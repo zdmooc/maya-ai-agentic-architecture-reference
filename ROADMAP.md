@@ -15,7 +15,7 @@ Deliverables:
 
 No runtime validation is claimed in this repository for I0.
 
-## I1 — Canonical market data and replay
+## I1 — Canonical market data and replay — IMPLEMENTED + TESTED OFFLINE / LIVE IG PENDING
 
 Goal: establish trustworthy input before adding intelligence.
 
@@ -28,6 +28,16 @@ Goal: establish trustworthy input before adding intelligence.
 - deterministic clock for reproducible tests.
 
 Exit evidence: reproducible replay and stale/bad-data tests.
+
+Status evidence:
+
+- runtime commit: `38a4f9637da31e8b96f0de8444a59c29a33bc9f3`;
+- dedicated I1 tests: 5 passed locally;
+- full runtime CI: 19 passed, Ruff clean;
+- replay fixture: 2 accepted / 0 rejected;
+- actual IG Demo authentication, live Lightstreamer feed and real latency measurements remain pending and are not claimed.
+
+See `evidence/ITERATION-001-MARKET-DATA-REPLAY.md`.
 
 ## I2 — Deterministic technical and pattern engines
 

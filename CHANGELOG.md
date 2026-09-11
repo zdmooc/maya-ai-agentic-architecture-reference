@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-09-11 — Iteration 1
+
+### Implemented in `TradeOps-GenAI-Integration`
+
+- canonical `MarketEvent` model with UTC event/ingest timestamps, source, bid/ask/last, spread, status, latency and staleness fields;
+- IG REST adapter for v2 session authentication and v3 historical prices;
+- IG Lightstreamer adapter using modern `PRICE:{account}:{epic}` subscriptions and the `Pricing` data adapter;
+- data-quality engine for stale, duplicate, out-of-order, future timestamp, missing-price and invalid-spread conditions;
+- deterministic clock and JSONL replay engine;
+- canonical JSON Schema and versioned replay fixture;
+- dedicated I1 tests, replay demo and configuration documentation;
+- `lightstreamer-client-lib==2.2.3` added to runtime dependencies.
+
+### Evidence
+
+- runtime commit: `38a4f9637da31e8b96f0de8444a59c29a33bc9f3`;
+- local I1 tests: 5 passed;
+- replay fixture: 2 accepted / 0 rejected;
+- GitHub Actions run `34642186132`: SUCCESS;
+- full runtime CI: Ruff clean, 19 tests passed with 3 non-blocking deprecation warnings.
+
+### Explicit non-claims
+
+- actual IG Demo authentication and live Lightstreamer streaming remain pending until credentials/network evidence is captured;
+- no real-world latency measurement is claimed;
+- no technical indicator, pattern engine, ML probability, profitability or real-money execution is claimed by I1.
+
 ## 2026-09-11 — Iteration 0
 
 ### Added
