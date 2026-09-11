@@ -119,17 +119,41 @@ Status evidence:
 
 See `evidence/ITERATION-004-BACKTESTING-EXPERIMENTS.md`.
 
-## I5 — ML signal quality
+## I5 — ML signal quality — IMPLEMENTED + TESTED / SYNTHETIC OOS CALIBRATION
 
-- feature contracts and leakage checks;
-- XGBoost/LightGBM/scikit-learn baselines;
-- train/validation/test and walk-forward;
-- calibration (for example Platt/isotonic as justified);
-- MLflow tracking/model registry;
-- drift/performance monitoring;
-- Feast only if online/offline feature consistency creates a real need.
+- versioned point-in-time feature contract using technical, structure, pattern, regime, market-quality, spread and latency evidence;
+- explicit leakage guards rejecting future/outcome/label/PnL/MFE/MAE semantics in feature names;
+- strictly chronological TRAIN / VALIDATION / CALIBRATION / TEST roles with no random shuffle;
+- ten rolling walk-forward windows with separate calibration and test segments;
+- scikit-learn logistic regression and histogram-gradient-boosting baselines;
+- XGBoost and LightGBM baselines;
+- validation-only champion selection;
+- Platt calibration fitted only on a dedicated calibration segment;
+- final untouched TEST metrics: ROC-AUC, Brier, log loss, ECE, accuracy, precision and recall;
+- explicit probability qualification that fails closed to `SCORE_ONLY` when sample, calibration, discrimination or drift gates fail;
+- PSI and standardized-mean-shift drift monitoring;
+- real MLflow tracking and Model Registry smoke test using SQLite plus controlled Skops trusted-type allowlist;
+- Feast deferred until a real online/offline feature-consistency need exists.
 
-Exit evidence: calibrated out-of-sample metrics. Until then outputs remain `score`, not `probability`.
+Exit evidence: calibrated out-of-sample mechanics on a pinned synthetic dataset plus end-to-end MLflow registry validation. Real-market probability calibration remains pending.
+
+Status evidence:
+
+- final runtime HEAD: `bca514ce35fab3e63ef16e487394fea576523d7b`;
+- runtime delta from I4: 4 commits ahead, 20 files changed, zero commits behind;
+- final GitHub Actions run `34646841551`: SUCCESS;
+- final full runtime CI: Ruff clean, 87 tests passed;
+- I5 adds 19 passing tests over the I4 baseline;
+- final CI runs CPython 3.11.16 with XGBoost 3.2.0, LightGBM 4.7.0 and MLflow 3.16.0 installed successfully;
+- pinned synthetic champion: `sklearn_logistic`;
+- final synthetic TEST set: 72 observations;
+- calibrated synthetic TEST ROC-AUC ≈ 0.7407, Brier ≈ 0.2005, log loss ≈ 0.5882 and ECE ≈ 0.0937;
+- synthetic drift status: WATCH, maximum PSI ≈ 0.2428;
+- qualification status: `CALIBRATED_OUT_OF_SAMPLE_SYNTHETIC`;
+- two earlier CI failures were retained as hardening evidence: FileStore was replaced by SQLite, then Skops custom classes were explicitly allowlisted rather than bypassing serialization controls;
+- no live or historical real-market calibrated probability, alpha, profitability or live-money readiness is claimed.
+
+See `evidence/ITERATION-005-ML-SIGNAL-QUALITY.md`.
 
 ## I6 — RAG, governed MCP and specialized agents
 

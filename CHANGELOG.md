@@ -1,5 +1,49 @@
 # Changelog
 
+## 2026-09-11 — Iteration 5
+
+### Implemented in `TradeOps-GenAI-Integration`
+
+- versioned point-in-time feature contract for technical, pattern, structure, regime, spread, latency and data-quality inputs;
+- explicit leakage guards for future/outcome/label/PnL/MFE/MAE semantics;
+- chronological TRAIN / VALIDATION / CALIBRATION / TEST split with no random shuffle;
+- rolling walk-forward windows with independent calibration/test blocks;
+- four ML baselines: scikit-learn logistic regression, scikit-learn histogram gradient boosting, XGBoost and LightGBM;
+- validation-only champion selection;
+- Platt calibration on a dedicated calibration segment;
+- untouched TEST metrics including ROC-AUC, Brier, log loss and expected calibration error;
+- probability qualification that fails closed to `SCORE_ONLY` when sample, discrimination, calibration or drift gates fail;
+- PSI and standardized-mean-shift drift monitoring;
+- deterministic synthetic dataset generator/spec and experiment protocol;
+- MLflow 3.16 tracking, artifact logging and Model Registry smoke test;
+- SQLite local/CI tracking backend and explicit Skops trusted-type allowlist for the two project-owned calibration classes;
+- Feast intentionally deferred until a real online/offline feature-consistency requirement appears.
+
+### Evidence
+
+- I5 runtime commit sequence: `2be132fc0659b3669c23013604760da78b45e839`, `16d283f1663830e6427ada1bb5579760f8d6bd1f`, `52492d5d1666dc4f774341886aa5e5542032cabd`, final HEAD `bca514ce35fab3e63ef16e487394fea576523d7b`;
+- runtime is 4 commits ahead of I4 and zero behind, with 20 changed files;
+- first integration CI exposed MLflow FileStore maintenance-mode rejection; local/CI tracking was migrated to SQLite rather than enabling the FileStore opt-out;
+- second integration CI exposed Skops rejection of project custom classes; exactly those two governed classes were explicitly allowlisted;
+- final GitHub Actions run `34646841551`: SUCCESS;
+- final CI: Ruff clean, 87 tests passed, 69 non-blocking deprecation warnings;
+- I5 adds 19 passing tests over the 68-test I4 baseline;
+- final CI runs CPython 3.11.16 and successfully installs `xgboost==3.2.0`, `lightgbm==4.7.0`, `mlflow==3.16.0`;
+- pinned synthetic champion: `sklearn_logistic`;
+- final synthetic TEST set: 72 observations;
+- calibrated synthetic TEST ROC-AUC ≈ 0.7407, Brier ≈ 0.2005, log loss ≈ 0.5882, ECE ≈ 0.0937;
+- drift status WATCH with maximum PSI ≈ 0.2428;
+- qualification status `CALIBRATED_OUT_OF_SAMPLE_SYNTHETIC`.
+
+### Explicit non-claims
+
+- I5 does not establish calibrated probability on real historical or live market data;
+- synthetic metrics do not establish trading alpha or profitability;
+- no production feature store is claimed;
+- the MLflow CI backend is an isolated SQLite validation backend, not a production remote deployment;
+- ML cannot override the deterministic I3 risk veto;
+- automated real-money execution remains outside scope.
+
 ## 2026-09-11 — Iteration 4
 
 ### Implemented in `TradeOps-GenAI-Integration`
