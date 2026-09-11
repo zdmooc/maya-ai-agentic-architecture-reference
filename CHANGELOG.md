@@ -141,7 +141,7 @@
 - aggregate win rate, total/average PnL, average R / expectancy R, gross profit/loss, profit factor and maximum drawdown;
 - metric breakdowns by regime, session, timeframe and pattern;
 - chronological train/test split and rolling walk-forward windows without random shuffle;
-- buy-and-hold baseline under the same cost model;
+- buy-and-hold baseline under the same transaction-cost model;
 - versioned synthetic dataset, experiment protocol, result schema, CLI demo and dedicated tests;
 - dataset SHA-256 and config SHA-256 embedded in backtest reports.
 
