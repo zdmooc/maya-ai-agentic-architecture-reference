@@ -1,5 +1,50 @@
 # Changelog
 
+## 2026-09-11 — Iteration 4
+
+### Implemented in `TradeOps-GenAI-Integration`
+
+- deterministic event-driven backtest package;
+- next-bar-open execution semantics to prevent same-bar lookahead;
+- explicit spread, slippage and per-order commission assumptions;
+- conservative `STOP_FIRST` handling for same-bar stop/target ambiguity;
+- I3 risk-gate integration: only `risk_status=APPROVED` signals can execute;
+- trade-level PnL, R-multiple, MFE/MAE, exit reason and bars-held evidence;
+- aggregate win rate, total/average PnL, average R / expectancy R, gross profit/loss, profit factor and maximum drawdown;
+- metric breakdowns by regime, session, timeframe and pattern;
+- chronological train/test split and rolling walk-forward windows without random shuffle;
+- buy-and-hold baseline under the same transaction-cost model;
+- versioned synthetic dataset, experiment protocol, result schema, CLI demo and dedicated tests;
+- dataset SHA-256 and config SHA-256 embedded in backtest reports.
+
+### Evidence
+
+- runtime commit / final I4 HEAD: `381b7dedf85a2170d8ff59205678bdf4692e5146`;
+- I4 is one commit ahead of I3 with 13 files added and no pre-I4 runtime file modified;
+- dedicated I4 tests added: 16;
+- GitHub Actions run `34645138469`: SUCCESS;
+- full runtime CI: Ruff clean, 68 tests passed with 3 non-blocking pre-existing deprecation warnings;
+- labelled synthetic fixture executes 4 approved trades, skips 1 I3-vetoed signal and produces 3 TARGET / 1 STOP outcomes;
+- synthetic fixture win rate is 75% only as deterministic mechanics evidence;
+- tests prove costs reduce performance versus a zero-cost configuration;
+- tests prove chronological and walk-forward train intervals end before their test intervals start;
+- report output is deterministic for identical dataset and config hashes.
+
+### Reference-engine review
+
+- NautilusTrader remains the primary independent architecture/replay reference. Current documentation recommends `BacktestNode` for config-driven backtesting; the reviewed current release line includes `2.0.0rc4`, so a future comparison must pin an exact tested release.
+- QuantConnect LEAN remains the second independent reference and supports event-driven local backtesting; no LEAN run is claimed in I4.
+
+### Explicit non-claims
+
+- the I4 fixture is synthetic and does not establish strategy profitability;
+- no real IG historical transaction-cost distribution is used yet;
+- no statistically significant out-of-sample alpha is claimed;
+- no Sharpe/Sortino figure is emitted from the tiny fixture because that would imply false precision;
+- NautilusTrader and LEAN are reviewed references, not executed validation engines in I4;
+- no calibrated ML probability is produced;
+- automated real-money execution remains outside scope.
+
 ## 2026-09-11 — Iteration 3
 
 ### Implemented in `TradeOps-GenAI-Integration`

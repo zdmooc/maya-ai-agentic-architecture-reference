@@ -86,18 +86,38 @@ Status evidence:
 
 See `evidence/ITERATION-003-MARKET-REGIME-RISK.md`.
 
-## I4 — Backtesting and experiment discipline
+## I4 — Backtesting and experiment discipline — IMPLEMENTED + TESTED (SYNTHETIC MECHANICS)
 
-- historical dataset contracts;
-- event-driven backtest/replay;
-- transaction cost, spread and slippage assumptions;
-- out-of-sample and walk-forward protocols;
-- metrics: expectancy, average R, profit factor, drawdown, Sharpe/Sortino where meaningful, per-regime/session/timeframe/pattern performance;
-- comparison against simple baselines.
+- versioned historical-dataset contract and deterministic dataset/config SHA-256 evidence;
+- event-driven next-bar-open execution to avoid same-bar lookahead;
+- explicit half-spread, slippage and commission assumptions on both sides of a trade;
+- conservative `STOP_FIRST` policy for same-bar stop/target ambiguity;
+- I3 `risk_status=APPROVED` enforcement before execution;
+- chronological out-of-sample split and rolling walk-forward windows with no shuffle;
+- metrics: trade count, win rate, PnL, average R / expectancy R, profit factor and drawdown;
+- MFE/MAE per trade and breakdowns by regime/session/timeframe/pattern;
+- buy-and-hold baseline using the same cost model;
+- versioned result schema, experiment protocol, synthetic fixture and CLI demo.
 
-Reference engines: NautilusTrader first for architecture/replay study; LEAN as independent reference/validation option.
+Reference engines remain NautilusTrader first for architecture/replay study and LEAN as an independent comparison option. Neither external engine is claimed as executed in I4.
 
-Exit evidence: reproducible run from pinned data/config/commit.
+Exit evidence: reproducible synthetic run from pinned data/config/commit plus CI tests proving execution timing, costs, veto handling, splits and metrics.
+
+Status evidence:
+
+- runtime commit / I4 HEAD: `381b7dedf85a2170d8ff59205678bdf4692e5146`;
+- runtime delta from I3: 1 commit, 13 files added, no I0-I3 runtime files modified;
+- dedicated I4 tests added: 16;
+- GitHub Actions run `34645138469`: SUCCESS;
+- final full runtime CI: Ruff clean, 68 tests passed, 3 non-blocking pre-existing deprecation warnings;
+- synthetic fixture executes 4 approved trades and skips 1 I3-vetoed signal;
+- labelled synthetic outcomes are 3 TARGET and 1 STOP, giving a fixture win rate of 75% only as a mechanics assertion, not a profitability claim;
+- tests prove explicit costs reduce performance versus a zero-cost run;
+- chronological and walk-forward tests prove train intervals finish before test intervals begin;
+- Sharpe/Sortino are intentionally omitted for the tiny synthetic fixture because the sample is not statistically meaningful;
+- no real-market profitability, out-of-sample alpha, real IG transaction-cost distribution or external-engine validation is claimed.
+
+See `evidence/ITERATION-004-BACKTESTING-EXPERIMENTS.md`.
 
 ## I5 — ML signal quality
 
