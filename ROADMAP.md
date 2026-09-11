@@ -222,16 +222,39 @@ Status evidence:
 
 See `evidence/ITERATION-007-DECISION-FUSION-HITL.md`.
 
-## I8 — End-to-end observability, security and LLMOps
+## I8 — End-to-end observability, security and LLMOps — IMPLEMENTED + TESTED IN CI / DEPLOYMENT VALIDATION PENDING
 
-- OpenTelemetry traces across event -> feature -> pattern -> ML -> agent -> MCP -> fusion -> risk -> decision;
-- Prometheus/Grafana service and business metrics;
-- optional Phoenix evaluation/observability only after ELv2 license review;
-- LLM cost/token/latency metrics;
-- OIDC/RBAC, secrets, NetworkPolicy, mTLS where justified, SBOM, image scanning and Policy-as-Code;
-- prompt-injection/tool-abuse tests.
+- real OpenTelemetry SDK replaces the previous placeholder;
+- W3C `traceparent` plus `X-Correlation-ID` propagation across HTTP/Kafka helper paths;
+- business spans for decision fusion and deterministic risk evaluation;
+- LLM spans with provider/model/status/latency metadata while avoiding prompt-body capture;
+- Prometheus service/business/security/LLM metrics;
+- Grafana I8 dashboard, Prometheus alert rules and OpenTelemetry Collector configuration;
+- LLM token/cost/latency metrics with estimated usage clearly distinguished from provider-native usage;
+- reusable identity layer with local static principals plus OIDC/JWT-compatible issuer/audience/JWKS/expiry/role/scope verification;
+- tracked `.env` removed and forbidden by CI hygiene rules;
+- weak local password defaults corrected to explicit placeholders;
+- focused secret/private-key audit gate;
+- deterministic SPDX SBOM for pinned direct Python requirements plus CI consistency check;
+- prompt-injection regression, OIDC fail-closed, trace/correlation and SBOM/security tests.
 
-Exit evidence: trace correlation IDs, dashboards, alerts, threat-model tests.
+Exit evidence: code/CI trace-correlation tests, dashboard/alert/collector configuration, JWT/security negative tests, SBOM/security gates and full regression CI.
+
+Status evidence:
+
+- functional runtime commit: `eea28b5d5317f3fd200de56ba882f9a6d93371d4`;
+- final runtime HEAD after security hardening: `90976dd60a9b80272e39db07ed027ae500f947c1`;
+- runtime delta from I7: 2 commits ahead, 0 behind, 30 files changed;
+- first GitHub Actions run `34653286233`: dependency install and Ruff passed; the newly introduced security audit correctly failed on weak defaults and scanner false positives; SBOM/Pytest were skipped;
+- no security gate or lint rule was disabled; weak defaults were corrected and exclusions were narrowed to scanner self-text plus historical redacted evidence;
+- final GitHub Actions run `34654382558`: SUCCESS;
+- final job `103443477579`: Ruff PASS, `SECURITY_AUDIT_PASS`, `SBOM_CHECK_PASS`, 157 tests passed, 69 non-blocking deprecation warnings;
+- net test increase over I7: 12 tests;
+- deployment of the Collector/Grafana dashboard/alerts against live traffic and production external OIDC federation are not claimed in I8;
+- NetworkPolicy, mTLS, image scanning and cluster Policy-as-Code remain I9 deployment work;
+- Phoenix is intentionally not added before a deliberate ELv2 adoption decision.
+
+See `evidence/ITERATION-008-OBSERVABILITY-SECURITY-LLMOPS.md`.
 
 ## I9 — OpenShift Local / CRC and GitOps
 

@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-09-12 — Iteration 8
+
+### Implemented in `TradeOps-GenAI-Integration`
+
+- real OpenTelemetry SDK replacing the previous placeholder;
+- W3C `traceparent` and application `X-Correlation-ID` propagation across HTTP/Kafka helper paths;
+- business spans for decision fusion and deterministic risk evaluation;
+- LLM spans and Prometheus metrics for provider/model/status/latency plus estimated token/cost usage without intentional prompt-body capture;
+- expanded Prometheus scrape configuration, I8 Grafana dashboard, alert rules and OpenTelemetry Collector configuration;
+- reusable identity layer supporting the local static demonstrator and OIDC/JWT-compatible issuer/audience/JWKS/expiry/role/scope verification;
+- tracked `.env` removed and ignored;
+- weak local Postgres password defaults replaced by explicit placeholders;
+- CI secret/private-key hygiene scanner;
+- deterministic SPDX JSON SBOM generated from pinned direct Python requirements;
+- CI SBOM consistency gate;
+- I8 tests for trace/correlation, OIDC fail-closed behavior, security scanning, SBOM determinism and prompt-injection regression.
+
+### Evidence
+
+- functional runtime commit: `eea28b5d5317f3fd200de56ba882f9a6d93371d4`;
+- corrective security-hardening commit / final I8 HEAD: `90976dd60a9b80272e39db07ed027ae500f947c1`;
+- runtime delta from I7: 2 commits ahead, 0 behind, 30 files changed;
+- first GitHub Actions run `34653286233`: dependency install and Ruff passed, then the newly added security audit failed on weak defaults and scanner false positives; SBOM/Pytest were skipped as intended;
+- no quality/security gate was disabled;
+- active weak defaults were corrected and scanner exclusions were limited to its own source plus historical redacted `evidence-sample/` artifacts;
+- final GitHub Actions run `34654382558`: SUCCESS;
+- final job `103443477579`: Ruff PASS, `SECURITY_AUDIT_PASS`, `SBOM_CHECK_PASS`;
+- final Pytest: 157 passed, 69 non-blocking deprecation warnings in 15.78s;
+- net increase from I7: 12 passing tests.
+
+### Explicit non-claims
+
+- no production trace backend or retained end-to-end trace stream is claimed from I8;
+- Grafana dashboard rendering and alert delivery are configured but not deployment-verified against live traffic;
+- OIDC/JWT verification mechanics are tested, but no real production IdP federation is claimed;
+- the SPDX SBOM covers pinned direct Python requirements and is not claimed as a complete transitive container/image SBOM;
+- the focused secret audit is not a replacement for an enterprise secret-scanning/SAST platform;
+- prompt-injection marker detection is not comprehensive prompt-injection immunity;
+- NetworkPolicy, mTLS, image scanning and cluster Policy-as-Code remain I9 deployment work;
+- Phoenix remains intentionally unadded pending an explicit ELv2 adoption decision;
+- no automated real-money execution or live IG order routing is enabled.
+
 ## 2026-09-11 — Iteration 7
 
 ### Implemented in `TradeOps-GenAI-Integration`
