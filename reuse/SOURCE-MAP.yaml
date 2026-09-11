@@ -1,0 +1,66 @@
+audit_date: 2026-09-11
+master_repository: zdmooc/maya-ai-agentic-architecture-reference
+primary_executable_repository: zdmooc/TradeOps-GenAI-Integration
+sources:
+  - repository: zdmooc/TradeOps-GenAI-Integration
+    capabilities: [event-driven, rag, mcp, agents, paper-oms, audit, observability-baseline]
+    decision: ADAPT
+  - repository: zdmooc/openshift2026-openshift-local-trading-gateway
+    capabilities: [openshift-local, kustomize, redpanda, postgres, keycloak, trading-services]
+    decision: ADAPT
+  - repository: zdmooc/mayabank-kafka-ddd-openshift
+    capabilities: [ddd, event-driven, kafka, openshift, enterprise-architecture]
+    decision: REFERENCE
+  - repository: zdmooc/mayabank-azure-cloud-ai-platform
+    capabilities: [azure, landing-zone, security, networking, observability, finops, greenops, ai-platform]
+    decision: REFERENCE
+  - repository: zdmooc/openshift-platform-blueprints
+    capabilities: [openshift, gitops, security, observability, platform-engineering]
+    decision: REFERENCE
+  - repository: zdmooc/mayabank-ibm-odm-ai-decision-architecture
+    capabilities: [deterministic-decisioning, ml, genai, mcp, hitl, audit]
+    decision: REFERENCE
+  - repository: zdmooc/Maya
+    capabilities: [product-context, local-first]
+    decision: REFERENCE
+  - repository: zdmooc/Maya-gitops
+    capabilities: [gitops-concept, crc]
+    decision: DEFER
+  - repository: zdmooc/maya-interlink-enterprise-ai-platform
+    capabilities: []
+    decision: IGNORE
+public_baseline:
+  connectivity:
+    - official-ig-rest-streaming
+    - ig-python/trading-ig
+  trading_engines:
+    - nautechsystems/nautilus_trader
+    - QuantConnect/Lean
+  agentic:
+    - langchain-ai/langgraph
+    - microsoft/agent-framework
+    - modelcontextprotocol/servers
+  ai_gateway:
+    - BerriAI/litellm
+    - envoyproxy/ai-gateway
+  rag:
+    - qdrant/qdrant
+  mlops:
+    - mlflow/mlflow
+    - feast-dev/feast
+  ml:
+    - dmlc/xgboost
+    - lightgbm-org/LightGBM
+    - scikit-learn/scikit-learn
+  observability:
+    - open-telemetry
+    - Arize-ai/phoenix
+  platform:
+    - apache/kafka
+    - redpanda-data/redpanda
+    - argoproj/argo-cd
+    - kyverno/kyverno
+  serving:
+    - kserve/kserve
+    - vllm-project/vllm
+    - ollama/ollama
