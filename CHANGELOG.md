@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-09-11 — Iteration 2
+
+### Implemented in `TradeOps-GenAI-Integration`
+
+- canonical validated OHLCV `Bar` model;
+- deterministic M1/M5/M15/M30/H1/H4/D1 aggregation and resampling;
+- conversion of I1 historical `MarketEvent` BAR data while preserving OHLCV;
+- EMA, VWAP, ATR, ADX/+DI/-DI, RSI, MACD and Bollinger implementations in transparent pure Python;
+- confirmed swing-high/swing-low detection and HH/HL/LH/LL labels;
+- BULLISH / BEARISH / RANGE / UNKNOWN structure classification;
+- deterministic breakout/retest, failed breakout, pullback, support/resistance rejection, compression/expansion, gap and liquidity-sweep rules;
+- explicit timeframe, preconditions, invalidation level/rule, lookback and machine-readable evidence on every emitted pattern;
+- JSON Schema for `PatternSignal`;
+- labelled replay fixtures and CLI demonstration;
+- dedicated I2 test suite.
+
+### Evidence
+
+- functional runtime commit: `4979abb4b53047364c1a661308e551603dd5552b`;
+- lint correction commit / final I2 runtime HEAD: `5c0a77cfd70f620ec6eb867472181632ced6777e`;
+- first CI correctly rejected three ambiguous variable names (Ruff E741); no rule was disabled;
+- dedicated I2 local tests after correction: 11 passed;
+- GitHub Actions run `34643453395`: SUCCESS;
+- final full runtime CI: Ruff clean, 30 tests passed with 3 non-blocking pre-existing deprecation warnings;
+- labelled examples deterministically matched `BREAKOUT_RETEST/LONG` and `FAILED_BREAKOUT/SHORT`.
+
+### Explicit non-claims
+
+- I2 does not implement market-regime classification or the target risk gate; those belong to I3;
+- I2 does not prove profitability, expectancy, drawdown or walk-forward performance; those belong to I4;
+- no calibrated ML probability is produced;
+- no LLM/agent is used to calculate indicators or detect these deterministic patterns;
+- live-money execution remains out of scope.
+
 ## 2026-09-11 — Iteration 1
 
 ### Implemented in `TradeOps-GenAI-Integration`

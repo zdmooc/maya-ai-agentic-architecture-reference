@@ -39,7 +39,7 @@ Status evidence:
 
 See `evidence/ITERATION-001-MARKET-DATA-REPLAY.md`.
 
-## I2 — Deterministic technical and pattern engines
+## I2 — Deterministic technical and pattern engines — IMPLEMENTED + TESTED
 
 - indicators: EMA, VWAP, ATR, ADX, RSI, MACD, Bollinger;
 - market structure: swings, HH/HL, LH/LL;
@@ -48,6 +48,18 @@ See `evidence/ITERATION-001-MARKET-DATA-REPLAY.md`.
 - multi-timeframe aggregation.
 
 Exit evidence: unit/property tests and replay-labelled examples.
+
+Status evidence:
+
+- functional runtime commit: `4979abb4b53047364c1a661308e551603dd5552b`;
+- lint-fix runtime commit / current I2 HEAD: `5c0a77cfd70f620ec6eb867472181632ced6777e`;
+- dedicated I2 tests: 11 passed locally;
+- GitHub Actions run `34643453395`: SUCCESS;
+- full runtime CI: Ruff clean, 30 tests passed, 3 non-blocking pre-existing deprecation warnings;
+- labelled fixtures: breakout/retest LONG and failed-breakout SHORT both matched deterministically;
+- no profitability, market-regime, risk-gate, ML-probability or live-execution claim is made by I2.
+
+See `evidence/ITERATION-002-TECHNICAL-PATTERNS.md`.
 
 ## I3 — Market regime and deterministic risk v1
 
