@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-09-11 — Iteration 6
+
+### Implemented in `TradeOps-GenAI-Integration`
+
+- real LangGraph `StateGraph` orchestration using `langgraph==1.2.11`;
+- specialist Market, Technical, Pattern, Macro, Risk and Fusion agents;
+- explicit `SUPPORTED`, `UNKNOWN`, `DATA_STALE`, `CONFLICT` and `VETO` states;
+- deterministic I3 risk veto preserved as terminal;
+- versioned governed RAG corpus and pre-agent admission checks;
+- prompt-injection marker rejection and fail-closed RAG UNKNOWN/CONFLICT behavior;
+- server-side bearer-token principals/scopes at the tool boundary;
+- explicit tool allowlist, argument/type/enum validation, rate limiting, timeouts and audit redaction;
+- distinct general-agent and reviewer identities;
+- `paper.execute` excluded from the general-agent scopes;
+- explicit human approval additionally required for `oms.place_order`;
+- legacy autonomous `/agent/trade` execution disabled;
+- analysis-only `/agent/assessment` endpoint and output schema with `execution_allowed=false`;
+- versioned aligned/disagreement/stale/veto scenarios;
+- ADR documenting LangGraph selection and MCP conformance boundary.
+
+### Evidence
+
+- runtime commit / final I6 HEAD: `faa16245013155265ef1edb8e3f47ba1b9b77415`;
+- runtime is exactly 1 commit ahead of I5, zero behind, with 22 changed files;
+- GitHub Actions run `34648593641`: SUCCESS;
+- full CI: Ruff clean, 111 tests passed, 69 non-blocking deprecation warnings;
+- net increase from I5: 24 passing tests;
+- CI installs and executes `langgraph==1.2.11` on CPython 3.11.16;
+- versioned fixtures prove SUPPORTED, CONFLICT, DATA_STALE and VETO paths;
+- negative tool-policy tests prove auth, scope, allowlist, argument, approval, rate-limit and timeout failures are fail-closed;
+- general-agent identity cannot self-escalate into paper execution by sending `human_approved=true`.
+
+### Explicit non-claims
+
+- I6 is analysis-only and does not implement I7 executable fusion/HITL workflow;
+- no automated real-money execution is enabled;
+- the static bearer-token mapping is a testable local boundary, not production OIDC/RBAC federation;
+- the hardened `/call` API is not claimed as native MCP protocol conformance or Streamable HTTP deployment;
+- Microsoft Agent Framework is evaluated but not added alongside LangGraph;
+- RAG checks do not claim comprehensive defense against all possible prompt-injection techniques;
+- agents do not replace deterministic technical, pattern, regime or risk engines.
+
 ## 2026-09-11 — Iteration 5
 
 ### Implemented in `TradeOps-GenAI-Integration`

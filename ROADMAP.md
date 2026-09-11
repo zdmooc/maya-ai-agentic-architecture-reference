@@ -155,16 +155,38 @@ Status evidence:
 
 See `evidence/ITERATION-005-ML-SIGNAL-QUALITY.md`.
 
-## I6 — RAG, governed MCP and specialized agents
+## I6 — RAG, governed MCP and specialized agents — IMPLEMENTED + TESTED / ANALYSIS ONLY
 
-- RAG over strategies, risk policies, runbooks, ADRs, past setups and evidence;
-- actual agent framework implementation after ADR (LangGraph baseline candidate; Microsoft Agent Framework evaluated as alternative);
-- specialized Market, Technical, Pattern, Macro, Risk and Fusion agents;
-- UNKNOWN / DATA_STALE / CONFLICT states;
-- governed MCP tools with authn/authz, allowlists, validation, timeouts, rate limits, audit and HITL;
-- no arbitrary shell or unrestricted trading tool.
+- real LangGraph `StateGraph` orchestration pinned to `langgraph==1.2.11`;
+- specialized Market, Technical, Pattern, Macro, Risk and Fusion agents consuming I1-I5 evidence rather than recomputing deterministic capabilities;
+- explicit `SUPPORTED`, `UNKNOWN`, `DATA_STALE`, `CONFLICT` and terminal `VETO` states;
+- deterministic I3 risk `VETO` remains authoritative and cannot be overridden by agent/RAG/ML agreement;
+- versioned RAG corpus for strategies, risk policies, runbooks, agent boundary and evidence lineage;
+- governed RAG admission checks for approved source types, relevance, bounded text and prompt-injection markers;
+- server-side bearer-token principals/scopes for the tool boundary;
+- tool allowlist, strict argument validation, per-principal/tool rate limits, timeouts and audit redaction;
+- general-agent identity has no `paper.execute` scope;
+- paper-order tool requires separate reviewer scope plus explicit human approval;
+- legacy autonomous `/agent/trade` execution path disabled; `/agent/assessment` is analysis-only;
+- versioned disagreement/staleness/veto fixtures and agent assessment JSON Schema with `execution_allowed=false`.
 
-Exit evidence: disagreement scenarios and tool-policy tests.
+Exit evidence: actual LangGraph execution, disagreement scenarios and negative tool-policy tests in the full CI.
+
+Status evidence:
+
+- runtime commit / final I6 HEAD: `faa16245013155265ef1edb8e3f47ba1b9b77415`;
+- runtime delta from I5: exactly 1 commit ahead, 22 files changed, zero commits behind;
+- GitHub Actions run `34648593641`: SUCCESS;
+- final full runtime CI: Ruff clean, 111 tests passed, 69 non-blocking deprecation warnings;
+- net test increase over I5: 24 tests;
+- versioned policy fixture proves aligned LONG -> `SUPPORTED`, directional disagreement -> `CONFLICT`, stale market -> `DATA_STALE`, deterministic risk veto -> `VETO`;
+- tests prove unauthenticated, missing-scope, unknown-tool, unknown-argument, invalid enum/quantity, rate-limit and timeout paths fail closed;
+- tests prove the general-agent token cannot self-escalate to paper execution even when the request submits `human_approved=true`;
+- official MCP Python SDK v2 was reviewed but is not added; I6 claims a governed MCP-shaped compatibility boundary, not native MCP protocol conformance or Streamable HTTP deployment;
+- Microsoft Agent Framework remains an evaluated alternative and is not added alongside LangGraph;
+- no executable I7 fusion/HITL workflow, live-money execution or production OIDC identity federation is claimed.
+
+See `evidence/ITERATION-006-RAG-MCP-AGENTS.md`.
 
 ## I7 — Decision fusion and Human-in-the-Loop
 
