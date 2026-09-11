@@ -188,13 +188,39 @@ Status evidence:
 
 See `evidence/ITERATION-006-RAG-MCP-AGENTS.md`.
 
-## I7 — Decision fusion and Human-in-the-Loop
+## I7 — Decision fusion and Human-in-the-Loop — IMPLEMENTED + TESTED
 
-Fusion must use evidence quality, data quality, regime, calibrated ML evidence, historical expectancy and risk vetoes—not majority voting.
+- deterministic gate-based fusion; no majority voting and no auto-approval;
+- I6 assessment must be `SUPPORTED` and I3 deterministic risk must remain `ACCEPT`;
+- hard gates for freshness, evidence quality, regime allowlist, R/R, historical sample size, historical expectancy and directionally valid entry/stop/target geometry;
+- synthetic I5 calibration remains non-decisive; only explicitly qualified real-market calibrated probability can activate the ML gate;
+- informational evidence score cannot override hard policy/risk gates;
+- eligible proposals become only `REVIEW_REQUIRED` with `human_approval_required=true` and `execution_allowed=false`;
+- persisted HITL lifecycle: `PENDING_REVIEW -> APPROVED|REJECTED|EXPIRED`;
+- approved cases can become `EXECUTED_SHADOW` or `EXECUTED_PAPER`, with expiry and duplicate-execution guards;
+- reviewer authentication is separate from the agent identity;
+- SHADOW requires approval but never calls the order tool;
+- PAPER requires approval and uses the governed I6 tool boundary with reviewer identity plus `human_approved=true`;
+- proposal ID is preserved as the paper order `workflow_id` for decision -> review -> order lineage;
+- full I7 case is persisted using the existing `workflows` table under `payload.i7`;
+- audit events: `decision.proposed`, `decision.reviewed`, `decision.executed`;
+- versioned proposal schema and synthetic policy scenarios.
 
-Output contract includes instrument, direction, entry zone, invalidation, stop, targets, R/R, timeframe, regime, pattern, ML score/probability status, risk status, freshness, evidence and final decision.
+Exit evidence: authenticated API flow for proposal/review/SHADOW/PAPER, negative gate tests, expiry/duplicate tests and full CI.
 
-Exit evidence: paper/shadow workflow with explicit approval and auditable rationale.
+Status evidence:
+
+- functional runtime commit: `ab6154b6cd9dbe60e6b30d893c5e7d3d57837d13`;
+- final runtime HEAD after test correction/API coverage: `f2e8536da9dc5c0e63134d97c3052f7b00ba1d0a`;
+- first GitHub Actions run `34650643058`: Ruff clean; 141 passed / 1 failed because the legacy I6 health test still expected `ANALYSIS_ONLY` after I7 correctly changed service mode to `ANALYSIS_PLUS_HITL`;
+- no I7 fusion/HITL functional test failed in the first run;
+- final GitHub Actions run `34650953035`: SUCCESS;
+- final full runtime CI: Ruff clean, 145 tests passed, 69 non-blocking deprecation warnings;
+- net test increase over I6: 34 tests;
+- API tests prove the general agent cannot approve, reviewer approval is required, SHADOW is order-free, duplicate execution is rejected and PAPER preserves proposal-to-order workflow lineage;
+- automated real-money execution, live IG order routing, real-market ML calibration and production OIDC/RBAC remain explicitly unclaimed.
+
+See `evidence/ITERATION-007-DECISION-FUSION-HITL.md`.
 
 ## I8 — End-to-end observability, security and LLMOps
 
