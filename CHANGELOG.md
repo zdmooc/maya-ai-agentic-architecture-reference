@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-09-11 — Iteration 7
+
+### Implemented in `TradeOps-GenAI-Integration`
+
+- deterministic gate-based decision fusion with no majority voting and no autonomous approval;
+- I6 `SUPPORTED` assessment and I3 deterministic `ACCEPT` risk status required before review eligibility;
+- hard fusion gates for freshness, evidence quality, regime, R/R, historical sample, historical expectancy and price geometry;
+- I5 synthetic calibration explicitly remains non-decisive; only explicitly qualified real-market calibration can enter the ML probability gate;
+- informational evidence score that cannot override hard gates;
+- `NO_TRADE` / `REVIEW_REQUIRED` proposal contract with `human_approval_required=true` and `execution_allowed=false`;
+- persisted HITL lifecycle with `PENDING_REVIEW`, `APPROVED`, `REJECTED`, `EXPIRED`, `EXECUTED_SHADOW` and `EXECUTED_PAPER`;
+- authenticated agent proposal identity separated from reviewer approval/execution identity;
+- SHADOW execution after approval without order placement;
+- PAPER execution after approval through the governed I6 tool boundary with `human_approved=true`;
+- exact proposal ID preserved as paper-order `workflow_id` for lineage;
+- I7 case persistence reusing the existing `workflows` table under `payload.i7`;
+- audit events for proposal, review and execution;
+- versioned proposal JSON Schema, synthetic policy fixture and I7 documentation;
+- API tests covering propose -> review -> SHADOW/PAPER, reviewer authorization and duplicate execution rejection.
+
+### Evidence
+
+- functional runtime commit: `ab6154b6cd9dbe60e6b30d893c5e7d3d57837d13`;
+- final runtime HEAD: `f2e8536da9dc5c0e63134d97c3052f7b00ba1d0a`;
+- first GitHub Actions run `34650643058`: Ruff PASS, 141 tests passed and one legacy I6 health assertion failed because it still expected `ANALYSIS_ONLY` after the I7 mode change;
+- no I7 fusion/HITL functional test failed in that first run;
+- corrective commit updated the health contract and added API-level HITL coverage without weakening any gate;
+- final GitHub Actions run `34650953035`: SUCCESS;
+- final CI: Ruff clean, 145 tests passed, 69 non-blocking deprecation warnings;
+- net increase from I6: 34 passing tests;
+- tests prove risk veto/no-accept paths fail closed, stale/weak/low-RR/negative-expectancy cases do not enter review, review expiry is enforced and duplicate review/execution is rejected;
+- tests prove a general agent cannot approve, SHADOW does not call paper execution and PAPER preserves proposal-to-order workflow lineage.
+
+### Explicit non-claims
+
+- no automated real-money execution is enabled;
+- no live IG order execution is claimed;
+- no real-market calibrated ML probability is claimed;
+- static bearer tokens are a local demonstrator and not production OIDC/RBAC;
+- end-to-end OpenTelemetry, production dashboards/SLOs and Policy-as-Code remain I8 work;
+- synthetic fusion fixtures do not establish strategy profitability.
+
 ## 2026-09-11 — Iteration 6
 
 ### Implemented in `TradeOps-GenAI-Integration`
@@ -99,7 +141,7 @@
 - aggregate win rate, total/average PnL, average R / expectancy R, gross profit/loss, profit factor and maximum drawdown;
 - metric breakdowns by regime, session, timeframe and pattern;
 - chronological train/test split and rolling walk-forward windows without random shuffle;
-- buy-and-hold baseline under the same transaction-cost model;
+- buy-and-hold baseline under the same cost model;
 - versioned synthetic dataset, experiment protocol, result schema, CLI demo and dedicated tests;
 - dataset SHA-256 and config SHA-256 embedded in backtest reports.
 
