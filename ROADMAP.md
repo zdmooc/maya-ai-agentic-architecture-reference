@@ -61,14 +61,30 @@ Status evidence:
 
 See `evidence/ITERATION-002-TECHNICAL-PATTERNS.md`.
 
-## I3 — Market regime and deterministic risk v1
+## I3 — Market regime and deterministic risk v1 — IMPLEMENTED + TESTED
 
-- regimes: TREND_UP, TREND_DOWN, RANGE, HIGH_VOLATILITY, LOW_VOLATILITY, BREAKOUT, POST_EVENT, RISK_ON, RISK_OFF;
+- regimes: TREND_UP, TREND_DOWN, RANGE, HIGH_VOLATILITY, LOW_VOLATILITY, BREAKOUT, POST_EVENT, RISK_ON, RISK_OFF plus UNKNOWN fail-closed fallback;
 - regime-specific strategy allowlist;
 - risk per trade, daily loss, exposure, concentration, correlation, volatility, event/spread/slippage/freshness gates;
-- circuit breakers and explicit veto reasons.
+- circuit breakers and explicit veto reasons;
+- structured `TradeIntent`, `RiskState`, `RiskLimits`, `RiskDecision` contracts;
+- fail-closed event adapter requiring risk intent, risk state and regime context;
+- legacy fixed-quantity/MAX_QTY risk placeholder removed from the Kafka worker.
 
 Exit evidence: negative tests proving that unsafe signals are vetoed.
+
+Status evidence:
+
+- functional runtime commit: `6e0768321f73c99dc6997a5963f727ed7aa99825`;
+- lint-fix runtime commit / current I3 HEAD: `bd5edfd32f894995233658aac27616f4a120d6dc`;
+- dedicated I3 tests: 22 cases;
+- first CI correctly rejected 10 Ruff packaging/import issues; no rule was disabled;
+- GitHub Actions run `34644295181`: SUCCESS;
+- final full runtime CI: Ruff clean, 52 tests passed, 3 non-blocking pre-existing deprecation warnings;
+- versioned risk scenarios include an approved trend pullback and a stale/wide-spread veto;
+- no profitability, VaR, optimized sizing, ML probability, backtest expectancy or live execution claim is made by I3.
+
+See `evidence/ITERATION-003-MARKET-REGIME-RISK.md`.
 
 ## I4 — Backtesting and experiment discipline
 

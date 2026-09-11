@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-09-11 — Iteration 3
+
+### Implemented in `TradeOps-GenAI-Integration`
+
+- deterministic market-regime engine using I2 technical evidence;
+- `TREND_UP`, `TREND_DOWN`, `RANGE`, `HIGH_VOLATILITY`, `LOW_VOLATILITY`, `BREAKOUT`, `POST_EVENT`, `RISK_ON`, `RISK_OFF` and fail-closed `UNKNOWN`;
+- explicit deterministic regime precedence and configurable strategy allowlists;
+- validated `TradeIntent`, `RiskState`, `RiskLimits` and `RiskDecision` contracts;
+- risk-per-trade, daily-loss, gross-exposure, concentration, correlated-exposure, ATR-volatility, event, spread, slippage and freshness gates;
+- circuit breakers for kill switch, degraded feed, daily-loss threshold and consecutive losses;
+- explicit aggregated veto reasons with deterministic ordering;
+- fail-closed structured event adapter requiring `risk_intent`, `risk_state` and `regime`;
+- Kafka risk worker upgraded to the I3 policy engine; the previous fixed `qty=100/MAX_QTY` placeholder was removed;
+- JSON Schemas for market-regime and risk-decision outputs;
+- versioned positive/negative risk scenarios, CLI demo and dedicated I3 test suite.
+
+### Evidence
+
+- functional runtime commit: `6e0768321f73c99dc6997a5963f727ed7aa99825`;
+- lint correction / final I3 runtime HEAD: `bd5edfd32f894995233658aac27616f4a120d6dc`;
+- runtime delta from I2: 14 files changed across regime, risk, schemas, docs, fixture, demo and tests;
+- first CI run `34644207171` rejected 10 Ruff import/re-export issues; no lint rule was disabled;
+- dedicated I3 test suite: 22 cases;
+- final GitHub Actions run `34644295181`: SUCCESS;
+- final full runtime CI: Ruff clean, 52 tests passed with 3 non-blocking pre-existing deprecation warnings.
+
+### Explicit non-claims
+
+- I3 does not prove trading profitability or strategy expectancy;
+- no VaR/CVaR, portfolio optimizer or sophisticated netting model is claimed;
+- exposure-after-trade calculations are deliberately conservative and additive in I3;
+- no calibrated ML probability is produced;
+- no agent or LLM can override the deterministic risk veto;
+- backtesting, transaction-cost experiments, out-of-sample and walk-forward evidence belong to I4;
+- automated real-money execution remains outside scope.
+
 ## 2026-09-11 — Iteration 2
 
 ### Implemented in `TradeOps-GenAI-Integration`
