@@ -1,5 +1,49 @@
 # Changelog
 
+## 2026-09-12 — Iteration 9
+
+### Implemented in `TradeOps-GenAI-Integration`
+
+- complete OpenShift Local / CRC target packaging for nine application workloads plus PostgreSQL, Redpanda, Qdrant, OpenTelemetry Collector, Prometheus and Grafana;
+- unified OpenShift-compatible Python runtime image to reduce duplicated CRC image storage;
+- explicit exclusion of the legacy pre-I2 `signal-engine` from the target runtime;
+- Helm chart upgraded from the historical three-API demonstrator to the I9 target slice;
+- startup/readiness/liveness probes for HTTP APIs and readiness checks for stateful/platform workloads;
+- explicit CPU/memory requests and limits, ServiceAccount hardening, `RuntimeDefault` seccomp, disabled privilege escalation and capability drop `ALL`;
+- ResourceQuota, LimitRange, restricted Pod Security labels and CRC overlay;
+- default-deny NetworkPolicy plus explicit intra-namespace, DNS, router-ingress and selected HTTPS-egress rules;
+- OpenShift ImageStream and BuildConfig using `Dockerfile.openshift` and output tag `tradeops-runtime:i9`;
+- Argo CD AppProject and three Applications for platform guardrails, Kyverno policies and Helm runtime;
+- real repository URL and explicit `main` targetRevision replacing the old placeholder;
+- Kyverno CEL `policies.kyverno.io/v1` `ValidatingPolicy` guardrails for resources, non-latest tags and container security;
+- CRC preflight, deploy and verify scripts plus a fail-closed Trivy image-scan helper;
+- CI gates for Helm lint, Helm rendering and I9 platform-contract validation;
+- ten I9 platform tests.
+
+### Evidence
+
+- functional runtime commit: `80ee9297a299133a63c7326b34bddf33d588bab5`;
+- final runtime HEAD after lint correction: `92e0718640e8a19f61df671c14a74e163a5af445`;
+- final runtime delta from I8: 2 commits ahead, 0 behind, 35 files changed;
+- first GitHub Actions run `34681157466`: dependency install passed and Ruff rejected one unused `Path` import before later gates ran; no rule was disabled;
+- corrective commit removed only that unused import;
+- final GitHub Actions run `34681213356`: SUCCESS;
+- final job `103520072644`: Ruff PASS, `SECURITY_AUDIT_PASS`, `SBOM_CHECK_PASS`, Helm lint PASS, Helm template PASS and `I9_PLATFORM_VALIDATION_PASS`;
+- final Pytest: 167 passed, 69 non-blocking deprecation warnings in 16.83s;
+- net increase from I8: 10 passing tests;
+- Helm reported `1 chart(s) linted, 0 chart(s) failed`.
+
+### Explicit non-claims
+
+- I9 does not claim that the user's local CRC cluster has executed the deployment yet;
+- no live evidence is claimed yet for BuildConfig completion, image pulls, PVC binding, Routes, runtime health checks, Argo CD sync, Kyverno admission decisions or actual CRC trace delivery;
+- the Trivy helper is versioned but the CRC-built image has not been scanned in CI;
+- PostgreSQL, Redpanda, Qdrant, Prometheus and Grafana are single-instance local-lab dependencies, not production HA designs;
+- standard NetworkPolicy does not provide FQDN-level egress filtering and I9 does not claim it;
+- no full service-to-service mTLS is claimed;
+- OpenShift AI, KServe and vLLM serving remain I10 work;
+- no automated real-money execution or live IG order routing is enabled.
+
 ## 2026-09-12 — Iteration 8
 
 ### Implemented in `TradeOps-GenAI-Integration`

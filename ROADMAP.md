@@ -256,15 +256,40 @@ Status evidence:
 
 See `evidence/ITERATION-008-OBSERVABILITY-SECURITY-LLMOPS.md`.
 
-## I9 — OpenShift Local / CRC and GitOps
+## I9 — OpenShift Local / CRC and GitOps — IMPLEMENTED + TESTED IN CI / LIVE CRC DEPLOYMENT PENDING
 
-- package the complete runnable slice rather than only selected services;
-- resource requests/limits, probes, quotas, network policies;
-- GitOps using Argo CD + Kustomize/Helm;
-- Kyverno policies based on current supported APIs;
-- local LLM may remain outside CRC through Ollama when GPU/RAM economics justify it.
+- unified OpenShift runtime image used by nine target application workloads;
+- target slice includes market-data, workflow-api, genai-api, rag-api, agent-controller, mcp-server, deterministic risk-engine, paper-oms and notifier;
+- legacy pre-I2 `signal-engine` explicitly excluded from the target deployment;
+- PostgreSQL, Redpanda and Qdrant local StatefulSets with PVCs;
+- OpenTelemetry Collector, Prometheus and Grafana local observability services;
+- explicit CPU/memory requests and limits for application and platform containers;
+- startup/readiness/liveness probes for HTTP APIs plus stateful readiness checks;
+- restricted-security-compatible pod/container settings with arbitrary-UID image permissions;
+- ResourceQuota, LimitRange and CRC-specific resource/storage overrides;
+- default-deny NetworkPolicy plus explicit intra-namespace, DNS, OpenShift router ingress and selected HTTPS egress rules;
+- OpenShift ImageStream/BuildConfig building `Dockerfile.openshift` into `tradeops-runtime:i9`;
+- Argo CD AppProject plus platform, Kyverno-policy and runtime Applications;
+- real repository URL and explicit `main` revision replace the old placeholder;
+- Kyverno CEL `policies.kyverno.io/v1` `ValidatingPolicy` policies for resources, explicit image tags and container security;
+- CRC preflight/deploy/verify scripts and fail-closed Trivy image-scan helper;
+- Helm lint/render and I9 platform-contract checks added to CI.
 
-Exit evidence: deploy/verify scripts and versioned command/test output.
+Exit evidence: versioned deploy/verify scripts, reproducible Helm rendering, policy/platform tests and full CI. Actual CRC execution remains a separate deployment-evidence step.
+
+Status evidence:
+
+- functional runtime commit: `80ee9297a299133a63c7326b34bddf33d588bab5`;
+- final runtime HEAD after lint correction: `92e0718640e8a19f61df671c14a74e163a5af445`;
+- runtime delta from I8: 2 commits ahead, 0 behind, 35 files changed;
+- first GitHub Actions run `34681157466`: dependency install passed; Ruff rejected one unused import and later gates were skipped; no rule was disabled;
+- final GitHub Actions run `34681213356`: SUCCESS;
+- final job `103520072644`: Ruff PASS, `SECURITY_AUDIT_PASS`, `SBOM_CHECK_PASS`, Helm lint PASS, Helm template PASS and `I9_PLATFORM_VALIDATION_PASS`;
+- final Pytest: 167 passed, 69 non-blocking deprecation warnings in 16.83s;
+- net test increase over I8: 10 tests;
+- live CRC BuildConfig execution, image pulls, PVC binding, Routes, Argo CD sync, Kyverno admission and actual image scan remain pending and are not claimed.
+
+See `evidence/ITERATION-009-OPENSHIFT-CRC-GITOPS.md`.
 
 ## I10 — OpenShift AI / production AI serving
 
