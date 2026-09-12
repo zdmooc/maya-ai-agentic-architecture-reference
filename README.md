@@ -11,7 +11,14 @@ The repository is intentionally an **architecture and evidence hub**, not a seco
 - Executable trading integration baseline: [`zdmooc/TradeOps-GenAI-Integration`](https://github.com/zdmooc/TradeOps-GenAI-Integration)
 - OpenShift/CRC trading platform patterns: [`zdmooc/openshift2026-openshift-local-trading-gateway`](https://github.com/zdmooc/openshift2026-openshift-local-trading-gateway)
 - Enterprise Kafka/DDD reference: [`zdmooc/mayabank-kafka-ddd-openshift`](https://github.com/zdmooc/mayabank-kafka-ddd-openshift)
-- Azure architecture reference: [`zdmooc/mayabank-azure-cloud-ai-platform`](https://github.com/zdmooc/mayabank-azure-cloud-ai-platform)
+- Azure pattern/reference source: [`zdmooc/mayabank-azure-cloud-ai-platform`](https://github.com/zdmooc/mayabank-azure-cloud-ai-platform)
+
+The program backlog and architecture decisions remain mastered in this repository. `mayabank-azure-cloud-ai-platform` is reused as an Azure pattern/reference source; it is not the master backlog for the Agentic AI program.
+
+For the Azure/ARO industrialization work, see:
+
+- [`enterprise/AZURE-ARO-INDUSTRIALIZATION-BACKLOG.md`](enterprise/AZURE-ARO-INDUSTRIALIZATION-BACKLOG.md)
+- executable implementation/evidence in [`zdmooc/TradeOps-GenAI-Integration`](https://github.com/zdmooc/TradeOps-GenAI-Integration)
 
 ## Architecture rule
 
