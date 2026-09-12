@@ -324,18 +324,39 @@ Status evidence:
 
 See `evidence/ITERATION-010-OPENSHIFT-AI-MODEL-SERVING.md`.
 
-## I11 — Azure / ARO enterprise target
+## I11 — Azure / ARO enterprise target — IMPLEMENTED + TESTED IN CI / LIVE AZURE-ARO DEPLOYMENT PENDING
 
-Reuse the existing Azure architecture reference for:
+- ARO-first private enterprise target preserving the I9 OpenShift/GitOps and I10 RHOAI/KServe contracts;
+- reuse/adapt of `mayabank-azure-cloud-ai-platform` rather than duplicating its Landing Zone, identity, security, observability and FinOps guidance;
+- Terraform `1.16.2` and AzureRM `5.2.0` pinned foundation;
+- VNet with dedicated ARO master, worker and shared private-endpoint subnets;
+- user-assigned managed identity / workload-identity target with no static ARO client secret;
+- Key Vault with Azure RBAC, purge protection, public access disabled, private endpoint/private DNS and least-privilege `Key Vault Secrets User` access;
+- Log Analytics Workspace plus Azure Monitor Workspace;
+- explicit ARO preflight/create/destroy helpers using managed identity and private API/ingress;
+- Microsoft Foundry documented as optional integration rather than a replacement for deterministic risk, HITL or RHOAI serving;
+- versioned FinOps/GreenOps tags and explicit cost-control/destroy discipline;
+- twelve I11 platform tests plus Terraform provider-schema validation in CI.
 
-- Landing Zone / Entra ID / Key Vault;
-- private networking and endpoints;
-- Azure Monitor/OpenTelemetry;
-- Microsoft Foundry/Azure OpenAI where selected;
-- ARO as the OpenShift-on-Azure target;
-- Terraform/IaC, FinOps and GreenOps.
+Exit evidence: the exact pinned Terraform provider schema validates in CI and all platform tests/validators are green. A live Azure apply remains a separate evidence step.
 
-Exit evidence: architecture decision pack plus selectively executed affordable labs.
+Status evidence:
+
+- functional runtime commit: `740422080621f6847e65b0fd1e8dad68f3fc0064`;
+- AzureRM 5 schema correction: `d0f13aad8d6d041cdaad2d39c13ae58b0fb97ae4`;
+- final Terraform-format correction / runtime I11 HEAD: `9c5beab73074608be1c941540267ebb3826bfe4b`;
+- runtime delta from I10: 3 commits ahead, 0 behind, 12 files changed;
+- first GitHub Actions run `34682484768`: all earlier gates passed, then real AzureRM 5.2.0 validation exposed the private-DNS-link schema change; no gate or provider pin was weakened;
+- second GitHub Actions run `34682589327`: corrected schema reached `terraform fmt`, which rejected noncanonical alignment; no formatting gate was disabled;
+- final GitHub Actions run `34682673257`, job `103524074997`: SUCCESS;
+- Terraform 1.16.2 setup, `fmt`, `init` and `validate` all PASS;
+- signed `hashicorp/azurerm v5.2.0` initialization PASS;
+- `I11_AZURE_TARGET_VALIDATION_PASS`;
+- final Pytest: 196 passed, 69 non-blocking pre-existing warnings in 15.08s;
+- net test increase over I10: 12 tests;
+- no Azure subscription apply, running ARO cluster, live workload identity/Key Vault access, Azure Monitor ingestion, Microsoft Foundry deployment, measured cost/carbon or DR failover is claimed.
+
+See `evidence/ITERATION-011-AZURE-ARO-ENTERPRISE.md`.
 
 ## I12 — Excellence graduation
 

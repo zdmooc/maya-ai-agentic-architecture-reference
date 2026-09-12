@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-09-12 — Iteration 11
+
+### Implemented in `TradeOps-GenAI-Integration`
+
+- ARO-first Azure enterprise target preserving the I9 OpenShift/GitOps and I10 RHOAI/KServe runtime contracts;
+- reuse/adapt decision for `zdmooc/mayabank-azure-cloud-ai-platform` at reviewed commit `dfe3909dc6904ac502aac857eb55f8ac2a0d1309` rather than duplicating its Landing Zone guidance;
+- pinned Terraform `1.16.2` and AzureRM `5.2.0` foundation;
+- dedicated ARO VNet with master, worker and shared private-endpoint subnets;
+- user-assigned managed identity / workload-identity target with no static ARO client secret;
+- Key Vault with Azure RBAC, purge protection, disabled public network access, private endpoint/private DNS and least-privilege `Key Vault Secrets User` role;
+- Log Analytics Workspace and Azure Monitor Workspace foundation;
+- private ARO preflight/create/destroy helpers using managed identity, private API and private ingress;
+- Microsoft Foundry documented as an optional managed AI integration rather than a replacement for deterministic risk, HITL or RHOAI serving;
+- FinOps/GreenOps tags and explicit create/destroy discipline so expensive ARO/Foundry resources are not created by the default foundation apply;
+- Terraform formatting/provider-schema validation added to CI;
+- twelve I11 platform tests.
+
+### Evidence
+
+- functional runtime commit: `740422080621f6847e65b0fd1e8dad68f3fc0064`;
+- AzureRM 5 schema correction: `d0f13aad8d6d041cdaad2d39c13ae58b0fb97ae4`;
+- final Terraform-format correction / I11 runtime HEAD: `9c5beab73074608be1c941540267ebb3826bfe4b`;
+- runtime delta from I10: 3 commits ahead, 0 behind, 12 files changed;
+- first GitHub Actions run `34682484768`: earlier gates passed, then `terraform validate` exposed the actual AzureRM 5.2.0 private-DNS-link schema change; no provider downgrade or gate bypass was used;
+- second GitHub Actions run `34682589327`: the corrected schema reached `terraform fmt`, which rejected noncanonical alignment; the formatting gate remained enabled;
+- final GitHub Actions run `34682673257`: SUCCESS;
+- final job `103524074997`: Ruff PASS, `SECURITY_AUDIT_PASS`, `SBOM_CHECK_PASS`, Helm/I9/I10 gates PASS, Terraform fmt/init/validate PASS and `I11_AZURE_TARGET_VALIDATION_PASS`;
+- Terraform initialization installed signed `hashicorp/azurerm v5.2.0` and final validation reported `Success! The configuration is valid.`;
+- final Pytest: 196 passed, 69 non-blocking pre-existing warnings in 15.08s;
+- net increase from I10: 12 passing tests.
+
+### Explicit non-claims
+
+- no Terraform apply against an Azure subscription is claimed;
+- no ARO cluster has been created by I11 evidence;
+- no live ARO workload-identity federation or Key Vault secret access is claimed;
+- no enterprise private-DNS, firewall, VPN or ExpressRoute routing is claimed as verified;
+- no Azure Monitor ingestion from a live ARO cluster is claimed;
+- no Microsoft Foundry project/model/agent deployment is claimed;
+- no measured Azure cost, carbon, RTO/RPO or DR failover evidence is claimed;
+- no automated real-money execution or live IG order routing is enabled.
+
 ## 2026-09-12 — Iteration 10
 
 ### Implemented in `TradeOps-GenAI-Integration`
