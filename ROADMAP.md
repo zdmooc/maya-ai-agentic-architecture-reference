@@ -175,7 +175,7 @@ Exit evidence: actual LangGraph execution, disagreement scenarios and negative t
 Status evidence:
 
 - runtime commit / final I6 HEAD: `faa16245013155265ef1edb8e3f47ba1b9b77415`;
-- runtime delta from I5: exactly 1 commit ahead, 22 files changed, zero commits behind;
+- runtime delta from I5: exactly 1 commit ahead, 22 files changed, zero behind;
 - GitHub Actions run `34648593641`: SUCCESS;
 - final full runtime CI: Ruff clean, 111 tests passed, 69 non-blocking deprecation warnings;
 - net test increase over I5: 24 tests;
@@ -291,15 +291,38 @@ Status evidence:
 
 See `evidence/ITERATION-009-OPENSHIFT-CRC-GITOPS.md`.
 
-## I10 — OpenShift AI / production AI serving
+## I10 — OpenShift AI / production AI serving — IMPLEMENTED + TESTED IN CI / LIVE RHOAI DEPLOYMENT & MEASURED PERFORMANCE PENDING
 
-- OpenShift AI model-serving architecture;
-- KServe for standardized serving;
-- vLLM for supported LLM serving;
-- MLflow lifecycle integration;
-- SLOs, capacity, HA and failure-mode exercises.
+- Red Hat OpenShift AI 3.4 versioned as the serving target;
+- KServe `ServingRuntime` and `InferenceService` contracts for standardized model serving;
+- custom CPU-first online serving boundary for the I5 signal-quality model;
+- canonical feature-order enforcement and fail-closed input/output validation;
+- hard production-qualification gate preventing synthetic I5 calibration from being relabeled as production probability;
+- FastAPI live/readiness/predict/metrics endpoints;
+- OpenShift ImageStream/BuildConfig for `tradeops-ai-runtime:i10`;
+- RHOAI-managed MLflow target with Kubernetes namespaced service-account/RBAC integration;
+- model URI, qualification and serving mode injected at runtime through Secret values rather than committed to Git;
+- two-replica HA floor and bounded four-replica ceiling for signal-quality serving;
+- platform-provided `vllm-runtime` example with explicit GPU request and non-executable-until-configured object-storage placeholder;
+- Prometheus SLO rules for unavailability, error ratio and p95 latency;
+- deterministic capacity estimator with an explicit `CAPACITY_ESTIMATE_NOT_BENCHMARK_EVIDENCE` status;
+- preflight/deploy/verify scripts and I10 platform validator;
+- 17 new tests covering serving contracts, production qualification, API behavior, manifests, vLLM reference and capacity logic.
 
-Exit evidence: measured deployment, not a diagram-only claim.
+Exit evidence: implementation and CI evidence are complete. The original I10 graduation condition still requires measured live RHOAI deployment evidence before the status can be upgraded to DEPLOYED/VERIFIED.
+
+Status evidence:
+
+- runtime commit / current I10 HEAD: `316a6a0f1cf09b35b4594d8f2061f206ee31f45c`;
+- runtime delta from I9: 1 commit ahead, 0 behind, 24 changed files;
+- GitHub Actions run `34681817517`: SUCCESS;
+- final job `103521706237`: Ruff PASS, `SECURITY_AUDIT_PASS`, `SBOM_CHECK_PASS`, I9 Helm/validator gates PASS and `I10_AI_SERVING_VALIDATION_PASS`;
+- final Pytest: 184 passed, 69 non-blocking deprecation warnings in 13.26s;
+- net test increase over I9: 17 tests;
+- the I5 synthetic status `CALIBRATED_OUT_OF_SAMPLE_SYNTHETIC` remains lab-only and cannot satisfy the I10 PRODUCTION guard;
+- live RHOAI deployment, real MLflow workspace/model version, model load time, cold/warm p50/p95/p99, throughput, resource saturation, GPU benchmarking and replica-failure recovery remain pending and are not claimed.
+
+See `evidence/ITERATION-010-OPENSHIFT-AI-MODEL-SERVING.md`.
 
 ## I11 — Azure / ARO enterprise target
 

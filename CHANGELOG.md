@@ -1,5 +1,49 @@
 # Changelog
 
+## 2026-09-12 — Iteration 10
+
+### Implemented in `TradeOps-GenAI-Integration`
+
+- versioned Red Hat OpenShift AI 3.4 target for model serving;
+- KServe custom `ServingRuntime` and `InferenceService` resources for the I5 signal-quality model;
+- executable FastAPI online-serving boundary with liveness, readiness, prediction and Prometheus metrics endpoints;
+- exact I5 feature-contract enforcement with rejection of missing, extra and non-finite inputs;
+- validated `predict_proba` output shape/range;
+- explicit `LAB` / `PRODUCTION` serving modes;
+- hard production guard requiring `CALIBRATED_OUT_OF_SAMPLE_REAL_MARKET`, so the I5 synthetic calibration cannot be promoted by configuration drift;
+- OpenShift ImageStream and binary BuildConfig for `tradeops-ai-runtime:i10`;
+- RHOAI-managed MLflow target with service-account RoleBinding to `mlflow-operator-mlflow-integration` and Kubernetes namespaced authentication settings;
+- model URI, qualification and serving mode kept out of Git and injected through a runtime Secret;
+- initial two-replica HA floor and four-replica ceiling for signal-quality serving;
+- versioned vLLM KServe example using the platform `vllm-runtime`, one NVIDIA GPU per replica and a deliberate `s3://REPLACE-ME/...` storage placeholder;
+- Prometheus serving SLO rules for unavailable responses, error ratio and p95 latency;
+- deterministic capacity estimator with an explicit non-benchmark status;
+- RHOAI preflight, deploy and verify scripts;
+- I10 static platform validator added to CI;
+- 17 new I10 tests for model-serving contracts, production qualification, API behavior, platform manifests, vLLM reference and capacity logic.
+
+### Evidence
+
+- runtime commit / final I10 HEAD: `316a6a0f1cf09b35b4594d8f2061f206ee31f45c`;
+- runtime delta from I9: 1 commit ahead, 0 behind, 24 changed files;
+- GitHub Actions run `34681817517`: SUCCESS;
+- final job `103521706237`: Ruff PASS, `SECURITY_AUDIT_PASS`, `SBOM_CHECK_PASS`, I9 Helm/validator gates PASS and `I10_AI_SERVING_VALIDATION_PASS`;
+- final Pytest: 184 passed, 69 non-blocking deprecation warnings in 13.26s;
+- net increase from I9: 17 passing tests;
+- the first I10 CI run was green; no quality or safety gate required weakening or bypassing.
+
+### Explicit non-claims
+
+- I10 does not claim a live RHOAI 3.4 deployment on the user's CRC cluster;
+- no live KServe InferenceService Ready status has been captured yet;
+- no production RHOAI MLflow workspace/model version has been created or verified;
+- the existing I5 `CALIBRATED_OUT_OF_SAMPLE_SYNTHETIC` model remains lab-only;
+- the vLLM resource values are a starting reference, not measured GPU capacity;
+- no LLM model artifact or object-storage path is pretended to exist; the example intentionally keeps `s3://REPLACE-ME/...`;
+- no measured cold/warm p50/p95/p99 latency, throughput, GPU utilization, saturation or failover recovery is claimed;
+- no automated real-money execution or live IG order routing is enabled;
+- Azure/ARO implementation remains I11 work.
+
 ## 2026-09-12 — Iteration 9
 
 ### Implemented in `TradeOps-GenAI-Integration`
