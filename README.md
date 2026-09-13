@@ -20,6 +20,12 @@ For the Azure/ARO industrialization work, see:
 - [`enterprise/AZURE-ARO-INDUSTRIALIZATION-BACKLOG.md`](enterprise/AZURE-ARO-INDUSTRIALIZATION-BACKLOG.md)
 - executable implementation/evidence in [`zdmooc/TradeOps-GenAI-Integration`](https://github.com/zdmooc/TradeOps-GenAI-Integration)
 
+For the demonstrable business UI / trading cockpit workstream, see:
+
+- [`enterprise/TRADEOPS-WEB-COCKPIT.md`](enterprise/TRADEOPS-WEB-COCKPIT.md)
+- implementation backlog: [`TradeOps docs/27-tradeops-web-cockpit.md`](https://github.com/zdmooc/TradeOps-GenAI-Integration/blob/main/docs/27-tradeops-web-cockpit.md)
+- CRC demo URL catalog: [`TradeOps docs/28-demo-urls.md`](https://github.com/zdmooc/TradeOps-GenAI-Integration/blob/main/docs/28-demo-urls.md)
+
 ## Architecture rule
 
 ```text
