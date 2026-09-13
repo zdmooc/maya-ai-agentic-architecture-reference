@@ -1,55 +1,66 @@
 # TradeOps Web Cockpit — architecture workstream
 
+## Status
+
+**IMPLEMENTED + TESTED IN CI / LIVE CRC DEPLOYMENT PENDING** as of 2026-09-13.
+
+Executable runtime commit:
+
+`17d47d33a663b78fd5e23518927929fe5e43b4ce`
+
+TradeOps GitHub Actions CI **#92** (`34750050606`): **SUCCESS**. The run validated the React/TypeScript production build, security/SBOM, Helm lint/render, `I13_WEB_COCKPIT_VALIDATION_PASS`, the existing OpenShift/RHOAI/Azure contracts and **230 passing Pytest tests**.
+
+The business Route remains `PLANNED` until real CRC runtime evidence exists:
+
+`https://tradeops-ui-tradeops.apps-crc.testing`
+
 ## Purpose
 
 Add a demonstrable Web IHM to the Agentic AI / trading reference architecture without creating a new backend architecture or bypassing the existing governance model.
 
-The cockpit is a **cross-cutting demo capability** supporting the existing roadmap. It is not a new numbered iteration and it does not change the I0-I12 capability model.
+The cockpit is a **cross-cutting demo capability** supporting the existing roadmap. It is not a new numbered I0-I12 capability and does not change the architectural control model.
 
 Executable implementation belongs in:
 
 `https://github.com/zdmooc/TradeOps-GenAI-Integration`
 
-Implementation backlog:
+Implementation/evidence:
 
-`docs/27-tradeops-web-cockpit.md`
-
-Demo URL catalog:
-
-`docs/28-demo-urls.md`
+- `docs/27-tradeops-web-cockpit.md`
+- `docs/28-demo-urls.md`
+- `evidence/ITERATION-013-WEB-COCKPIT.md`
+- `frontend/tradeops-ui/`
 
 ## Architecture position
 
 ```text
 User / Browser
    -> TradeOps Web Cockpit
-      -> Agent Controller / Workflow API
-         -> deterministic engines
-         -> Agent/RAG/MCP orchestration
-         -> deterministic risk gate
-         -> Human-in-the-Loop
-         -> SHADOW / PAPER
+      -> same-origin reverse proxy
+         -> Market Data API
+         -> Workflow API
+         -> Agent Controller
+            -> deterministic engines
+            -> Agent/RAG/MCP orchestration
+            -> deterministic Risk Gate
+            -> Human-in-the-Loop
+            -> SHADOW / PAPER
       -> Grafana / OpenShift links for operational evidence
 ```
 
-The cockpit must visualize the architecture; it must not replace or weaken it.
+The cockpit visualizes and operates the existing governed architecture; it does not replace or weaken it.
 
-## User value
+## Implemented views
 
-The demo must allow an interviewer, architect or operator to see in one place:
-
-- market context and data freshness;
-- technical/pattern/regime evidence;
-- ML score and qualification status;
-- specialized agent evidence;
-- conflict / stale / unknown states;
-- deterministic risk ACCEPT/VETO;
-- fusion result;
-- REVIEW_REQUIRED state;
-- explicit human decision;
-- SHADOW/PAPER outcome;
-- PnL/outcome history with provenance;
-- audit and operational observability links.
+- Market Dashboard
+- Signal Detail
+- Agent Evidence
+- Deterministic Risk Gate
+- Human-in-the-Loop Review
+- SHADOW/PAPER execution control
+- Positions / Outcomes / Performance demonstration
+- Audit / Provenance
+- Platform / Demo Links
 
 ## Security and governance rules
 
@@ -59,57 +70,45 @@ The demo must allow an interviewer, architect or operator to see in one place:
 4. No UI button can bypass Human-in-the-Loop.
 5. SHADOW and PAPER are visually distinct.
 6. Real-money execution is out of scope.
-7. Synthetic, estimated and measured values must be labelled distinctly.
-8. Secrets/tokens are never embedded in frontend source or browser-visible configuration.
-9. The UI must use the same identity/audit/correlation model as the backend.
+7. Synthetic, estimated and measured values are labelled distinctly.
+8. Secrets/tokens are not embedded in frontend source or built image.
+9. CRC static-demo Agent/Reviewer tokens remain memory-only in the browser and are backed by OpenShift Secrets on the services.
 10. Grafana remains the SRE/technical observability interface; the cockpit is the business/demo interface.
 
-## Target views
+## CRC status
 
-- Market Dashboard
-- Signal Detail
-- Agent Evidence
-- Deterministic Risk Gate
-- Human-in-the-Loop Review
-- Positions / Outcomes / Performance
-- Audit / Provenance
-- Platform / Demo Links
-
-## CRC target
-
-Planned business UI Route:
-
-`https://tradeops-ui-tradeops.apps-crc.testing`
-
-Current state: **PLANNED / NOT YET DEPLOYED**.
-
-Verified existing CRC demo Routes remain:
+Existing verified LIVE Routes:
 
 - `https://agent-controller-tradeops.apps-crc.testing`
 - `https://workflow-api-tradeops.apps-crc.testing`
 - `https://grafana-tradeops.apps-crc.testing`
 
-## Exit criteria
+Implemented but not yet live-verified Route:
 
-The cockpit can be considered part of the demonstrable architecture only after:
+- `https://tradeops-ui-tradeops.apps-crc.testing`
 
-- React/TypeScript frontend builds in CI;
-- OpenShift image/deployment/service/route are healthy;
-- UI calls Agent Controller and Workflow API through controlled same-origin endpoints;
-- one complete REVIEW_REQUIRED -> human review -> SHADOW/PAPER flow is demonstrated;
-- no direct exposure of MCP/database/event-bus internals is introduced;
-- demo URLs are catalogued with LIVE/INTERNAL/PLANNED status;
-- evidence is captured on CRC;
-- the same packaging can later be reconciled by Argo CD on ARO without changing business logic.
+The runtime repository already contains the `tradeops-ui` BuildConfig, ImageStream, Helm Deployment/Service/Route, NetworkPolicy changes and CRC deploy/verify logic.
+
+## Remaining live exit criteria
+
+Only runtime evidence remains before the cockpit can be called `DEPLOYED/VERIFIED` on CRC:
+
+- build `tradeops-ui:i13-ui` with the OpenShift BuildConfig;
+- Deployment Ready;
+- Route reachable;
+- `/healthz` reachable;
+- proxied Agent Controller and Workflow API health reachable;
+- one `REVIEW_REQUIRED -> human review -> SHADOW/PAPER` flow executed;
+- audit visible;
+- live evidence committed;
+- demo URL catalog changed from `PLANNED` to `LIVE` only after those checks.
 
 ## Relation to Azure/ARO
 
-The cockpit should be proven first on CRC. Azure/ARO industrialization then deploys the same frontend through the existing GitOps path.
-
-This preserves the program rule:
+The cockpit is proven first on CRC. Azure/ARO industrialization later deploys the **same frontend packaging** through the existing GitOps path, without changing business logic.
 
 ```text
 prove locally -> package declaratively -> reconcile with GitOps -> deploy on enterprise target
 ```
 
-No paid Azure resource is required to complete the cockpit implementation and CRC evidence.
+No paid Azure resource is required for the cockpit CRC proof.
