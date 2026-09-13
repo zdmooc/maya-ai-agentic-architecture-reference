@@ -2,17 +2,23 @@
 
 ## Status
 
-**IMPLEMENTED + TESTED IN CI / LIVE CRC DEPLOYMENT PENDING** as of 2026-09-13.
+**DEPLOYED LIVE ON CRC / PLATFORM VERIFIED / END-TO-END HITL LIVE PROOF PENDING** as of 2026-09-13.
 
-Executable runtime commit:
+Executable runtime implementation:
 
-`17d47d33a663b78fd5e23518927929fe5e43b4ce`
+`https://github.com/zdmooc/TradeOps-GenAI-Integration`
 
-TradeOps GitHub Actions CI **#92** (`34750050606`): **SUCCESS**. The run validated the React/TypeScript production build, security/SBOM, Helm lint/render, `I13_WEB_COCKPIT_VALIDATION_PASS`, the existing OpenShift/RHOAI/Azure contracts and **230 passing Pytest tests**.
-
-The business Route remains `PLANNED` until real CRC runtime evidence exists:
+The business Route is now LIVE and verified on real CRC:
 
 `https://tradeops-ui-tradeops.apps-crc.testing`
+
+Deployment/evidence source:
+
+`TradeOps-GenAI-Integration/evidence/graduation/live/ui/20260913/README.md`
+
+The live platform proof covers the OpenShift build, published image, Deployment Ready, Service, Route, UI health, same-origin proxy health to Market/Workflow/Agent, and `I9_CRC_VERIFY_PASS`.
+
+The complete interactive business proof `REVIEW_REQUIRED -> APPROVE/REJECT -> SHADOW/PAPER -> audit` remains a separate final live-functional step and is not yet claimed as demonstrated.
 
 ## Purpose
 
@@ -29,6 +35,7 @@ Implementation/evidence:
 - `docs/27-tradeops-web-cockpit.md`
 - `docs/28-demo-urls.md`
 - `evidence/ITERATION-013-WEB-COCKPIT.md`
+- `evidence/graduation/live/ui/20260913/README.md`
 - `frontend/tradeops-ui/`
 
 ## Architecture position
@@ -77,31 +84,36 @@ The cockpit visualizes and operates the existing governed architecture; it does 
 
 ## CRC status
 
-Existing verified LIVE Routes:
+Verified LIVE Routes:
 
 - `https://agent-controller-tradeops.apps-crc.testing`
 - `https://workflow-api-tradeops.apps-crc.testing`
 - `https://grafana-tradeops.apps-crc.testing`
-
-Implemented but not yet live-verified Route:
-
 - `https://tradeops-ui-tradeops.apps-crc.testing`
 
-The runtime repository already contains the `tradeops-ui` BuildConfig, ImageStream, Helm Deployment/Service/Route, NetworkPolicy changes and CRC deploy/verify logic.
+The runtime repository contains the `tradeops-ui` BuildConfig, ImageStream, Helm Deployment/Service/Route, NetworkPolicy controls and CRC deploy/verify logic.
 
-## Remaining live exit criteria
+Live CRC proof on 2026-09-13 verified:
 
-Only runtime evidence remains before the cockpit can be called `DEPLOYED/VERIFIED` on CRC:
-
-- build `tradeops-ui:i13-ui` with the OpenShift BuildConfig;
-- Deployment Ready;
+- `tradeops-ui-1` OpenShift build `Complete`;
+- ImageStreamTag `tradeops-ui:i13-ui` published;
+- Helm release `tradeops` deployed, revision `5`;
+- Deployment `tradeops-ui` Ready `1/1`;
 - Route reachable;
-- `/healthz` reachable;
-- proxied Agent Controller and Workflow API health reachable;
-- one `REVIEW_REQUIRED -> human review -> SHADOW/PAPER` flow executed;
-- audit visible;
-- live evidence committed;
-- demo URL catalog changed from `PLANNED` to `LIVE` only after those checks.
+- `/` and `/healthz` HTTP 200;
+- proxied Market, Workflow and Agent health HTTP 200;
+- `scripts/i9_crc_verify.sh` ended with `I9_CRC_VERIFY_PASS`.
+
+## Remaining live functional proof
+
+The deployment itself is live and verified. Remaining evidence is limited to the governed business flow:
+
+- create a proposal and observe `REVIEW_REQUIRED`;
+- perform explicit human `APPROVE` or `REJECT`;
+- for an approved proposal, execute only `SHADOW` or `PAPER`;
+- verify the audit record.
+
+This remaining cockpit evidence is not an I12 graduation blocker.
 
 ## Relation to Azure/ARO
 
@@ -112,3 +124,8 @@ prove locally -> package declaratively -> reconcile with GitOps -> deploy on ent
 ```
 
 No paid Azure resource is required for the cockpit CRC proof.
+
+The I12 graduation blockers remain unchanged:
+
+- `OPENSHIFT_AZURE_DEPLOYMENT`;
+- `RESILIENCE_FINOPS_GREENOPS_VERIFIED`.
