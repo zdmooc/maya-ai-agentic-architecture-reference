@@ -4,7 +4,7 @@
 
 This repository is the architecture reference and portfolio index for a demonstrable enterprise-grade AI solution architecture program. Trading is the primary real-time domain used to exercise the architecture, but the patterns are designed to transfer to banking, payments, insurance, fraud, risk, anomaly detection, cybersecurity, IT operations and enterprise decisioning.
 
-The program is now also being extended toward a broader **Enterprise AI Architecture / AI Platform / Hybrid Multi-Cloud** reference portfolio while preserving the evidence-first rules of the existing I0-I12 roadmap.
+The program is also extended toward a broader **Enterprise AI Architecture / AI Platform / Hybrid Multi-Cloud** reference portfolio while preserving the evidence-first rules of the existing I0-I12 roadmap.
 
 ## Scope
 
@@ -24,12 +24,15 @@ The program backlog and architecture decisions remain mastered in this repositor
 
 The current I0-I12 program already covers substantial Agentic AI, MLOps, OpenShift/GitOps, OpenShift AI/KServe model serving, observability/security/LLMOps and Azure/ARO architecture.
 
-The next enterprise extension closes the remaining gaps around Knowledge Copilot, governed knowledge ingestion, AI Gateway/policy enforcement, Design Authority, Responsible AI, AI Factory/GPU operations, hybrid multi-cloud placement and payment operations.
+The Enterprise AI extension covers Knowledge Copilot, governed knowledge ingestion, AI Gateway/policy enforcement, Design Authority, Responsible AI, AI Factory/GPU operations, hybrid multi-cloud placement, payment operations and multimodal/document automation.
 
 - [Enterprise AI Portfolio V10 gap matrix](enterprise/V10-GAP-MATRIX.md)
-- [Enterprise AI Roadmap I13-I20](enterprise/ENTERPRISE-AI-ROADMAP-I13-I20.md)
+- [Enterprise AI implementation roadmap I13-I20](enterprise/ENTERPRISE-AI-ROADMAP-I13-I20.md)
+- [Enterprise AI theoretical design I13-I20](enterprise/ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md)
 
-**I13-I20 are PLANNED / NOT IMPLEMENTED until evidence proves otherwise.**
+**I13-I20 are now `DESIGNED` at architecture/theory level. Their runtime POCs remain `NOT IMPLEMENTED` and are intentionally deferred until a concrete business use case, mission or interview requirement justifies them.**
+
+Theoretical completion includes the target architecture, design principles, component responsibilities, data and knowledge contracts, security/governance rules, NFRs, provider/placement principles, AI Factory design, payment transposition and a business-demand-to-POC activation matrix. No deployment or benchmark claim is implied by `DESIGNED`.
 
 For the Azure/ARO industrialization work, see:
 
@@ -65,9 +68,14 @@ For enterprise transposition, the same control philosophy applies: deterministic
 
 ## Current maturity
 
-The detailed capability status is maintained in [`ROADMAP.md`](ROADMAP.md) and the versioned evidence files under [`evidence/`](evidence/).
+The detailed implementation/evidence status for I0-I12 is maintained in [`ROADMAP.md`](ROADMAP.md) and the versioned evidence files under [`evidence/`](evidence/).
 
-The enterprise I13-I20 extension is a planned roadmap and must not be interpreted as implementation evidence.
+For I13-I20, distinguish two dimensions:
+
+- **Architecture/theory:** `DESIGNED`.
+- **Executable POC/runtime evidence:** `NOT IMPLEMENTED` until selected by business demand and proven by code/tests/deployment evidence.
+
+The selection rule is demand-driven rather than sequential: Enterprise RAG activates I13/I14; AI Security activates I16; OpenShift AI/AI Platform activates I17; hybrid/multi-cloud activates I18; banking/payments AI activates I19; multimodal/document automation activates I20.
 
 See:
 
@@ -75,6 +83,7 @@ See:
 - [`ROADMAP.md`](ROADMAP.md)
 - [`architecture/vision/ARCHITECTURE-VISION.md`](architecture/vision/ARCHITECTURE-VISION.md)
 - [`architecture/TARGET-ARCHITECTURE.md`](architecture/TARGET-ARCHITECTURE.md)
+- [`enterprise/ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md`](enterprise/ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md)
 - [`reuse/OWN-REPOSITORIES.md`](reuse/OWN-REPOSITORIES.md)
 - [`reuse/PUBLIC-REPOSITORIES.md`](reuse/PUBLIC-REPOSITORIES.md)
 - [`evidence/`](evidence/)
@@ -85,7 +94,7 @@ Every claim must use one of these states according to evidence:
 
 `DESIGNED` → `IMPLEMENTED` → `TESTED` → `DEPLOYED` → `VERIFIED`
 
-Planned work must be labelled explicitly as `PLANNED / NOT IMPLEMENTED`.
+`DESIGNED` means architecture/design material exists. It does not imply executable runtime evidence. Planned implementation work must remain explicitly labelled `NOT IMPLEMENTED` until evidence exists.
 
 ## Safety and financial scope
 
