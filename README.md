@@ -31,6 +31,7 @@ The Enterprise AI extension covers Knowledge Copilot, governed knowledge ingesti
 - [Enterprise AI theoretical design I13-I20](enterprise/ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md)
 - [AI Engineering fundamentals reference](enterprise/AI-ENGINEERING-FUNDAMENTALS.md)
 - [AI Engineering official book/repository alignment](enterprise/AI-ENGINEERING-BOOK-ALIGNMENT.md)
+- [AI Architect book decomposition backlog](enterprise/AI-ARCHITECT-BOOK-BACKLOG.md)
 
 **I13-I20 are now `DESIGNED` at architecture/theory level. Their runtime POCs remain `NOT IMPLEMENTED` and are intentionally deferred until a concrete business use case, mission or interview requirement justifies them.**
 
@@ -88,6 +89,7 @@ See:
 - [`enterprise/ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md`](enterprise/ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md)
 - [`enterprise/AI-ENGINEERING-FUNDAMENTALS.md`](enterprise/AI-ENGINEERING-FUNDAMENTALS.md)
 - [`enterprise/AI-ENGINEERING-BOOK-ALIGNMENT.md`](enterprise/AI-ENGINEERING-BOOK-ALIGNMENT.md)
+- [`enterprise/AI-ARCHITECT-BOOK-BACKLOG.md`](enterprise/AI-ARCHITECT-BOOK-BACKLOG.md)
 - [`reuse/OWN-REPOSITORIES.md`](reuse/OWN-REPOSITORIES.md)
 - [`reuse/PUBLIC-REPOSITORIES.md`](reuse/PUBLIC-REPOSITORIES.md)
 - [`evidence/`](evidence/)
