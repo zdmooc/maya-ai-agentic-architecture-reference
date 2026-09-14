@@ -30,10 +30,11 @@ The Enterprise AI extension covers Knowledge Copilot, governed knowledge ingesti
 - [Enterprise AI implementation roadmap I13-I20](enterprise/ENTERPRISE-AI-ROADMAP-I13-I20.md)
 - [Enterprise AI theoretical design I13-I20](enterprise/ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md)
 - [AI Engineering fundamentals reference](enterprise/AI-ENGINEERING-FUNDAMENTALS.md)
+- [AI Engineering official book/repository alignment](enterprise/AI-ENGINEERING-BOOK-ALIGNMENT.md)
 
 **I13-I20 are now `DESIGNED` at architecture/theory level. Their runtime POCs remain `NOT IMPLEMENTED` and are intentionally deferred until a concrete business use case, mission or interview requirement justifies them.**
 
-Theoretical completion includes the target architecture, design principles, component responsibilities, data and knowledge contracts, security/governance rules, NFRs, provider/placement principles, AI Factory design, payment transposition and a business-demand-to-POC activation matrix. The AI Engineering fundamentals reference separately covers foundation-model concepts, evaluation, prompt engineering, RAG/agents, fine-tuning, dataset engineering, inference optimization and feedback architecture. No deployment or benchmark claim is implied by `DESIGNED`.
+Theoretical completion includes the target architecture, design principles, component responsibilities, data and knowledge contracts, security/governance rules, NFRs, provider/placement principles, AI Factory design, payment transposition and a business-demand-to-POC activation matrix. The AI Engineering fundamentals reference covers foundation-model concepts, evaluation, prompt engineering, RAG/agents, fine-tuning, dataset engineering, inference optimization and feedback architecture. The official-book alignment closes remaining theory details such as scaling-law concepts, benchmark limitations, fine-tuning memory composition, agent memory/evaluation and feedback limitations. No deployment or benchmark claim is implied by `DESIGNED`.
 
 For the Azure/ARO industrialization work, see:
 
@@ -86,6 +87,7 @@ See:
 - [`architecture/TARGET-ARCHITECTURE.md`](architecture/TARGET-ARCHITECTURE.md)
 - [`enterprise/ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md`](enterprise/ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md)
 - [`enterprise/AI-ENGINEERING-FUNDAMENTALS.md`](enterprise/AI-ENGINEERING-FUNDAMENTALS.md)
+- [`enterprise/AI-ENGINEERING-BOOK-ALIGNMENT.md`](enterprise/AI-ENGINEERING-BOOK-ALIGNMENT.md)
 - [`reuse/OWN-REPOSITORIES.md`](reuse/OWN-REPOSITORIES.md)
 - [`reuse/PUBLIC-REPOSITORIES.md`](reuse/PUBLIC-REPOSITORIES.md)
 - [`evidence/`](evidence/)
