@@ -13,11 +13,15 @@ Role: **canonical AI architecture / knowledge / governance hub**.
 Scope:
 - Enterprise AI architecture;
 - Agentic AI, RAG, MCP, HITL;
+- AI Control Plane / Runtime Plane;
 - AI Gateway / Model Router;
 - Responsible AI, risk, governance, ADR/NFR/SAD;
 - OpenShift AI / KServe / vLLM;
 - hybrid multi-cloud;
 - LLMOps/SRE/FinOps/GreenOps;
+- AI Policy-as-Code;
+- AI evaluation/observability tooling options;
+- AI failure injection/resilience;
 - banking/insurance transposition.
 
 Portfolio decision: **KEEP AS THE SINGLE AI ARCHITECTURE REFERENCE HUB**.
@@ -135,24 +139,6 @@ Primary identity remains OpenShift/platform architecture, not pure AI.
 
 Decision: **KEEP AS CROSS-DOMAIN PLATFORM REFERENCE**. Reuse Data/AI platform patterns; do not position it ahead of the Tier S repositories for an AI mission.
 
-### `maya-interlink-enterprise-ai-platform`
-
-Role: **future enterprise AI platform implementation**.
-
-Target scope:
-- Enterprise Architecture;
-- hybrid multi-cloud;
-- OpenShift/OpenShift AI;
-- GitOps;
-- AI Platform;
-- RAG/Agents/MCP;
-- LLMOps/SRE/FinOps/GreenOps;
-- payment investigation demonstrator.
-
-Current state: **QUEUED / NOT STARTED**.
-
-Decision: **FREEZE FOR NOW**. Its target overlaps strongly with the now-mature `maya-ai-agentic-architecture-reference`. Start implementation only when a distinct platform-runtime capability is required and cannot be represented in the existing reference + specialist repos.
-
 ---
 
 ## 4. Tier C — Intelligence / automation adjacent to AI
@@ -183,7 +169,31 @@ Decision: **REFERENCE ONLY**. Do not turn it into another executable AI runtime.
 
 ---
 
-## 5. AI-enabling repositories — important but not AI repositories
+## 5. Deprecated AI repository
+
+### `maya-interlink-enterprise-ai-platform`
+
+Previous role: future generic Enterprise AI Platform.
+
+Observed state: **QUEUED / NOT STARTED**; content consisted of a master implementation prompt rather than an implemented runtime.
+
+AI-only consolidation is complete in:
+
+- `reuse/MAYA-INTERLINK-AI-CONSOLIDATION.md`;
+- `enterprise/AI-CONTROL-RUNTIME-PLANE.md`;
+- `enterprise/AI-GATEWAY-IMPLEMENTATION-OPTIONS.md`;
+- `enterprise/AI-POLICY-AS-CODE-CONTROLS.md`;
+- `enterprise/AI-FAILURE-INJECTION-RESILIENCE.md`;
+- `enterprise/AI-EVALUATION-OBSERVABILITY-TOOLING.md`;
+- existing I13-I20, TradeOps and specialist repositories.
+
+Decision: **DEPRECATE / SAFE TO DELETE FROM THE AI PORTFOLIO**.
+
+Do not resume implementation there. Any future Enterprise AI work belongs in the canonical hub or an existing specialist executable repository unless a genuinely distinct capability appears.
+
+---
+
+## 6. AI-enabling repositories — important but not AI repositories
 
 These repositories should be referenced by AI solutions, but not marketed individually as AI projects.
 
@@ -203,7 +213,7 @@ These are **supporting evidence sources** for an AI architecture, not competing 
 
 ---
 
-## 6. Recommended AI portfolio hierarchy
+## 7. Recommended AI portfolio hierarchy
 
 For a generic **AI Solution Architect / Enterprise AI Architect** interview or CV, show repositories in this order:
 
@@ -215,9 +225,10 @@ For a generic **AI Solution Architect / Enterprise AI Architect** interview or C
 6. `mayabank-pega-ai-case-management-openshift` — CRM/case-management AI specialization.
 7. `MayaBank-V2` — broad OpenShift/Data/AI platform reference.
 8. `maya-freelance-mission-intelligence` — intelligent automation / decision support.
-9. `maya-interlink-enterprise-ai-platform` — future platform, not yet runtime evidence.
 
-## 7. Portfolio rule
+`maya-interlink-enterprise-ai-platform` is intentionally excluded because it is deprecated after AI-only consolidation.
+
+## 8. Portfolio rule
 
 The AI portfolio should have **one hub, one principal executable runtime, and specialist domain/platform repositories**.
 
