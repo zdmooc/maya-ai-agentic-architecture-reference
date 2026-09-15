@@ -32,10 +32,32 @@ The Enterprise AI extension covers Knowledge Copilot, governed knowledge ingesti
 - [AI Engineering fundamentals reference](enterprise/AI-ENGINEERING-FUNDAMENTALS.md)
 - [AI Engineering official book/repository alignment](enterprise/AI-ENGINEERING-BOOK-ALIGNMENT.md)
 - [AI Architect book decomposition backlog](enterprise/AI-ARCHITECT-BOOK-BACKLOG.md)
+- [Solutions Architect's Handbook alignment](enterprise/SOLUTIONS-ARCHITECTS-HANDBOOK-ALIGNMENT.md)
 
 **I13-I20 are now `DESIGNED` at architecture/theory level. Their runtime POCs remain `NOT IMPLEMENTED` and are intentionally deferred until a concrete business use case, mission or interview requirement justifies them.**
 
 Theoretical completion includes the target architecture, design principles, component responsibilities, data and knowledge contracts, security/governance rules, NFRs, provider/placement principles, AI Factory design, payment transposition and a business-demand-to-POC activation matrix. The AI Engineering fundamentals reference covers foundation-model concepts, evaluation, prompt engineering, RAG/agents, fine-tuning, dataset engineering, inference optimization and feedback architecture. The official-book alignment closes remaining theory details such as scaling-law concepts, benchmark limitations, fine-tuning memory composition, agent memory/evaluation and feedback limitations. No deployment or benchmark claim is implied by `DESIGNED`.
+
+## AI Solution Architecture dossier
+
+The repository now includes a reusable architect deliverable pack derived from the Solution Architecture alignment work:
+
+- [AI Solution Architecture Document template](enterprise/AI-SOLUTION-ARCHITECTURE-DOCUMENT-TEMPLATE.md)
+- [AI FR/NFR catalog](enterprise/AI-FR-NFR-CATALOG.md)
+- [AI architecture constraints register](enterprise/AI-ARCHITECTURE-CONSTRAINTS-REGISTER.md)
+- [AI performance budget template](enterprise/AI-PERFORMANCE-BUDGET-TEMPLATE.md)
+- [AI architecture review checklist](enterprise/AI-ARCHITECTURE-REVIEW-CHECKLIST.md)
+- [AI architecture pattern catalog](enterprise/AI-ARCHITECTURE-PATTERN-CATALOG.md)
+- [AI architecture ADR reference set](enterprise/AI-ARCHITECTURE-ADR-REFERENCE.md)
+- [AI architecture risk register](enterprise/AI-ARCHITECTURE-RISK-REGISTER.md)
+- [AI architecture RACI](enterprise/AI-ARCHITECTURE-RACI.md)
+- [Legacy-to-AI integration patterns](enterprise/LEGACY-TO-AI-INTEGRATION-PATTERNS.md)
+
+These artifacts are designed for **AI Solution Architect / Enterprise AI Architect / Design Authority** work. They structure business demand, FR/NFR, constraints, patterns, trade-offs, risks, responsibilities, review gates and production-readiness evidence. They do not imply implementation or live-environment validation.
+
+Architect operating model:
+
+`Business demand -> discovery -> FR/NFR -> constraints -> options -> target architecture -> ADR -> POC only if material uncertainty remains -> architecture review -> delivery governance -> production readiness -> post-launch operability`
 
 For the Azure/ARO industrialization work, see:
 
@@ -80,6 +102,12 @@ For I13-I20, distinguish two dimensions:
 
 The selection rule is demand-driven rather than sequential: Enterprise RAG activates I13/I14; AI Security activates I16; OpenShift AI/AI Platform activates I17; hybrid/multi-cloud activates I18; banking/payments AI activates I19; multimodal/document automation activates I20.
 
+Book-alignment status:
+
+- **AI Engineering — Chip Huyen:** theoretical alignment complete.
+- **Solutions Architect's Handbook — 3rd Edition:** architecture extraction complete; no mandatory POC produced.
+- Next target: **Enterprise Generative AI Well-Architected Framework & Patterns**.
+
 See:
 
 - [`MASTER-CHARTER.md`](MASTER-CHARTER.md)
@@ -89,6 +117,7 @@ See:
 - [`enterprise/ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md`](enterprise/ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md)
 - [`enterprise/AI-ENGINEERING-FUNDAMENTALS.md`](enterprise/AI-ENGINEERING-FUNDAMENTALS.md)
 - [`enterprise/AI-ENGINEERING-BOOK-ALIGNMENT.md`](enterprise/AI-ENGINEERING-BOOK-ALIGNMENT.md)
+- [`enterprise/SOLUTIONS-ARCHITECTS-HANDBOOK-ALIGNMENT.md`](enterprise/SOLUTIONS-ARCHITECTS-HANDBOOK-ALIGNMENT.md)
 - [`enterprise/AI-ARCHITECT-BOOK-BACKLOG.md`](enterprise/AI-ARCHITECT-BOOK-BACKLOG.md)
 - [`reuse/OWN-REPOSITORIES.md`](reuse/OWN-REPOSITORIES.md)
 - [`reuse/PUBLIC-REPOSITORIES.md`](reuse/PUBLIC-REPOSITORIES.md)
@@ -98,7 +127,7 @@ See:
 
 Every claim must use one of these states according to evidence:
 
-`DESIGNED` → `IMPLEMENTED` → `TESTED` → `DEPLOYED` → `VERIFIED`
+`DESIGNED` -> `IMPLEMENTED` -> `TESTED` -> `DEPLOYED` -> `VERIFIED`
 
 `DESIGNED` means architecture/design material exists. It does not imply executable runtime evidence. Planned implementation work must remain explicitly labelled `NOT IMPLEMENTED` until evidence exists.
 
