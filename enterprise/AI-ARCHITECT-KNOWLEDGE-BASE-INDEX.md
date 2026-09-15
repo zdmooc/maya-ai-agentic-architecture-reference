@@ -15,6 +15,8 @@ Purpose: provide one entry point into the architecture knowledge base. Use this 
 - `ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md` — enterprise RAG, evaluation/FinOps, Design Authority, AI Gateway/security, AI Factory, hybrid placement, payments AI, multimodal/document automation.
 - `GENAI-PLATFORM-CAPABILITY-MAP.md` — reusable enterprise GenAI platform capabilities.
 - `GENAI-PRODUCTION-MATURITY-MODEL.md` — Idea -> Prototype -> Controlled POC -> Pre-Production -> Managed Production -> Platformized.
+- `AI-CONTROL-RUNTIME-PLANE.md` — explicit AI Control Plane vs AI Runtime Plane boundaries and responsibilities.
+- `AI-GATEWAY-IMPLEMENTATION-OPTIONS.md` — provider-neutral AI Gateway contract with LiteLLM / Envoy AI Gateway / managed-cloud option analysis.
 
 ## 3. Solution Architecture deliverable pack
 
@@ -33,6 +35,7 @@ Purpose: provide one entry point into the architecture knowledge base. Use this 
 - `LEGACY-TO-AI-INTEGRATION-PATTERNS.md` — API/MQ/Kafka/CDC/RAG/sidecar/strangler/batch/event-driven/HITL integration.
 - `AI-DATA-SYSTEMS-ARCHITECTURE-PRINCIPLES.md` — system of record, derived state, consistency, replay, idempotence, batch/stream, schema evolution.
 - `AI-ARCHITECTURE-FITNESS-FUNCTIONS.md` — continuous architectural governance.
+- `AI-POLICY-AS-CODE-CONTROLS.md` — AI-specific provider/model/risk/HITL/GPU/cost/evaluation controls and enforcement points.
 
 ## 5. Well-Architected / governance / compliance
 
@@ -40,11 +43,13 @@ Purpose: provide one entry point into the architecture knowledge base. Use this 
 - `AI-INTERACTION-ARCHIVAL-COMPLIANCE-PATTERN.md` — audit evidence, retention, legal hold, deletion and privacy minimization.
 - `ENTERPRISE-GENAI-WELL-ARCHITECTED-ALIGNMENT.md` — book alignment and vendor-neutral interpretation.
 
-## 6. Production, LLMOps and SRE
+## 6. Production, LLMOps, evaluation, observability and SRE
 
 - `ARCHITECTING-GENAI-APPLICATIONS-ALIGNMENT.md` — production architecture alignment.
 - `GENAI-SRE-SLO-ERROR-BUDGET.md` — SLIs/SLOs/error-budget model.
 - `GENAI-ONLINE-EXPERIMENTATION-PATTERN.md` — A/B/controlled online experimentation.
+- `AI-EVALUATION-OBSERVABILITY-TOOLING.md` — Promptfoo/Phoenix options, OpenTelemetry-first telemetry and evaluation contracts.
+- `AI-FAILURE-INJECTION-RESILIENCE.md` — LLM/RAG/agent/MCP/gateway/model-serving failure scenarios and safe recovery expectations.
 - `ML-PRODUCTION-MONITORING-DRIFT-LIFECYCLE.md` — classic ML drift/retraining/shadow/canary lifecycle.
 - `DESIGNING-ML-SYSTEMS-ALIGNMENT.md` — systems/production extraction from Chip Huyen.
 
@@ -67,6 +72,7 @@ Specialist evidence repositories to reuse rather than duplicate:
 
 - `GOOGLE-AI-SOLUTIONS-ARCHITECT-ALIGNMENT.md` — portable lessons from the Google-focused book.
 - I18 in `ENTERPRISE-AI-THEORETICAL-DESIGN-I13-I20.md` — policy-based private/Azure/AWS/GCP placement.
+- `AI-GATEWAY-IMPLEMENTATION-OPTIONS.md` — gateway/product option analysis without provider lock-in.
 - `AI-ARCHITECTURE-ADR-REFERENCE.md` — provider-neutral contracts, placement, gateway/router, reversibility.
 - `AI-ARCHITECTURE-FITNESS-FUNCTIONS.md` — provider eligibility and portability checks.
 
@@ -80,7 +86,12 @@ Specialist evidence repositories to reuse rather than duplicate:
 - `BUILDING-EVOLUTIONARY-ARCHITECTURES-ALIGNMENT.md` — evolutionary architecture interpretation for AI.
 - `AI-ARCHITECTURE-FITNESS-FUNCTIONS.md` — testable governance catalog.
 
-## 11. Book program
+## 11. Repository consolidation
+
+- `../reuse/AI-REPOSITORY-PORTFOLIO-MAP.md` — official AI repository hierarchy.
+- `../reuse/MAYA-INTERLINK-AI-CONSOLIDATION.md` — AI-only consolidation proving the former `maya-interlink-enterprise-ai-platform` plan no longer contains unique AI architecture value.
+
+## 12. Book program
 
 - `AI-ARCHITECT-BOOK-BACKLOG.md` — source list, extraction status and future-source policy.
 
@@ -95,7 +106,7 @@ Architecture book baseline currently processed:
 8. *Designing Data-Intensive Applications — 2nd Edition*.
 9. *Building Evolutionary Architectures — 2nd Edition*.
 
-## 12. How to use the knowledge base for a mission
+## 13. How to use the knowledge base for a mission
 
 1. Extract mission/business capabilities.
 2. Map them to existing architecture knowledge and runtime evidence.
@@ -108,7 +119,7 @@ Architecture book baseline currently processed:
 9. Record test/deployment evidence and upgrade status truthfully.
 10. Stop; do not create unrelated POCs.
 
-## 13. Status discipline
+## 14. Status discipline
 
 `DESIGNED -> IMPLEMENTED -> TESTED -> DEPLOYED -> VERIFIED`
 
