@@ -43,58 +43,79 @@ Repository mapping:
 
 Authors: Saurabh Shrivastava, Neelanjali Srivastav.
 
-Why it matters:
+Status: **ARCHITECTURE EXTRACTION COMPLETE**
 
-- solution-architect role and responsibilities;
-- architecture principles and design patterns;
+Main value retained:
+
+- role and operating model of the Solution Architect;
 - FR/NFR and quality attributes;
-- cloud-native architecture;
-- machine-learning architecture;
-- generative-AI architecture;
-- modernization and legacy integration;
-- Solution Architecture Document (SAD);
-- architecture communication and decision making.
+- SAD discipline;
+- architecture patterns and ADRs;
+- performance budgets;
+- constraints/risk/RACI;
+- legacy modernization and AI integration;
+- architecture review / Design Authority.
 
-What to extract into our reference:
+Repository mapping:
 
-- formal SAD structure for AI solutions;
-- FR/NFR template for AI applications;
-- architecture pattern catalog;
-- modernization/integration patterns for legacy banking systems;
-- GenAI reference-architecture comparison;
-- stakeholder and design-authority deliverables.
+- `SOLUTIONS-ARCHITECTS-HANDBOOK-ALIGNMENT.md`
+- `AI-SOLUTION-ARCHITECTURE-DOCUMENT-TEMPLATE.md`
+- `AI-FR-NFR-CATALOG.md`
+- `AI-ARCHITECTURE-CONSTRAINTS-REGISTER.md`
+- `AI-PERFORMANCE-BUDGET-TEMPLATE.md`
+- `AI-ARCHITECTURE-REVIEW-CHECKLIST.md`
+- `AI-ARCHITECTURE-PATTERN-CATALOG.md`
+- `AI-ARCHITECTURE-ADR-REFERENCE.md`
+- `AI-ARCHITECTURE-RISK-REGISTER.md`
+- `AI-ARCHITECTURE-RACI.md`
+- `LEGACY-TO-AI-INTEGRATION-PATTERNS.md`
 
-POC policy: **none by default**. Mostly an architecture/documentation/design-authority source.
+POC policy: **none required by the book**.
 
 ---
 
 ## 3. Enterprise Generative AI Well-Architected Framework & Patterns
 
-Why it matters:
+Author: Suvoraj Biswas.
 
-- explicit enterprise GenAI architecture viewpoint;
-- Well-Architected pillars adapted to GenAI;
+Status: **ARCHITECTURE EXTRACTION COMPLETE**
+
+Main value retained:
+
+- explicit enterprise GenAI Well-Architected assessment;
 - operational excellence;
-- security and compliance;
-- guardrails/content moderation;
-- enterprise adoption patterns;
-- architecture trade-offs for foundation models.
+- security/privacy;
+- compliance and Responsible AI;
+- reliability;
+- system architecture excellence;
+- cost optimization;
+- content moderation/guardrails;
+- interaction archival/compliance;
+- observability;
+- enterprise FM/LLM adoption patterns.
 
-What to extract:
+Repository mapping:
 
-- GenAI Well-Architected scorecard;
-- architecture review checklist;
-- guardrail and compliance control matrix;
-- mapping with I15/I16 Design Authority and Responsible AI;
-- anti-pattern catalog.
+- `ENTERPRISE-GENAI-WELL-ARCHITECTED-ALIGNMENT.md`
+- `GENAI-WELL-ARCHITECTED-SCORECARD.md`
+- `AI-INTERACTION-ARCHIVAL-COMPLIANCE-PATTERN.md`
+- existing risk, RACI, NFR, review, AI Gateway, RAG and observability artifacts.
 
-POC policy: only if a mission asks for **AI governance / Well-Architected assessment / regulated GenAI**.
+Skipped as non-core to the current architect track:
+
+- Python RAG tutorial steps;
+- AWS-specific EC2/pgVector implementation;
+- SageMaker/Bedrock details unless a future AWS mission requires them.
+
+POC policy: **none required by the book**. Evidence demo only for regulated GenAI, security/guardrails, FinOps or architecture-assessment missions.
 
 ---
 
 ## 4. Architecting Generative AI Applications — Leonid Kuligin
 
 Publication: 2026.
+
+Status: **NEXT TO EXTRACT**
 
 Why it matters:
 
@@ -287,14 +308,14 @@ POC policy: architecture/governance only; no standalone POC.
 Recommended order for the architecture program:
 
 1. `AI Engineering` — **DONE**.
-2. `Solutions Architect's Handbook, 3rd Ed.`
-3. `Enterprise Generative AI Well-Architected Framework & Patterns`
-4. `Architecting Generative AI Applications`
-5. `Google Machine Learning and Generative AI for Solutions Architects`
+2. `Solutions Architect's Handbook, 3rd Ed.` — **DONE**.
+3. `Enterprise Generative AI Well-Architected Framework & Patterns` — **DONE**.
+4. `Architecting Generative AI Applications` — **NEXT**.
+5. `Google Machine Learning and Generative AI for Solutions Architects`.
 6. `The Machine Learning Solutions Architect Handbook, 2nd Ed.` — architecture chapters only.
 7. `Designing Machine Learning Systems` — systems/production chapters only.
-8. `Designing Data-Intensive Applications, 2nd Ed.`
-9. `Building Evolutionary Architectures, 2nd Ed.`
+8. `Designing Data-Intensive Applications, 2nd Ed.`.
+9. `Building Evolutionary Architectures, 2nd Ed.`.
 
 This order goes from **AI application architecture -> enterprise governance -> production AI -> AI platform/multi-cloud -> ML systems -> data/distributed systems -> evolutionary governance**.
 
