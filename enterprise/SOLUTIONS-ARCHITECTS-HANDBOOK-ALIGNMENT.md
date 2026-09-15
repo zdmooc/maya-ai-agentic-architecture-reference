@@ -1,6 +1,6 @@
 # Solutions Architect's Handbook — Architecture Alignment
 
-Status: **IN PROGRESS — ARCHITECTURE EXTRACTION / NO IMPLEMENTATION CLAIM**
+Status: **COMPLETE — ARCHITECTURE EXTRACTION CLOSED / NO IMPLEMENTATION POC REQUIRED**
 
 Source: *Solutions Architect's Handbook — 3rd Edition* (Saurabh Shrivastava, Neelanjali Srivastav).
 
@@ -10,7 +10,7 @@ Purpose: extract only the material useful to an **AI Solution Architect / Enterp
 
 The book covers the role of the Solution Architect, functional and non-functional requirements, solution architecture patterns, cloud-native architecture, performance, ML architecture, Generative AI architecture, legacy modernization, Solution Architecture Documents and architecture communication.
 
-For this repository, the main value is not learning one cloud product. It is strengthening the **architecture method and deliverables** around the existing AI capabilities.
+For this repository, the main value is not learning one cloud product. It is strengthening the **architecture method, decision discipline and deliverables** around the existing AI capabilities.
 
 ## 2. Current strengths already present
 
@@ -29,125 +29,71 @@ The repository already covers strongly:
 - Responsible AI, AI-BOM and governance intent;
 - Design Authority intent and ADR-based decisions.
 
-## 3. Gaps identified from an Architect viewpoint
+## 3. Gaps identified and now closed
 
-### GAP-SA-01 — Formal Solution Architecture Document (SAD)
+### GAP-SA-01 — Formal Solution Architecture Document (SAD) — CLOSED
 
-The repository contains architecture documents, but not yet one canonical **AI Solution Architecture Document template** tying the material together.
+Created:
 
-Target SAD structure:
+- `AI-SOLUTION-ARCHITECTURE-DOCUMENT-TEMPLATE.md`
 
-1. Executive summary and business context.
-2. Scope / out of scope.
-3. Stakeholders and concerns.
-4. Functional requirements.
-5. Non-functional requirements / quality attributes.
-6. Constraints and assumptions.
-7. Current-state architecture.
-8. Target-state architecture.
-9. Application/service view.
-10. Data/knowledge view.
-11. Integration/API/event view.
-12. AI/model/RAG/agent view.
-13. Security/privacy/compliance view.
-14. Deployment/platform/network view.
-15. Observability/SRE/operations view.
-16. Capacity/performance/cost view.
-17. Resilience/BCP/DR view.
-18. Architecture decisions / ADRs.
-19. Risks, trade-offs and technical debt.
-20. Transition architecture / roadmap.
-21. Validation/evidence status.
+Canonical content includes business context, scope, stakeholders, FR/NFR, constraints, current/target architecture, application/data/integration/AI/security/deployment/operations views, capacity/cost, resilience, ADRs, risks, transition roadmap and evidence status.
 
-Future action: create a reusable SAD template under I15 / Design Authority work. No POC required.
+### GAP-SA-02 — Explicit FR/NFR separation — CLOSED
 
-### GAP-SA-02 — Explicit FR/NFR separation
+Created:
 
-The current repository has many NFR-like controls but no canonical FR/NFR catalog for an AI solution.
+- `AI-FR-NFR-CATALOG.md`
 
-Minimum AI NFR families:
+Covers availability, latency, throughput, scalability, resilience, security, privacy/residency, explainability/traceability, quality/grounding, safety/abstention, observability, operability, portability, maintainability, FinOps/GreenOps and compliance/auditability.
 
-- availability;
-- latency and throughput;
-- scalability;
-- resilience and recoverability;
-- security;
-- privacy and data residency;
-- explainability/traceability;
-- quality/grounding;
-- safety/abstention;
-- observability;
-- operability/supportability;
-- portability/reversibility;
-- maintainability;
-- cost/FinOps;
-- GreenOps where measurable;
-- compliance and auditability.
+### GAP-SA-03 — Architecture constraints register — CLOSED
 
-Future action: consolidate these as an architecture checklist and use them as Architecture Review Board criteria.
+Created:
 
-### GAP-SA-03 — Architecture constraints register
+- `AI-ARCHITECTURE-CONSTRAINTS-REGISTER.md`
 
-Add one explicit register for:
+Covers regulatory, data locality, provider/platform, legacy, licensing, SLA/performance, skills/organization, budget/deadline and model/provider constraints.
 
-- regulatory constraints;
-- data locality;
-- cloud/provider constraints;
-- platform constraints;
-- legacy dependencies;
-- licensing;
-- performance/SLA;
-- organization/skills constraints;
-- budget constraints;
-- delivery deadlines;
-- model/provider availability.
+### GAP-SA-04 — Performance architecture as first-class viewpoint — CLOSED
 
-Each constraint should map to one or more ADRs.
+Created:
 
-### GAP-SA-04 — Performance architecture as a first-class viewpoint
+- `AI-PERFORMANCE-BUDGET-TEMPLATE.md`
 
-The repository already has inference-performance concepts, but Solution Architecture should also make generic performance architecture explicit:
+Makes the latency chain explicit:
 
-`latency budget -> component budget -> concurrency -> throughput -> caching -> autoscaling -> queueing -> storage/network -> model inference -> SLO`.
+`gateway -> retrieval -> reranking -> model TTFT -> decode -> tools -> output/policy validation`
 
-For AI specifically:
+and connects latency, throughput, concurrency, queueing, cache, autoscaling, network/storage, GPU/CPU capacity and SLOs.
 
-`user latency = gateway + retrieval + reranking + model TTFT + decode + tool calls + policy/output validation`.
+### GAP-SA-05 — Legacy modernization / AI integration — CLOSED
 
-This belongs in I14/I17 and the SAD template.
+Created:
 
-### GAP-SA-05 — Legacy modernization / AI integration
+- `LEGACY-TO-AI-INTEGRATION-PATTERNS.md`
 
-This is especially relevant for banking and insurance.
+Decision ladder:
 
-Reference decision ladder:
+`encapsulate -> API enable -> event enable -> replatform -> refactor -> rearchitect -> replace`
 
-`encapsulate -> API enable -> event enable -> replatform -> refactor -> rearchitect -> replace`.
+The catalog formalizes API facade, MQ, Kafka, CDC/outbox, RAG over documentation, AI sidecar, strangler, batch enrichment, event-driven incident copilot and HITL command patterns.
 
-AI must not force unnecessary core-system replacement. Prefer governed interfaces around legacy systems where feasible:
+### GAP-SA-06 — Solution Architect operating model — CLOSED
 
-- REST/API facade;
-- MQ/Kafka events;
-- read-only tools for agents;
-- RAG over documentation/runbooks;
-- deterministic policy around sensitive actions;
-- HITL for high-impact remediation.
+The repository now formalizes:
 
-This maps directly to the existing IBM MQ, Kafka, API Management and payment repositories.
+`Business demand -> discovery -> FR/NFR -> constraints -> options -> trade-off analysis -> target architecture -> ADR -> POC only if material uncertainty remains -> architecture review -> delivery governance -> production readiness -> post-launch operability`
 
-### GAP-SA-06 — Solution Architect operating model
+Additional artifacts:
 
-The book reinforces that architecture is not only diagrams. Formalize the lifecycle:
-
-`Business demand -> discovery -> FR/NFR -> constraints -> options -> trade-off analysis -> target architecture -> ADR -> POC only if uncertainty requires it -> review -> delivery governance -> production readiness -> post-launch operability`.
-
-POCs should be used to reduce material uncertainty, not as a default engineering activity.
+- `AI-ARCHITECTURE-REVIEW-CHECKLIST.md`
+- `AI-ARCHITECTURE-RACI.md`
+- `AI-ARCHITECTURE-RISK-REGISTER.md`
+- `AI-ARCHITECTURE-ADR-REFERENCE.md`
+- `AI-ARCHITECTURE-PATTERN-CATALOG.md`
 
 ## 4. GenAI architecture chapter — mapping to current repository
-
-The book includes a dedicated Generative AI Architecture chapter with foundation-model selection, hallucination mitigation, a reference architecture and implementation challenges.
-
-Current repository mapping:
 
 | Book concern | Current repository |
 |---|---|
@@ -160,62 +106,70 @@ Current repository mapping:
 | ML/MLOps | I5/I10/I14/I17 |
 | Human oversight | I7 + I16 |
 | Production operations | I8/I14/I17 |
+| SAD / architecture method | dedicated SAD + review/checklist artifacts |
+| FR/NFR / quality attributes | dedicated AI FR/NFR catalog |
+| Patterns / trade-offs | AI architecture pattern catalog + ADR set |
+| Legacy modernization | legacy-to-AI integration pattern catalog |
 
-Conclusion: the repository is already stronger than this chapter on modern enterprise GenAI controls. The main additions from this book are therefore **architecture discipline and deliverable structure**, not new AI runtime components.
+Conclusion: the repository is already stronger than the book's GenAI chapter on modern enterprise AI controls. The added value of the book has now been absorbed mainly into **architecture discipline, architecture deliverables and governance structure**.
 
-## 5. Solution Architecture patterns relevant to AI
+## 5. Pattern principles retained
 
-Patterns to retain explicitly in the reference catalog:
+The reference now explicitly includes:
 
-- layered/n-tier where appropriate;
-- API/service-oriented boundaries;
+- layered/service-oriented boundaries where appropriate;
 - DDD bounded contexts;
-- circuit breaker;
-- bulkhead/isolation;
-- cache patterns;
-- stateless services where possible;
-- stateful stores where required;
-- event-driven architecture;
-- queues and back-pressure;
-- saga/orchestration for distributed workflows;
-- service mesh where justified;
-- clean architecture / dependency inversion;
-- anti-pattern: tight provider coupling;
-- anti-pattern: hidden state in agents;
-- anti-pattern: unbounded context/tool access;
-- anti-pattern: LLM as authoritative policy engine.
+- API and event-driven integration;
+- circuit breaker and bulkhead/isolation;
+- cache and back-pressure patterns;
+- stateful vs stateless responsibility;
+- orchestration/HITL for distributed sensitive workflows;
+- provider-neutral boundaries where practical;
+- anti-patterns such as hidden agent state, unbounded tool access and LLM-as-policy-engine.
 
-## 6. Architecture artefacts to add later
+AI-specific selection rule remains:
 
-No local PC is needed to design these. They are documentation artifacts:
+`deterministic software -> prompt-only -> RAG -> deterministic workflow + LLM -> agentic workflow -> fine-tuning`
+
+## 6. Architect deliverable pack now available
+
+The Solution Architect dossier now contains:
 
 1. `AI-SOLUTION-ARCHITECTURE-DOCUMENT-TEMPLATE.md`
 2. `AI-FR-NFR-CATALOG.md`
 3. `AI-ARCHITECTURE-CONSTRAINTS-REGISTER.md`
-4. `AI-ARCHITECTURE-REVIEW-CHECKLIST.md`
-5. `AI-PERFORMANCE-BUDGET-TEMPLATE.md`
-6. `LEGACY-TO-AI-INTEGRATION-PATTERNS.md`
+4. `AI-PERFORMANCE-BUDGET-TEMPLATE.md`
+5. `AI-ARCHITECTURE-REVIEW-CHECKLIST.md`
+6. `AI-ARCHITECTURE-PATTERN-CATALOG.md`
+7. `AI-ARCHITECTURE-ADR-REFERENCE.md`
+8. `AI-ARCHITECTURE-RISK-REGISTER.md`
+9. `AI-ARCHITECTURE-RACI.md`
+10. `LEGACY-TO-AI-INTEGRATION-PATTERNS.md`
 
-These should be created only as architecture documents; executable POCs remain demand-driven.
+These are architecture artifacts. They do not imply live deployment, benchmark or production evidence.
 
 ## 7. Interview outcomes
 
-After this alignment, an AI Solution Architect should be able to answer:
+An AI Solution Architect should now be able to answer:
 
-- How do you move from a business requirement to an AI target architecture?
+- How do you move from business demand to an AI target architecture?
 - How do FRs differ from NFRs in an AI solution?
-- How do you build and maintain a SAD?
-- How do you choose among API, event, RAG, agent and deterministic integration?
-- How do you integrate AI with a legacy banking platform without unnecessary replacement?
-- How do you design for latency, throughput, failure and degradation?
+- What belongs in a SAD?
+- How do you choose deterministic software, prompt-only, RAG, workflow, agent or fine-tuning?
+- How do you integrate AI with legacy banking systems without unnecessary replacement?
+- How do API, IBM MQ, Kafka and RAG fit into different integration patterns?
+- How do you allocate a performance/latency budget?
+- How do you document constraints, risks, trade-offs and architecture decisions?
+- Which decisions belong to the architect versus Data, Security, Risk, Platform and Operations?
 - When is a POC justified?
-- How do you document trade-offs and architecture decisions?
 - What must be validated before production readiness?
 
-## 8. Current conclusion
+## 8. Final conclusion
 
-**No new AI implementation POC is required from this book.**
+**This book is now closed at architecture level for the reference repository. No new implementation POC is required from it.**
 
-The main value is to upgrade the repository from a strong AI technical reference into a stronger **Solution Architecture dossier** by formalizing SAD, FR/NFR, constraints, performance budgets, modernization patterns and the architect operating model.
+Its useful content has been converted into reusable architecture artifacts rather than additional application code.
 
-Next extraction target after this book: Enterprise Generative AI Well-Architected Framework & Patterns.
+Next book in the architecture backlog:
+
+**Enterprise Generative AI Well-Architected Framework & Patterns** — target areas: Well-Architected scorecard, governance, security/compliance, guardrails, operational excellence and enterprise GenAI anti-patterns.
