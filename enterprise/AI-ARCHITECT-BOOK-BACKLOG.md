@@ -19,7 +19,6 @@ No book creates a mandatory implementation roadmap by itself.
 Status: **THEORETICAL ALIGNMENT COMPLETE**
 
 Focus retained for architecture:
-
 - foundation-model selection and constraints;
 - evaluation and model/system selection;
 - prompt/context architecture;
@@ -30,7 +29,6 @@ Focus retained for architecture:
 - AI Gateway, Model Router, cache, observability and user feedback.
 
 Repository mapping:
-
 - `AI-ENGINEERING-FUNDAMENTALS.md`
 - `AI-ENGINEERING-BOOK-ALIGNMENT.md`
 - I13-I20 theoretical design.
@@ -46,7 +44,6 @@ Authors: Saurabh Shrivastava, Neelanjali Srivastav.
 Status: **ARCHITECTURE EXTRACTION COMPLETE**
 
 Main value retained:
-
 - role and operating model of the Solution Architect;
 - FR/NFR and quality attributes;
 - SAD discipline;
@@ -57,7 +54,6 @@ Main value retained:
 - architecture review / Design Authority.
 
 Repository mapping:
-
 - `SOLUTIONS-ARCHITECTS-HANDBOOK-ALIGNMENT.md`
 - `AI-SOLUTION-ARCHITECTURE-DOCUMENT-TEMPLATE.md`
 - `AI-FR-NFR-CATALOG.md`
@@ -81,7 +77,6 @@ Author: Suvoraj Biswas.
 Status: **ARCHITECTURE EXTRACTION COMPLETE**
 
 Main value retained:
-
 - explicit enterprise GenAI Well-Architected assessment;
 - operational excellence;
 - security/privacy;
@@ -95,14 +90,12 @@ Main value retained:
 - enterprise FM/LLM adoption patterns.
 
 Repository mapping:
-
 - `ENTERPRISE-GENAI-WELL-ARCHITECTED-ALIGNMENT.md`
 - `GENAI-WELL-ARCHITECTED-SCORECARD.md`
 - `AI-INTERACTION-ARCHIVAL-COMPLIANCE-PATTERN.md`
 - existing risk, RACI, NFR, review, AI Gateway, RAG and observability artifacts.
 
 Skipped as non-core to the current architect track:
-
 - Python RAG tutorial steps;
 - AWS-specific EC2/pgVector implementation;
 - SageMaker/Bedrock details unless a future AWS mission requires them.
@@ -115,28 +108,33 @@ POC policy: **none required by the book**. Evidence demo only for regulated GenA
 
 Publication: 2026.
 
-Status: **NEXT TO EXTRACT**
+Status: **ARCHITECTURE EXTRACTION COMPLETE**
 
-Why it matters:
+Main value retained:
+- prototype-to-production discipline;
+- evaluation and HITL;
+- LLMOps lifecycle;
+- stateful/stateless deployment principles;
+- graceful failure, throttling and cascading-failure controls;
+- Responsible AI/security/privacy;
+- SRE, SLIs/SLOs/SLAs and error budgets;
+- GenAI platform-team capability model;
+- online experimentation / A-B testing.
 
-- production-oriented GenAI architecture;
-- transition from prototype to production;
-- evaluation;
-- LLMOps;
-- SRE and reliability;
-- scalable architecture patterns;
-- operationalization of GenAI systems.
+Repository mapping:
+- `ARCHITECTING-GENAI-APPLICATIONS-ALIGNMENT.md`
+- `GENAI-PRODUCTION-MATURITY-MODEL.md`
+- `GENAI-PLATFORM-CAPABILITY-MAP.md`
+- `GENAI-SRE-SLO-ERROR-BUDGET.md`
+- `GENAI-ONLINE-EXPERIMENTATION-PATTERN.md`
+- existing evaluation, observability, performance, risk, RACI and Design Authority artifacts.
 
-What to extract:
+Skipped as non-core:
+- code/API wrapping tutorials;
+- command-level Kubernetes deployment steps;
+- tool-specific managed-platform walkthroughs.
 
-- prototype-to-production maturity model;
-- production reference architecture;
-- LLMOps/SRE control points;
-- resilience and failure-mode catalog;
-- scalability and performance NFRs;
-- mapping against I14, I16 and I17.
-
-POC policy: activate only for **GenAI production / LLMOps / AI SRE / platform** missions.
+POC policy: **none required by the book**. Runtime evidence only for production-readiness, LLMOps/SRE, platform or online-experimentation missions.
 
 ---
 
@@ -146,8 +144,9 @@ POC policy: activate only for **GenAI production / LLMOps / AI SRE / platform** 
 
 Author: Kieran Kavanagh.
 
-Why it matters:
+Status: **NEXT TO EXTRACT**
 
+Why it matters:
 - written specifically for Solutions Architects;
 - enterprise AI/ML system design;
 - GenAI architecture;
@@ -156,11 +155,9 @@ Why it matters:
 - cloud AI reference architectures.
 
 Scope rule:
-
 Read for **architecture concepts**, not to become a Google Cloud specialist.
 
 What to extract:
-
 - GCP GenAI/ML reference architecture patterns;
 - comparison with Azure/OpenShift targets;
 - MLOps platform building blocks;
@@ -179,7 +176,6 @@ Author: David Ping.
 Important scope restriction: **not a Data Science learning path for us**.
 
 Read only the architecture-relevant sections:
-
 - ML lifecycle from a Solution Architecture viewpoint;
 - business use cases;
 - enterprise ML architecture;
@@ -190,13 +186,11 @@ Read only the architecture-relevant sections:
 - Generative AI platforms and solutions.
 
 Skip/deprioritize:
-
 - algorithm implementation detail;
 - model-training exercises;
 - Data Scientist-oriented hands-on content that does not affect architecture decisions.
 
 What to extract:
-
 - AI/ML platform capability map;
 - lifecycle responsibilities;
 - governance gates;
@@ -213,7 +207,6 @@ POC policy: only if an **ML platform / MLOps / AI platform** mission needs proof
 Scope: **systems architecture**, not Data Science.
 
 Why it matters:
-
 - business objectives -> system requirements;
 - reliability, scalability, maintainability and adaptability;
 - data distribution shifts;
@@ -225,7 +218,6 @@ Why it matters:
 - responsible AI.
 
 What to extract:
-
 - ML-system NFR model;
 - architecture lifecycle from business objective to production;
 - deployment patterns: shadow, canary, A/B;
@@ -246,11 +238,9 @@ Authors: Martin Kleppmann, Chris Riccomini.
 Publication: 2026.
 
 Why it matters to an AI Architect:
-
 AI systems are still distributed data systems. RAG, agents, event-driven AI, vector indexes, feature pipelines, knowledge ingestion and audit cannot be architected correctly without data-system trade-offs.
 
 Architecture topics to extract:
-
 - operational vs analytical systems;
 - system of record vs derived data;
 - cloud vs self-hosting;
@@ -264,7 +254,6 @@ Architecture topics to extract:
 - data governance implications.
 
 Mapping:
-
 - I13 knowledge platform;
 - I17 AI Factory data plane;
 - I18 hybrid placement;
@@ -279,11 +268,9 @@ POC policy: no dedicated POC. Reuse MQ/Kafka/RAG/platform evidence.
 Authors: Neal Ford, Rebecca Parsons, Patrick Kua, Pramod Sadalage.
 
 Why it matters:
-
 AI stacks change rapidly. The architecture must evolve without losing security, cost, reliability or portability.
 
 What to extract:
-
 - fitness functions;
 - evolutionary architecture principles;
 - incremental change;
@@ -293,7 +280,6 @@ What to extract:
 - architecture transition strategy.
 
 Mapping:
-
 - I15 Design Authority;
 - I16 governance/policy;
 - I18 provider reversibility;
@@ -310,8 +296,8 @@ Recommended order for the architecture program:
 1. `AI Engineering` — **DONE**.
 2. `Solutions Architect's Handbook, 3rd Ed.` — **DONE**.
 3. `Enterprise Generative AI Well-Architected Framework & Patterns` — **DONE**.
-4. `Architecting Generative AI Applications` — **NEXT**.
-5. `Google Machine Learning and Generative AI for Solutions Architects`.
+4. `Architecting Generative AI Applications` — **DONE**.
+5. `Google Machine Learning and Generative AI for Solutions Architects` — **NEXT**.
 6. `The Machine Learning Solutions Architect Handbook, 2nd Ed.` — architecture chapters only.
 7. `Designing Machine Learning Systems` — systems/production chapters only.
 8. `Designing Data-Intensive Applications, 2nd Ed.`.
