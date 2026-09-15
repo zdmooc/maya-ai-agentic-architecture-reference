@@ -1,59 +1,53 @@
 # AI Architect Book Backlog
 
-Status: **CURATED READING / ARCHITECTURE EXTRACTION BACKLOG**
+Status: **BASELINE COMPLETE — 9/9 ARCHITECTURE SOURCES EXTRACTED / FUTURE SOURCES DEMAND-DRIVEN**
 
-Purpose: maintain a focused reading backlog for **AI Solution Architect / Enterprise AI Architect / AI Platform Architect** work. This list intentionally excludes developer-first books whose main value is Python, LangChain, application coding or Data Science implementation.
+Purpose: maintain a focused source backlog for **AI Solution Architect / Enterprise AI Architect / AI Platform Architect** work. Developer-first books centered on Python, LangChain or Data Science implementation are intentionally excluded unless they contain a material architecture gap.
 
-The method for each book is:
+Method:
 
-`READ -> EXTRACT ARCHITECTURE PRINCIPLES -> MAP TO REFERENCE ARCHITECTURE -> IDENTIFY GAPS -> ADD ADR/NFR/PATTERN -> DEFER POC UNTIL BUSINESS DEMAND`
+`SOURCE -> EXTRACT ARCHITECTURE PRINCIPLES -> MAP TO REFERENCE -> IDENTIFY REAL GAP -> ADD ADR/NFR/PATTERN -> DEFER POC UNTIL BUSINESS DEMAND`
 
 No book creates a mandatory implementation roadmap by itself.
 
----
+## Completion matrix
 
-## Priority 0 — Completed baseline
+| # | Source | Status | Main contribution retained |
+|---|---|---|---|
+| 1 | *AI Engineering* — Chip Huyen | **DONE** | foundation models, evaluation, prompting, RAG/agents, fine-tuning decisions, datasets, inference, gateway/router, feedback |
+| 2 | *Solutions Architect's Handbook — 3rd Ed.* | **DONE** | Solution Architect method, SAD, FR/NFR, constraints, patterns, ADRs, risk/RACI, performance, legacy integration |
+| 3 | *Enterprise Generative AI Well-Architected Framework & Patterns* | **DONE** | GenAI Well-Architected assessment, governance, security/privacy, compliance, reliability, cost, archival |
+| 4 | *Architecting Generative AI Applications* | **DONE** | prototype-to-production, LLMOps, platform capabilities, SRE/error budgets, online experimentation |
+| 5 | *Google Machine Learning and Generative AI for Solutions Architects* | **DONE** | unified classic-ML/GenAI lifecycle, governance and provider-neutral platform mapping |
+| 6 | *The Machine Learning Solutions Architect Handbook — 2nd Ed.* | **DONE** | regulated-industry/financial-services use cases and ML/GenAI Solution Architecture framing |
+| 7 | *Designing Machine Learning Systems* — Chip Huyen | **DONE** | production ML, monitoring, drift, retraining, shadow/canary/A-B, adaptability |
+| 8 | *Designing Data-Intensive Applications — 2nd Ed.* | **DONE** | system of record/derived state, consistency, partial failure, schemas, replication/sharding, batch/stream |
+| 9 | *Building Evolutionary Architectures — 2nd Ed.* | **DONE** | fitness functions, automated governance, reversibility, incremental/evolvable architecture |
 
-### 1. AI Engineering — Chip Huyen
+## 1. AI Engineering — Chip Huyen
 
 Status: **THEORETICAL ALIGNMENT COMPLETE**
 
-Focus retained for architecture:
-- foundation-model selection and constraints;
-- evaluation and model/system selection;
-- prompt/context architecture;
+Repository outputs:
+- `AI-ENGINEERING-FUNDAMENTALS.md`
+- `AI-ENGINEERING-BOOK-ALIGNMENT.md`
+- enterprise I13-I20 theoretical design.
+
+Architect focus:
+- model/system selection;
+- evaluation;
+- prompt/context;
 - RAG and agents;
 - fine-tuning decision criteria;
 - dataset engineering;
 - inference optimization;
-- AI Gateway, Model Router, cache, observability and user feedback.
-
-Repository mapping:
-- `AI-ENGINEERING-FUNDAMENTALS.md`
-- `AI-ENGINEERING-BOOK-ALIGNMENT.md`
-- I13-I20 theoretical design.
-
----
-
-# Priority 1 — Core AI / Solution Architecture
+- gateway/router/cache/observability/feedback.
 
 ## 2. Solutions Architect's Handbook — 3rd Edition
 
-Authors: Saurabh Shrivastava, Neelanjali Srivastav.
-
 Status: **ARCHITECTURE EXTRACTION COMPLETE**
 
-Main value retained:
-- role and operating model of the Solution Architect;
-- FR/NFR and quality attributes;
-- SAD discipline;
-- architecture patterns and ADRs;
-- performance budgets;
-- constraints/risk/RACI;
-- legacy modernization and AI integration;
-- architecture review / Design Authority.
-
-Repository mapping:
+Repository outputs:
 - `SOLUTIONS-ARCHITECTS-HANDBOOK-ALIGNMENT.md`
 - `AI-SOLUTION-ARCHITECTURE-DOCUMENT-TEMPLATE.md`
 - `AI-FR-NFR-CATALOG.md`
@@ -66,257 +60,166 @@ Repository mapping:
 - `AI-ARCHITECTURE-RACI.md`
 - `LEGACY-TO-AI-INTEGRATION-PATTERNS.md`
 
-POC policy: **none required by the book**.
-
----
+No implementation POC required.
 
 ## 3. Enterprise Generative AI Well-Architected Framework & Patterns
 
-Author: Suvoraj Biswas.
-
 Status: **ARCHITECTURE EXTRACTION COMPLETE**
 
-Main value retained:
-- explicit enterprise GenAI Well-Architected assessment;
-- operational excellence;
-- security/privacy;
-- compliance and Responsible AI;
-- reliability;
-- system architecture excellence;
-- cost optimization;
-- content moderation/guardrails;
-- interaction archival/compliance;
-- observability;
-- enterprise FM/LLM adoption patterns.
-
-Repository mapping:
+Repository outputs:
 - `ENTERPRISE-GENAI-WELL-ARCHITECTED-ALIGNMENT.md`
 - `GENAI-WELL-ARCHITECTED-SCORECARD.md`
 - `AI-INTERACTION-ARCHIVAL-COMPLIANCE-PATTERN.md`
-- existing risk, RACI, NFR, review, AI Gateway, RAG and observability artifacts.
 
-Skipped as non-core to the current architect track:
-- Python RAG tutorial steps;
-- AWS-specific EC2/pgVector implementation;
-- SageMaker/Bedrock details unless a future AWS mission requires them.
+Architect focus:
+- operational excellence;
+- security/privacy;
+- compliance/Responsible AI;
+- reliability;
+- cost;
+- interaction archival/audit;
+- guardrails and observability.
 
-POC policy: **none required by the book**. Evidence demo only for regulated GenAI, security/guardrails, FinOps or architecture-assessment missions.
+AWS-specific tutorials are deferred unless an AWS mission requires them.
 
----
-
-## 4. Architecting Generative AI Applications — Leonid Kuligin
-
-Publication: 2026.
+## 4. Architecting Generative AI Applications
 
 Status: **ARCHITECTURE EXTRACTION COMPLETE**
 
-Main value retained:
-- prototype-to-production discipline;
-- evaluation and HITL;
-- LLMOps lifecycle;
-- stateful/stateless deployment principles;
-- graceful failure, throttling and cascading-failure controls;
-- Responsible AI/security/privacy;
-- SRE, SLIs/SLOs/SLAs and error budgets;
-- GenAI platform-team capability model;
-- online experimentation / A-B testing.
-
-Repository mapping:
+Repository outputs:
 - `ARCHITECTING-GENAI-APPLICATIONS-ALIGNMENT.md`
 - `GENAI-PRODUCTION-MATURITY-MODEL.md`
 - `GENAI-PLATFORM-CAPABILITY-MAP.md`
 - `GENAI-SRE-SLO-ERROR-BUDGET.md`
 - `GENAI-ONLINE-EXPERIMENTATION-PATTERN.md`
-- existing evaluation, observability, performance, risk, RACI and Design Authority artifacts.
 
-Skipped as non-core:
-- code/API wrapping tutorials;
-- command-level Kubernetes deployment steps;
-- tool-specific managed-platform walkthroughs.
-
-POC policy: **none required by the book**. Runtime evidence only for production-readiness, LLMOps/SRE, platform or online-experimentation missions.
-
----
-
-# Priority 2 — AI Platform / Multi-Cloud Architecture
+Architect focus:
+- prototype versus production;
+- LLMOps;
+- reusable platform capabilities;
+- SRE/error budgets;
+- resilience;
+- controlled online experimentation.
 
 ## 5. Google Machine Learning and Generative AI for Solutions Architects
 
-Author: Kieran Kavanagh.
+Status: **ARCHITECTURE EXTRACTION COMPLETE**
 
-Status: **NEXT TO EXTRACT**
+Repository outputs:
+- `GOOGLE-AI-SOLUTIONS-ARCHITECT-ALIGNMENT.md`
+- `AI-ML-SOLUTION-ARCHITECTURE-LIFECYCLE.md`
 
-Why it matters:
-- written specifically for Solutions Architects;
-- enterprise AI/ML system design;
-- GenAI architecture;
-- MLOps;
-- scalable platform patterns;
-- cloud AI reference architectures.
+Architect focus:
+- deterministic versus classic ML versus GenAI;
+- ML lifecycle awareness without Data Scientist depth;
+- MLOps/governance;
+- provider-neutral logical architecture.
 
-Scope rule:
-Read for **architecture concepts**, not to become a Google Cloud specialist.
-
-What to extract:
-- GCP GenAI/ML reference architecture patterns;
-- comparison with Azure/OpenShift targets;
-- MLOps platform building blocks;
-- multi-cloud placement implications;
-- portability and provider-lock-in ADRs;
-- inputs for I18 Hybrid/Multi-Cloud AI.
-
-POC policy: no GCP POC unless required by a mission.
-
----
+No GCP POC unless a target mission requires GCP/Vertex AI evidence.
 
 ## 6. The Machine Learning Solutions Architect Handbook — 2nd Edition
 
-Author: David Ping.
+Status: **ARCHITECTURE EXTRACTION COMPLETE**
 
-Important scope restriction: **not a Data Science learning path for us**.
+Repository outputs:
+- `ML-SOLUTIONS-ARCHITECT-HANDBOOK-ALIGNMENT.md`
+- `BANKING-INSURANCE-AI-USE-CASE-MAP.md`
 
-Read only the architecture-relevant sections:
-- ML lifecycle from a Solution Architecture viewpoint;
-- business use cases;
-- enterprise ML architecture;
-- data/platform architecture;
-- MLOps;
-- security, governance and compliance;
-- Generative AI project lifecycle;
-- Generative AI platforms and solutions.
+Architect focus:
+- payments/settlement;
+- fraud/anomaly;
+- AML/trade surveillance;
+- credit;
+- customer service;
+- wealth/advisory;
+- insurance underwriting/claims;
+- regulated AI boundaries.
 
-Skip/deprioritize:
-- algorithm implementation detail;
-- model-training exercises;
-- Data Scientist-oriented hands-on content that does not affect architecture decisions.
-
-What to extract:
-- AI/ML platform capability map;
-- lifecycle responsibilities;
-- governance gates;
-- architecture roles and operating model;
-- GenAI platform requirements;
-- security/compliance requirements.
-
-POC policy: only if an **ML platform / MLOps / AI platform** mission needs proof.
-
----
+Algorithm and AWS lab detail is deliberately deprioritized.
 
 ## 7. Designing Machine Learning Systems — Chip Huyen
 
-Scope: **systems architecture**, not Data Science.
+Status: **ARCHITECTURE EXTRACTION COMPLETE**
 
-Why it matters:
-- business objectives -> system requirements;
-- reliability, scalability, maintainability and adaptability;
-- data distribution shifts;
-- model deployment and prediction services;
-- monitoring;
-- continual learning;
-- production testing;
-- MLOps infrastructure and tooling;
-- responsible AI.
+Repository outputs:
+- `DESIGNING-ML-SYSTEMS-ALIGNMENT.md`
+- `ML-PRODUCTION-MONITORING-DRIFT-LIFECYCLE.md`
 
-What to extract:
-- ML-system NFR model;
-- architecture lifecycle from business objective to production;
-- deployment patterns: shadow, canary, A/B;
-- monitoring/drift architecture;
-- model/platform operational boundaries;
-- mapping to I5/I10/I14/I17.
-
-POC policy: none by default; selected POCs only for MLOps/platform missions.
-
----
-
-# Priority 3 — Data and Distributed Systems Foundations for AI Architects
+Architect focus:
+- reliability/scalability/maintainability/adaptability;
+- batch versus online prediction;
+- drift and delayed labels;
+- retraining governance;
+- shadow/canary/A-B/champion-challenger;
+- production ownership.
 
 ## 8. Designing Data-Intensive Applications — 2nd Edition
 
-Authors: Martin Kleppmann, Chris Riccomini.
+Status: **ARCHITECTURE EXTRACTION COMPLETE**
 
-Publication: 2026.
+Repository outputs:
+- `DESIGNING-DATA-INTENSIVE-APPLICATIONS-ALIGNMENT.md`
+- `AI-DATA-SYSTEMS-ARCHITECTURE-PRINCIPLES.md`
 
-Why it matters to an AI Architect:
-AI systems are still distributed data systems. RAG, agents, event-driven AI, vector indexes, feature pipelines, knowledge ingestion and audit cannot be architected correctly without data-system trade-offs.
+Architect focus:
+- system of record versus derived state;
+- vector/index/cache as derived data;
+- schema evolution;
+- replication/sharding;
+- consistency;
+- partial failures/timeouts;
+- idempotence/exactly-once business effects;
+- batch versus streaming;
+- deletion through derived stores.
 
-Architecture topics to extract:
-- operational vs analytical systems;
-- system of record vs derived data;
-- cloud vs self-hosting;
-- distributed-system failure modes;
-- NFRs;
-- data models;
-- replication and sharding;
-- transactions/consistency;
-- streams/events;
-- batch and distributed processing;
-- data governance implications.
-
-Mapping:
-- I13 knowledge platform;
-- I17 AI Factory data plane;
-- I18 hybrid placement;
-- I19 Kafka/MQ/event-driven AI.
-
-POC policy: no dedicated POC. Reuse MQ/Kafka/RAG/platform evidence.
-
----
+No standalone DDIA POC; reuse MQ/Kafka/RAG/platform evidence.
 
 ## 9. Building Evolutionary Architectures — 2nd Edition
 
-Authors: Neal Ford, Rebecca Parsons, Patrick Kua, Pramod Sadalage.
+Status: **ARCHITECTURE EXTRACTION COMPLETE**
 
-Why it matters:
-AI stacks change rapidly. The architecture must evolve without losing security, cost, reliability or portability.
+Repository outputs:
+- `BUILDING-EVOLUTIONARY-ARCHITECTURES-ALIGNMENT.md`
+- `AI-ARCHITECTURE-FITNESS-FUNCTIONS.md`
 
-What to extract:
+Architect focus:
+- guided incremental change;
 - fitness functions;
-- evolutionary architecture principles;
-- incremental change;
-- architectural characteristics;
-- governance through automated checks;
-- coupling and changeability;
-- architecture transition strategy.
+- continuous/automated governance;
+- reversibility;
+- last responsible moment;
+- provider/model/prompt/index evolution;
+- architecture for testability;
+- bounded coupling and anticorruption layers.
 
-Mapping:
-- I15 Design Authority;
-- I16 governance/policy;
-- I18 provider reversibility;
-- architecture fitness functions for model/provider/prompt/index evolution.
+Automation of fitness functions is demand-driven; the catalog does not imply all checks are implemented.
 
-POC policy: architecture/governance only; no standalone POC.
+## Navigation
 
----
+Use `AI-ARCHITECT-KNOWLEDGE-BASE-INDEX.md` as the primary entry point into the resulting architecture knowledge base.
 
-# Reading order
+## Future-source policy
 
-Recommended order for the architecture program:
+The baseline book program is now closed. A new source is added only when at least one condition is true:
 
-1. `AI Engineering` — **DONE**.
-2. `Solutions Architect's Handbook, 3rd Ed.` — **DONE**.
-3. `Enterprise Generative AI Well-Architected Framework & Patterns` — **DONE**.
-4. `Architecting Generative AI Applications` — **DONE**.
-5. `Google Machine Learning and Generative AI for Solutions Architects` — **NEXT**.
-6. `The Machine Learning Solutions Architect Handbook, 2nd Ed.` — architecture chapters only.
-7. `Designing Machine Learning Systems` — systems/production chapters only.
-8. `Designing Data-Intensive Applications, 2nd Ed.`.
-9. `Building Evolutionary Architectures, 2nd Ed.`.
+1. it addresses a material gap not already covered;
+2. a target mission requires a technology/provider/domain-specific architecture;
+3. a regulation/standard changes materially;
+4. a new architecture paradigm changes enterprise AI design practice;
+5. it provides authoritative evidence needed for an architecture decision.
 
-This order goes from **AI application architecture -> enterprise governance -> production AI -> AI platform/multi-cloud -> ML systems -> data/distributed systems -> evolutionary governance**.
+Do not accumulate books for volume.
 
----
+## Future POC policy
 
-# Extraction rule for every future book
+For any mission/use case:
 
-For each book, create a dedicated alignment document only when we start it. The document must answer:
+1. map requirements to this knowledge base;
+2. reuse existing specialist implementation evidence;
+3. identify the smallest missing evidence;
+4. build only that POC;
+5. test/capture evidence;
+6. update status truthfully;
+7. stop.
 
-1. What architecture concepts are new?
-2. What is already covered by the repository?
-3. What is missing theoretically?
-4. Which ADRs/NFRs/patterns should be added?
-5. Which content is developer/Data Science detail and can be skipped?
-6. Which future POCs become relevant only for a concrete business demand?
-7. Which interview questions should an AI Solution Architect be able to answer after the book?
-
-The objective is **not to accumulate books**. The objective is to turn each selected source into a stronger, coherent AI architecture reference without unnecessary implementation work.
+Architecture/theory may remain `DESIGNED` while runtime proof is intentionally deferred.
