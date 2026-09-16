@@ -124,3 +124,27 @@ Architecture book baseline currently processed:
 `DESIGNED -> IMPLEMENTED -> TESTED -> DEPLOYED -> VERIFIED`
 
 Architecture theory can be complete while runtime evidence remains deferred. Never infer runtime maturity from the presence of a design document.
+
+## 15. `architecteAI` learning-material convergence
+
+The deep learning material in Google Drive remains the pedagogical source. The repository now extracts only the reusable architecture decisions, controls and proof criteria that were missing or too condensed.
+
+Start with:
+
+- `BOOK-TO-REFERENCE-CONVERGENCE.md` — exact gap/convergence matrix.
+- `BOOK-READING-TO-REFERENCE-MAP.md` — reading path from course material to architecture reference.
+- `REFERENCE-DEPTH-MATRIX.md` — current architecture depth versus runtime proof.
+- `BOOK-GAP-IMPLEMENTATION-BACKLOG.md` — demand-driven runtime evidence backlog.
+
+New architecture references extracted from the learning corpus:
+
+- `AI-PLATFORM-PHYSICAL-GPU-ARCHITECTURE.md` — CPU, NUMA, PCIe, GPU/HBM, interconnect, storage, network, power/cooling.
+- `ENTERPRISE-RETRIEVAL-VECTOR-DATABASE-ARCHITECTURE.md` — embeddings, ANN/HNSW/IVF, hybrid search, reranking, ACL, quality and sizing.
+- `RHOAI-PLATFORM-DEEP-DIVE.md` — OpenShift AI Operator, DataScienceCluster, projects, workbenches, pipelines, serving, training and GPU enablement.
+- `DISTRIBUTED-TRAINING-FINETUNING-LIFECYCLE.md` — Kueue/admission, distributed training, checkpoints, SFT/LoRA/QLoRA, registry and promotion.
+- `AI-PLATFORM-HA-DR-MULTICLUSTER.md` — AI-specific state inventory, RPO/RTO, model/RAG/event recovery, failover/failback and split-brain control.
+- `AI-SI-INTEGRATION-CONTRACTS.md` — API/Kafka/MQ/ITSM/CMDB/GitOps integration contracts, identity, idempotency, DLQ/outbox and audit.
+- `AI-FINOPS-GREENOPS-TELEMETRY.md` — GPU/token telemetry, unit economics, energy/carbon methodology and optimization gates.
+- `AI-ZERO-TRUST-SUPPLY-CHAIN-CONTROLS.md` — workload identity, network Zero Trust, SBOM/AI-BOM, signatures, RAG/agent controls and red-team evidence.
+
+These additions are `DESIGNED`. Detailed teaching content stays in the books; executable proof stays in specialist repositories.
