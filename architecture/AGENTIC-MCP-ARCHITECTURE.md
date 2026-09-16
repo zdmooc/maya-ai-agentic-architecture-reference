@@ -1,10 +1,24 @@
 # Agentic AI and MCP Architecture
 
+Status: **REFERENCE ARCHITECTURE — RUNTIME EVIDENCE REUSED FROM `TradeOps-GenAI-Integration`**
+
 ## Current-state finding
 
-`TradeOps-GenAI-Integration` contains a useful agent-controller concept, RAG calls, MCP-like tool dispatch, confidence gating, audit and paper-order flow. The current graph is explicitly a **LangGraph-style** sequential Python state machine implemented without the LangGraph dependency. This is reusable as a behavioral prototype, not evidence of a production agent framework.
+`TradeOps-GenAI-Integration` is now an executable Agentic AI baseline rather than only a behavioral prototype.
 
-The current confidence formula is heuristic. It must not be represented as a calibrated probability.
+The current runtime includes:
+
+- real LangGraph `StateGraph` orchestration pinned to `langgraph==1.2.11`;
+- specialized Market, Technical, Pattern, Macro, Risk and Fusion agents;
+- governed RAG and a versioned knowledge corpus;
+- explicit conflict, stale-data and deterministic risk-veto states;
+- persisted Human-in-the-Loop review/execution lifecycle;
+- governed tool calls with authentication, scopes, allowlists, input validation, rate limits, timeouts, audit correlation and redaction;
+- OpenTelemetry/Prometheus observability and OpenShift/CRC deployment evidence.
+
+The current tool service is deliberately described as an **MCP-shaped governed compatibility boundary**, not as native MCP protocol conformance. It exposes governed HTTP tool operations and reuses the security semantics expected around MCP, but the official MCP SDK/protocol transport is not yet part of the executable baseline. Native MCP conformance therefore remains a targeted implementation gap rather than an already-proven capability.
+
+The confidence/evidence model must still distinguish heuristic scores from calibrated probabilities. No agent score is presented as calibrated probability unless qualification evidence exists.
 
 ## Target agent roles
 
@@ -44,7 +58,7 @@ Every agent output should include:
 
 ```yaml
 agent: string
-status: OK|UNKNOWN|DATA_STALE|CONFLICT|ERROR
+status: OK|UNKNOWN|DATA_STALE|CONFLICT|ERROR|VETO
 conclusion: string
 confidence_type: heuristic|calibrated|none
 confidence: number|null
@@ -55,94 +69,162 @@ evidence:
 assumptions: []
 conflicts: []
 correlation_id: string
+autonomy_level: L0|L1|L2|L3|L4
+human_approval_required: boolean
 ```
+
+Autonomy policy is defined in `enterprise/AGENT-AUTONOMY-HITL-MODEL.md`.
 
 ## Orchestration choice
 
-### Baseline candidate: LangGraph
+### Baseline: LangGraph
 
-Use for explicit state, durable workflows, checkpoints and controlled branching after an ADR and small proof of concept. The implementation must use the real framework if the repository claims LangGraph.
+The executable baseline now uses the real LangGraph framework for explicit state and controlled orchestration. Durable production workflows, checkpoint persistence and advanced branching remain subject to use-case-specific ADRs and runtime evidence.
 
 ### Alternative: Microsoft Agent Framework
 
 Evaluate as an enterprise/Microsoft ecosystem alternative, especially when Azure/Foundry integration and .NET/Python interoperability matter. Do not introduce two agent frameworks into the executable baseline without a demonstrated need.
 
+## MCP target architecture
+
+```text
+User / Service identity
+        |
+        v
+API / AI Gateway
+        |
+        v
+Agent Runtime / MCP Client
+        |
+        v
+MCP Gateway / policy enforcement
+        |
+   +----+------------------+
+   |         |             |
+   v         v             v
+MCP Server  MCP Server    MCP Server
+OpenShift   Payments/MQ   Knowledge/CMDB
+   |         |             |
+   +---------+-------------+
+             |
+             v
+      Enterprise systems
+```
+
+Native MCP implementation must preserve the security boundary already proven by the governed tool service. Protocol adoption must not weaken authorization or introduce a generic privileged execution channel.
+
 ## MCP domains
 
-### MCP-IG / Market Connectivity
+### MCP-Platform / OpenShift
 
-Read-only in initial phases:
+Initial read-only capabilities:
 
-- `get_price`
-- `get_candles`
-- `get_spread`
-- `get_market_status`
+- `get_pods`
+- `get_deployment_status`
+- `get_logs`
+- `get_metrics`
+- `get_events`
 
-### MCP-MarketData
+Sensitive operations such as `restart_deployment` require explicit policy and HITL.
 
-- `get_vix`
-- `get_dxy`
-- `get_us10y`
-- `get_breadth`
+### MCP-Payments / IBM MQ
 
-### MCP-Macro
+- `get_queue_depth`
+- `get_channel_status`
+- `get_dlq_summary`
+- `get_payment_status`
+- `get_processing_health`
 
-- `get_calendar`
-- `get_event`
-- `get_consensus`
+Mutation/replay/remediation operations are separate tools with stronger scopes and approval requirements.
 
-### MCP-TradingDB
+### MCP-Knowledge / CMDB
 
-- `save_signal`
-- `get_signal_history`
-- `get_similar_setups`
-- `get_statistics`
+- `search_runbook`
+- `get_architecture_document`
+- `get_application`
+- `get_dependencies`
+- `get_owner`
 
-### MCP-Backtest
+### Existing market/trading domains
 
-- `run_backtest`
-- `get_backtest_result`
+The reusable executable baseline also contains market-oriented tool domains such as price/market data, macro evidence, trading history and backtest lookup. These remain domain-specific examples rather than the target enterprise mission itself.
 
 ## MCP security controls
 
-Every tool has:
+Every tool must have:
 
 - authenticated caller identity;
+- end-to-end identity/claim propagation or explicit workload delegation;
 - scoped authorization;
 - explicit allowlist;
 - typed input schema and bounds;
 - output schema and redaction;
 - timeout and cancellation;
-- rate limit;
-- correlation ID;
+- rate limit and budget limit where applicable;
+- correlation/trace ID;
 - immutable/auditable call record;
 - network egress restrictions;
+- autonomy-level classification;
 - HITL for sensitive actions.
 
-Never expose arbitrary shell execution, unrestricted SQL, deployment mutation or real-money order placement to a general-purpose agent.
+Identity propagation is detailed in `enterprise/IDENTITY-PROPAGATION-MCP-IAM.md`.
 
-## Paper-order boundary
+Never expose arbitrary shell execution, unrestricted SQL, unrestricted Kubernetes mutation, secret-store browsing or payment execution to a general-purpose agent.
 
-If `oms.place_order` exists during development, it is explicitly named and enforced as paper/simulated. A later live connector requires a separate namespace/tool identity, policy set and ADR; it must not be enabled by changing a configuration flag on the same unrestricted tool.
+## Human approval boundary
+
+A human approval decision is an authorization event, not merely a boolean supplied by the LLM.
+
+For sensitive actions the expected chain is:
+
+```text
+Agent recommendation
+ -> deterministic policy evaluation
+ -> approval request
+ -> authenticated reviewer decision
+ -> short-lived execution authorization
+ -> MCP tool call
+ -> audit/evidence
+```
+
+The agent cannot self-promote its autonomy level, mint reviewer identity or waive required approval.
 
 ## RAG architecture
 
-Use RAG for evidence retrieval—not for market-price truth. Candidate corpora:
+Use RAG for governed evidence retrieval—not as a substitute for Systems of Record.
 
-- risk policies;
-- strategy specifications;
-- pattern definitions;
-- ADRs and runbooks;
-- prior signal/trade evidence;
+Candidate corpora:
+
+- risk and security policies;
+- payment-platform architecture;
+- runbooks and operating procedures;
+- ADRs and technical standards;
+- CMDB/service metadata snapshots where appropriate;
 - postmortems;
-- model cards and evaluation reports.
+- model cards and evaluation reports;
+- strategy specifications and prior evidence in domain-specific demonstrations.
 
-Every answer used in a decision must preserve document IDs/versions and retrieval citations.
+Every answer used in a decision must preserve document IDs/versions and retrieval citations. Entitlement filtering must occur before unauthorized content enters model context.
 
 ## Failure behavior
 
 - RAG unavailable -> continue only with capabilities that do not require it and mark context incomplete;
-- MCP tool unavailable -> ERROR/UNKNOWN, not invented output;
-- stale market data -> DATA_STALE and no entry permission;
-- conflicting evidence -> CONFLICT and deterministic escalation policy;
-- risk veto -> terminal VETO regardless of agent confidence.
+- MCP tool unavailable -> `ERROR/UNKNOWN`, never invented output;
+- missing/expired identity -> fail closed;
+- authorization ambiguity -> deny;
+- stale operational data -> `DATA_STALE` and block sensitive remediation;
+- conflicting evidence -> `CONFLICT` and deterministic escalation policy;
+- risk/security veto -> terminal `VETO` regardless of agent confidence;
+- approval service unavailable -> no sensitive execution.
+
+## Evidence and claim discipline
+
+Current executable evidence may be reused from `TradeOps-GenAI-Integration` for real LangGraph orchestration, governed RAG, HITL, security controls, observability and OpenShift deployment.
+
+Do not claim until separately evidenced:
+
+- native MCP protocol conformance/Streamable HTTP deployment;
+- production enterprise IAM federation;
+- payment/OpenShift MCP servers executing against production systems;
+- unrestricted autonomous remediation;
+- production-scale RAG corpus or GPU platform performance.
