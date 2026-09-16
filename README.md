@@ -15,6 +15,23 @@ The program extends toward a broader **Enterprise AI Architecture / AI Platform 
 - [Target architecture](architecture/TARGET-ARCHITECTURE.md)
 - [Roadmap / evidence status](ROADMAP.md)
 
+## Agentic AI Solution Architect mission pack
+
+The repository now includes a focused mission-alignment layer for senior **Enterprise Agentic AI Solution Architect** work without duplicating the executable runtime.
+
+Start with:
+
+- [Mission capability coverage](enterprise/AGENTIC-AI-MISSION-COVERAGE.md)
+- [Focused mission roadmap M1-M4 + runtime backlog](enterprise/AGENTIC-AI-MISSION-ROADMAP.md)
+- [Updated Agentic AI / MCP architecture](architecture/AGENTIC-MCP-ARCHITECTURE.md)
+- [Agent autonomy L0-L4 and HITL model](enterprise/AGENT-AUTONOMY-HITL-MODEL.md)
+- [IAM / identity propagation across Agent and MCP](enterprise/IDENTITY-PROPAGATION-MCP-IAM.md)
+- [EU/France regulatory control mapping — AI Act / GDPR / NIS2-OSE](enterprise/REGULATORY-CONTROL-MAPPING-EU-FR.md)
+- [Architecture committee pack](committee-pack/README.md)
+- [End-to-end Agentic Payment Operations demonstration](committee-pack/06-DEMONSTRATION-SCENARIO.md)
+
+Architecture coverage M1-M4 is complete at `DESIGNED` level. Native MCP, enterprise IAM federation, payment/OpenShift MCP adapters, enterprise RAG ACL transposition and final runtime demonstration remain explicit implementation/evidence work rather than hidden architecture gaps.
+
 ## Scope
 
 This repository is intentionally an **architecture and evidence hub**, not a second implementation repository.
@@ -108,6 +125,8 @@ A new source is added only when it closes a real architecture gap, supports a ta
 ## Current maturity and evidence rule
 
 Detailed implementation/evidence status for I0-I12 is maintained in [`ROADMAP.md`](ROADMAP.md) and versioned evidence under [`evidence/`](evidence/).
+
+The focused Agentic AI mission-alignment workstream is maintained in [`enterprise/AGENTIC-AI-MISSION-ROADMAP.md`](enterprise/AGENTIC-AI-MISSION-ROADMAP.md) so the core I0-I20 numbering remains stable.
 
 For architecture/theory versus runtime proof, always distinguish:
 
