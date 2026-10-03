@@ -113,3 +113,22 @@ No universal product is mandated.
 - **Managed gateway:** valid when cloud/provider constraints make it the best trade-off.
 
 Any product selection must produce an ADR and runtime evidence before being described as implemented.
+
+## 8. D-090 executable lab decision
+
+For the D-090 portfolio wave, the first executable lab selects:
+
+```text
+Shared Keycloak/RHBK -> Kong -> LiteLLM -> approved model
+```
+
+This is a **lab decision**, not a universal product mandate.
+
+- Kong is the AuthN/AuthZ/JWT boundary, reusing the already-proven API Management pattern.
+- LiteLLM is the `DEDICATED_FOR_TEST` AI routing/model-policy layer for G1-G4.
+- consumer identity is derived server-side from authenticated identity; client-supplied consumer headers are not trusted.
+- TradeOps temporarily hosts the AI Access lab until the G5 platformization decision.
+- ODM is the required second consumer before extraction is considered.
+- Envoy AI Gateway and managed-cloud alternatives remain valid G5 options.
+
+Reference: [ADR-026](ADR-026-TRADEOPS-AI-ACCESS-LAB.md).
