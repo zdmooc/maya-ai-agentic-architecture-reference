@@ -93,3 +93,23 @@ Do not infer from this pack:
 - production IAM federation;
 - production-scale RAG/GPU benchmarks;
 - regulatory certification or legal compliance.
+
+## D-092 enterprise platform decisions
+
+For an enterprise-scale agentic platform, the committee must additionally decide:
+
+1. who owns the Agent Registry and lifecycle process;
+2. which identity is assigned to each agent/workload;
+3. which MCP servers/tools and A2A peers may be discovered/called;
+4. maximum delegation depth, task/time/token/cost budgets and kill-switch authority;
+5. tenancy/isolation model for runtime, data, memory, observability and cost;
+6. whether the target is internal/OpenShift, managed cloud, code-first + managed primitives, or hybrid;
+7. which portability and exit constraints are mandatory;
+8. which evidence is required before promoting from single consumer to shared/multi-tenant platform.
+
+Current reference position:
+- do not extract a generic platform for one POC;
+- prove governed reuse with at least a second consumer;
+- keep protocols/contracts portable where business/regulatory NFRs require reversibility;
+- treat agent identity, registry and lifecycle as control-plane capabilities, not application afterthoughts.
+
