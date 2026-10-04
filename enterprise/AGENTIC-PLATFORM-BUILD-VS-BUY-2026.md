@@ -158,7 +158,7 @@ Source:
 
 ### A2A
 
-A2A provides cross-framework/vendor agent interoperability through Agent Cards, tasks/messages/artifacts and standardized transports.
+A2A provides cross-framework/vendor agent interoperability through Agent Cards, tasks/messages/artifacts and standardized transports. On 2026-10-04, the latest specification release observed is 1.0.1; the v1 wire protocol is 1.0, and the TradeOps executable baseline pins Python SDK 1.1.5.
 
 Source:
 - https://a2a-protocol.org/latest/
