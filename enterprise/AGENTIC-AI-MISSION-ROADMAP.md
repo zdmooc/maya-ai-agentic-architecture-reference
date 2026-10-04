@@ -157,3 +157,49 @@ Run the committee-pack demonstration scenario and capture:
 ## Claim discipline
 
 M1-M4 being complete means **architecture coverage is complete for the target mission**. It does not mean R1-R5 are implemented or that the portfolio represents client production experience.
+
+## D-092 extension track — M1-M5 COMPLETE
+
+This extension is separate from the original M1-M4 mission-alignment numbering above.
+
+### D092-M1 — Agent Registry & Lifecycle — COMPLETE / DESIGNED
+File:
+- `enterprise/AGENT-REGISTRY-LIFECYCLE-GOVERNANCE.md`
+
+### D092-M2 — MCP + A2A interoperability — COMPLETE / DESIGNED
+File:
+- `architecture/AGENTIC-INTEROPERABILITY-MCP-A2A.md`
+
+### D092-M3 — Scalability / Multi-tenancy — COMPLETE / DESIGNED
+File:
+- `enterprise/AGENTIC-PLATFORM-SCALABILITY-MULTITENANCY.md`
+
+### D092-M4 — Build vs Buy / Hybrid — COMPLETE / DESIGNED
+File:
+- `enterprise/AGENTIC-PLATFORM-BUILD-VS-BUY-2026.md`
+
+### D092-M5 — Mission / Committee Pack refresh — COMPLETE / DESIGNED
+Updated:
+- `committee-pack/README.md`
+- `committee-pack/01-EXECUTIVE-SUMMARY.md`
+- `committee-pack/02-TARGET-ARCHITECTURE-AND-OPTIONS.md`
+- `committee-pack/04-PRODUCTION-READINESS.md`
+- `committee-pack/05-DECISION-MEMO-TEMPLATE.md`
+- `committee-pack/06-DEMONSTRATION-SCENARIO.md`
+
+### Next runtime gates
+
+Architecture completion does not supersede D-090.
+
+```text
+G0 CLOSED
+ -> G1 TradeOps -> Kong -> LiteLLM -> real model
+ -> G2 governed single consumer
+ -> targeted A2A runtime proof
+ -> G3 ODM second consumer
+ -> G4 cross-consumer isolation
+ -> G5 platformization decision
+```
+
+D-094 async AI/TaskIQ/RabbitMQ/KEDA runtime work is queued behind G1/G2 and should reuse the same governed real-model path.
+
