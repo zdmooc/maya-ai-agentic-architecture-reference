@@ -95,17 +95,28 @@ After M1-M4, the reference repository covers the architecture domains expected f
 
 The following are implementation/evidence work and must remain separate from the completed architecture alignment:
 
-### R1 — Native MCP protocol
+### R1 — Native MCP protocol — IMPLEMENTED + TESTED IN CI / R5 LIVE CRC PENDING
 
-Implement a real MCP client/server transport using the selected current standard/SDK while preserving the existing governed-tool authorization controls.
+TradeOps now contains a native MCP client/server implementation and R1-R4 CI evidence covering protocol host, security controls, tool contracts and negative authorization.
 
-Evidence required:
+Remaining live evidence:
+- R5 `TradeOps -> native MCP -> mq-ops-api -> IBM MQ` on CRC;
+- actual local evidence bundle with `R5_CRC_MCP_MQ_VERIFY_PASS`;
+- no production claim from this lab.
 
-- protocol interoperability test;
-- authenticated/authorized tool discovery and calls;
-- transport failure behavior;
-- audit/correlation propagation;
-- negative authorization tests.
+### D092-R3 — A2A executable baseline — IMPLEMENTED + TESTED IN CI / LIVE PENDING
+
+TradeOps now packages `a2a-sdk==1.1.5` with an Operations Agent exposing bounded payment/MQ diagnostic skills and reusing the native MCP client.
+
+CI run `37219263119` passed the full 278-test suite plus D-092 validator and Helm render.
+
+Still required before runtime claim:
+- live two-agent execution;
+- authenticated peer identity;
+- Agent Card discovery;
+- unauthorized peer/skill denial over live transport;
+- cancellation/failure evidence;
+- correlated A2A -> MCP trace.
 
 ### R2 — Enterprise IAM federation
 
