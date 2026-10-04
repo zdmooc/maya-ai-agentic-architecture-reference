@@ -114,3 +114,25 @@ Architecture coverage is considered complete when:
 7. architecture decisions have ADR/risk/NFR/operability views;
 8. executive/committee material can be produced without rebuilding the technical analysis;
 9. implementation status remains distinguished from design and production experience.
+
+## 6. D-092 enterprise platform extension — 2026-10-04
+
+The original mission coverage remains valid. D-092 closes four additional enterprise-platform architecture gaps revealed by a newer senior Agentic AI Platform mission.
+
+| D-092 requirement | Architecture owner | Status |
+|---|---|---|
+| Agent registry, ownership and lifecycle | `AGENT-REGISTRY-LIFECYCLE-GOVERNANCE.md` | DESIGNED |
+| MCP vs A2A interoperability | `architecture/AGENTIC-INTEROPERABILITY-MCP-A2A.md` | DESIGNED |
+| Fleet scalability / multi-tenancy | `AGENTIC-PLATFORM-SCALABILITY-MULTITENANCY.md` | DESIGNED |
+| Build vs buy / managed vs internal / hybrid | `AGENTIC-PLATFORM-BUILD-VS-BUY-2026.md` | DESIGNED |
+| Committee decision material | `committee-pack/` | REFRESHED |
+
+New truth boundaries:
+
+- Agent Registry governance is designed; no enterprise registry runtime is claimed.
+- A2A is explicitly designed; runtime interoperability remains `NOT_PROVEN`.
+- MCP 2026-07-28 is the current architecture reference; native protocol runtime remains separate evidence.
+- production-scale agent-fleet multi-tenancy remains `NOT_PROVEN`.
+- vendor capabilities are dated source snapshots, not portfolio implementation claims.
+- D-090 G1/G2 remain the next runtime AI-access/governance gates.
+
