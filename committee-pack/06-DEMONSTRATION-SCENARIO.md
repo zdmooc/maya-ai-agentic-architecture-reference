@@ -148,3 +148,67 @@ The demonstration does not claim:
 - production-native MCP unless the protocol implementation is actually tested;
 - production enterprise IAM federation unless evidenced;
 - business gains before measured pilot results.
+
+## D-092 interoperability extension — A2A -> MCP
+
+Target follow-up demonstration:
+
+```text
+Operator
+   |
+   v
+Investigation Agent
+   |
+   | A2A authenticated task
+   v
+Operations Agent
+   |
+   | MCP governed tools
+   +--> openshift.get_metrics
+   +--> mq.get_queue_depth
+   +--> cmdb.get_dependencies
+   |
+   v
+Evidence / recommendation
+   |
+   | A2A artifact/result
+   v
+Investigation Agent
+   |
+   v
+Operator
+```
+
+Sensitive remediation remains:
+
+```text
+A2A delegated task
+ -> Operations Agent
+ -> policy evaluation
+ -> L2 HUMAN_APPROVAL_REQUIRED
+ -> separate reviewer identity
+ -> MCP bounded mutation
+ -> target verification
+ -> A2A result
+ -> end-to-end audit
+```
+
+### Additional evidence required
+
+1. Investigation and Operations agents have distinct workload identities.
+2. Operations Agent exposes a validated Agent Card / discovery contract.
+3. Investigation Agent can invoke only approved skills.
+4. an unauthorized peer/skill request is denied.
+5. task timeout/cancellation is demonstrated.
+6. remote agent output is treated as untrusted input.
+7. Operations Agent independently authorizes its MCP calls.
+8. correlation links user -> Agent A -> Agent B -> MCP tool -> target.
+9. agent/protocol versions are captured in evidence.
+10. tool mutation still requires HITL according to autonomy policy.
+
+### Status
+
+This section is a **DESIGNED demonstration extension**.
+
+Do not claim `A2A_RUNTIME_INTEROPERABILITY` until these steps are actually implemented and executed.
+
