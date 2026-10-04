@@ -96,3 +96,27 @@ Production approval should be blocked when any material condition applies:
 - recovery/rollback evidence;
 - regulatory applicability/control mapping;
 - residual-risk acceptance records.
+
+## 8. D-092 registry and A2A threat extension
+
+Additional platform-scale threats:
+
+| Threat | Required response |
+|---|---|
+| rogue/impersonated agent | stable workload identity, authenticated registry, peer allowlist |
+| registry/Agent Card poisoning | controlled publishing/review, provenance, authenticated discovery, schema validation |
+| delegation abuse/confused deputy | non-transitive authorization, caller+remote agent identity, tenant/resource binding |
+| cross-agent prompt injection | remote messages/artifacts are untrusted input; deterministic policy remains authoritative |
+| recursive delegation/task storm | max depth/fan-out/time/token/cost, cancellation and circuit breakers |
+| protocol/version skew | versioned contracts, compatibility tests, canary and deprecation policy |
+| cross-tenant memory/state leakage | partitioned state/memory/cache plus negative isolation tests |
+
+Security review must cover both boundaries:
+
+```text
+Agent -> A2A -> Agent
+Agent -> MCP -> Tool/System
+```
+
+An authenticated A2A peer does not inherit authorization to downstream MCP tools. The receiving agent must re-authorize every sensitive downstream action.
+
