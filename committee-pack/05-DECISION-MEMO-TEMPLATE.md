@@ -126,3 +126,61 @@ review_date: YYYY-MM-DD
 linked_adrs: []
 linked_evidence: []
 ```
+
+## Platform sourcing decision — D-092 extension
+
+When the committee is deciding platform strategy rather than only a use case, add:
+
+### Scope requested
+
+```yaml
+platform_scope: APPLICATION|SHARED_CAPABILITY|ENTERPRISE_PLATFORM
+target_consumers: []
+tenancy_model: string
+registry_owner: string
+lifecycle_owner: string
+```
+
+### Interoperability
+
+```yaml
+mcp_required: true|false
+mcp_reference_version: string
+a2a_required: true|false
+a2a_reference_version: string
+approved_a2a_trust_domains: []
+max_delegation_depth: number
+```
+
+### Sourcing options
+
+| Option | Decision evidence |
+|---|---|
+| internal/OpenShift | control, residency, operations, private serving, portability |
+| managed cloud | managed runtime/identity/registry/tooling, region/security/cost |
+| code-first + managed primitives | orchestration portability vs integration burden |
+| hybrid | placement policy, identity federation, protocol/exit contracts |
+
+Use `enterprise/AGENTIC-PLATFORM-BUILD-VS-BUY-2026.md` as the dated option framework.
+
+### Platformization evidence
+
+Before approving extraction/shared platform:
+
+- first consumer runtime proven;
+- second consumer real, not hypothetical;
+- identity/policy separation;
+- cross-consumer negative tests;
+- operational owner;
+- measured cost/operability;
+- exit/reversibility plan.
+
+### Decision
+
+```yaml
+platform_decision: KEEP_IN_PRODUCT|EXTRACT_INTERNAL|MANAGED|HYBRID|DEFER
+rationale: string
+mandatory_conditions: []
+revisit_trigger: string
+```
+
