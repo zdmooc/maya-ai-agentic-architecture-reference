@@ -32,6 +32,20 @@ Start with:
 
 Architecture coverage M1-M4 is complete at `DESIGNED` level. Native MCP, enterprise IAM federation, payment/OpenShift MCP adapters, enterprise RAG ACL transposition and final runtime demonstration remain explicit implementation/evidence work rather than hidden architecture gaps.
 
+## D-092 — Enterprise Agentic AI Platform extension — 2026-10-04
+
+The portfolio mission signal for senior Agentic AI Platform Architecture adds five focused deliverables without creating another generic AI platform repository:
+
+1. [Agent Registry & Lifecycle Governance](enterprise/AGENT-REGISTRY-LIFECYCLE-GOVERNANCE.md)
+2. [MCP + A2A interoperability](architecture/AGENTIC-INTEROPERABILITY-MCP-A2A.md)
+3. [Agentic Platform Scalability & Multi-tenancy](enterprise/AGENTIC-PLATFORM-SCALABILITY-MULTITENANCY.md)
+4. [Agentic Platform Build vs Buy / Hybrid — 2026](enterprise/AGENTIC-PLATFORM-BUILD-VS-BUY-2026.md)
+5. refreshed committee/mission decision material under [committee-pack](committee-pack/README.md)
+
+Status: **D-092 M1-M5 DESIGNED / ARCHITECTURE COMPLETE**.
+
+Runtime evidence remains separate. A2A interoperability, native MCP conformance, production-scale multi-tenancy and managed-cloud agent platforms are not claimed deployed by this architecture work.
+
 ## Scope
 
 This repository is intentionally an **architecture and evidence hub**, not a second implementation repository.
