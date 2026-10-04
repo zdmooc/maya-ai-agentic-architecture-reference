@@ -134,3 +134,60 @@ Before moving beyond design:
 - evaluation/evidence plan defined;
 - operating ownership established;
 - residual risks accepted by authorized owners.
+
+## 6. D-092 platform-scale extension
+
+### Registry and lifecycle
+
+```text
+Agent Registry / Lifecycle
+ -> owner / identity / version / risk / autonomy
+ -> model/tool/data policy
+ -> evaluation/approval
+ -> deploy/observe
+ -> suspend/kill/retire
+```
+
+Reference: `enterprise/AGENT-REGISTRY-LIFECYCLE-GOVERNANCE.md`.
+
+### MCP and A2A
+
+```text
+Agent -> MCP -> Tools / Data / Systems
+Agent -> A2A -> Other Agents
+```
+
+Reference: `architecture/AGENTIC-INTEROPERABILITY-MCP-A2A.md`.
+
+### Scale / tenancy
+
+The architecture must separate identity, runtime, data/RAG, memory/state, model quota, tool entitlement, observability and billing tenancy.
+
+Reference: `enterprise/AGENTIC-PLATFORM-SCALABILITY-MULTITENANCY.md`.
+
+### Build vs buy
+
+Options:
+- Internal / OpenShift-heavy;
+- Microsoft Foundry Agent Service;
+- Google Vertex AI Agent Builder / Agent Engine;
+- Amazon Bedrock AgentCore;
+- code-first framework + managed primitives;
+- hybrid.
+
+No universal winner is selected. The decision uses security/IAM, residency, interoperability, isolation, SRE burden, cost, portability and exit criteria.
+
+Reference: `enterprise/AGENTIC-PLATFORM-BUILD-VS-BUY-2026.md`.
+
+### Platformization gate
+
+```text
+single consumer
+ -> governed evidence
+ -> second consumer
+ -> cross-consumer isolation
+ -> G5 build/buy/extract/hybrid ADR
+```
+
+Do not approve a generic platform extraction solely from architecture completeness.
+
