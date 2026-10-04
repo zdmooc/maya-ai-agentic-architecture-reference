@@ -39,6 +39,13 @@ Purpose: provide a reusable risk baseline for AI Solution Architecture reviews. 
 | R-31 | Event duplicate/replay causes duplicate action | Payment/ops impact | idempotence, correlation/causation IDs, DLQ/backout, replay controls | Mitigate |
 | R-32 | Misleading sustainability claim | Governance/reputation risk | declared methodology, measured-vs-estimated labels, auditable inputs | Avoid |
 
+| R-33 | Agent impersonation / rogue agent | Unauthorized delegation/action | stable workload identity, authenticated registry, peer allowlist, signed metadata where supported, audit | Avoid/Mitigate |
+| R-34 | Agent registry poisoning / malicious capability metadata | Wrong agent selected, credential/data exposure | controlled publishing/review, provenance, authenticated discovery, schema validation, approval workflow | Avoid/Mitigate |
+| R-35 | Delegation abuse / confused deputy across A2A | Privilege escalation, cross-domain action | non-transitive authZ, caller+remote workload identity, skill allowlists, tenant/resource binding, max delegation depth | Avoid/Mitigate |
+| R-36 | Cross-agent prompt injection / malicious artifact | Remote agent manipulates peer or downstream tool use | treat remote output as untrusted input, schema/content validation, deterministic policy, no auth from natural language | Mitigate |
+| R-37 | Recursive A2A task storm | Cost/capacity outage | fan-out/depth/time/token budgets, queue/backpressure, cancellation, circuit breakers | Mitigate |
+| R-38 | Agent version/protocol skew | Failed or unsafe interoperability | versioned Agent Cards/contracts, compatibility tests, deprecation policy, canary/rollback | Mitigate |
+
 ## Risk scoring
 
 Suggested qualitative scale:
