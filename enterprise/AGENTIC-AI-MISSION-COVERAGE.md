@@ -14,7 +14,7 @@ This document does not turn architecture design into production experience. Runt
 | Multi-agent orchestration and explicit state | Agent roles, LangGraph baseline, conflict/veto contracts | `TradeOps-GenAI-Integration` | Keep runtime evidence current |
 | Human-in-the-Loop | I7 lifecycle, approval boundary, policy-as-code | `TradeOps-GenAI-Integration` + this repository | Apply autonomy matrix per tool |
 | Levels of autonomy | Dedicated L0-L4 model | This repository | Validate with client risk appetite |
-| MCP/tool architecture | MCP target architecture, governed tool boundary, security controls | This repository + runtime MCP-shaped boundary | Native MCP protocol implementation remains separate evidence item |
+| MCP/tool architecture | MCP target architecture, governed tool boundary, security controls | This repository + TradeOps native MCP | native MCP R1-R4 TESTED IN CI ; R5 live CRC -> IBM MQ still PENDING |
 | API Management / AI Gateway | Gateway options, control plane, API Management reuse | `mayabank-api-management-architecture` | Select product/implementation by client context |
 | IAM / least privilege | AuthN/AuthZ, scoped tools, ACL-before-context, OIDC-compatible runtime | Runtime + this repository | Production federation evidence not claimed |
 | Identity propagation | End-to-end delegation/claim pattern | Dedicated identity document | Implement with chosen IAM/gateway stack |
@@ -94,7 +94,7 @@ The mission narrative is therefore:
 The following must not be claimed merely because they are designed here:
 
 - two years of client production GenAI experience;
-- production native MCP deployment unless protocol-conformance evidence exists;
+- production/native-MCP live deployment beyond the currently evidenced scope; TradeOps R1-R4 are TESTED IN CI while R5 live CRC -> IBM MQ remains pending;
 - production-scale enterprise corpus performance;
 - production federated IAM deployment;
 - live GPU benchmark/capacity results;
@@ -130,8 +130,8 @@ The original mission coverage remains valid. D-092 closes four additional enterp
 New truth boundaries:
 
 - Agent Registry governance is designed; no enterprise registry runtime is claimed.
-- A2A is explicitly designed; runtime interoperability remains `NOT_PROVEN`.
-- MCP 2026-07-28 is the current architecture reference; native protocol runtime remains separate evidence.
+- A2A architecture is designed and a TradeOps SDK baseline is now IMPLEMENTED + TESTED IN CI; live authenticated interoperability remains `NOT_PROVEN`.
+- MCP 2026-07-28 is the current architecture reference; TradeOps native MCP is implemented/tested in CI, while the dedicated R5 live CRC -> IBM MQ proof remains pending.
 - production-scale agent-fleet multi-tenancy remains `NOT_PROVEN`.
 - vendor capabilities are dated source snapshots, not portfolio implementation claims.
 - D-090 G1/G2 remain the next runtime AI-access/governance gates.
