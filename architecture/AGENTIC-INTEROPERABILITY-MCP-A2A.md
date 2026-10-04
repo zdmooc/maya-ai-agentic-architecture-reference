@@ -34,7 +34,7 @@ Enterprise implication: MCP servers can be treated more like horizontally scalab
 
 ### A2A
 
-Reference baseline: **A2A 1.0.0** as the latest released version observed on 2026-10-04.
+Reference baseline observed on 2026-10-04: **A2A specification release 1.0.1**, wire protocol version **1.0**, Python SDK baseline **a2a-sdk 1.1.5**.
 
 A2A provides a standard for discovering agent capabilities and exchanging messages/tasks/artifacts between independent agents without exposing their internal state or tools.
 
@@ -250,3 +250,29 @@ Runtime A2A claim requires:
 8. version/interoperability test.
 
 Until then: **A2A_RUNTIME_INTEROPERABILITY = NOT_PROVEN**.
+
+## 13. Portfolio implementation update — 2026-10-04
+
+`TradeOps-GenAI-Integration` now contains an implemented A2A Payment Operations baseline:
+
+```text
+Investigation Agent
+ -> A2A JSON-RPC
+ -> Payment Operations Agent
+ -> native MCP client
+ -> bounded IBM MQ read tools
+```
+
+Evidence state:
+- A2A SDK/server/client-side policy baseline = **IMPLEMENTED + TESTED IN CI** ;
+- CI run `37219263119` = SUCCESS ;
+- complete TradeOps suite = **278 passed** ;
+- unknown peer and unauthorized skill negative tests = PASS ;
+- Agent Card / HTTP packaging validators = PASS ;
+- live A2A peer authentication/interoperability = **PENDING** ;
+- native MCP R1-R4 = **TESTED IN CI** ;
+- native MCP R5 -> IBM MQ live CRC = **PENDING** until the local R5 evidence bundle exists.
+
+Therefore:
+`A2A_RUNTIME_INTEROPERABILITY = NOT_PROVEN` remains correct.
+
