@@ -228,3 +228,26 @@ Do not claim until separately evidenced:
 - payment/OpenShift MCP servers executing against production systems;
 - unrestricted autonomous remediation;
 - production-scale RAG corpus or GPU platform performance.
+
+## MCP + A2A interoperability boundary
+
+D-092 adds a distinct inter-agent boundary:
+
+```text
+Agent -> MCP -> tools/data/systems
+Agent -> A2A -> independent agent
+```
+
+MCP remains the governed tool/resource integration protocol. A2A covers discovery and task/message/artifact exchange between independent agents.
+
+The detailed architecture is maintained in:
+`architecture/AGENTIC-INTEROPERABILITY-MCP-A2A.md`.
+
+Current reference baselines on 2026-10-04:
+- MCP specification: `2026-07-28`;
+- A2A latest released version observed: `1.0.0`.
+
+A2A adoption must preserve workload identity, peer allowlists, delegation controls, data classification, max delegation depth, time/token/cost budgets, cancellation, audit and fail-closed semantics.
+
+**A2A_RUNTIME_INTEROPERABILITY remains NOT_PROVEN.**
+
