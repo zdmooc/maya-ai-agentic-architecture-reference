@@ -141,3 +141,55 @@ technical_owner: string
 security_owner: string
 approval_date: string
 ```
+
+## 9. D-092 platform-scale readiness
+
+Before calling the solution a shared or multi-tenant Agentic AI platform, require evidence for:
+
+### Registry/lifecycle
+- agent registered with named owners;
+- stable workload identity;
+- approved risk/autonomy classification;
+- version/change history;
+- suspend/kill/retire path;
+- tool/A2A entitlement records.
+
+### A2A
+- two independently versioned agents;
+- validated discovery/Agent Card;
+- authenticated task/message exchange;
+- denied unauthorized peer/skill;
+- timeout/cancel/failure behavior;
+- correlated trace and audit;
+- downstream MCP call re-authorized by the receiving agent.
+
+### Multi-tenancy
+- distinct tenant identities;
+- data/RAG isolation;
+- state/memory/cache isolation;
+- quota/budget isolation;
+- tool entitlement isolation;
+- cross-tenant negative tests;
+- telemetry separation.
+
+### Fleet operations
+- canary/rollback;
+- bulk quarantine/kill;
+- protocol/version compatibility;
+- cost/showback;
+- high-cardinality telemetry controls;
+- representative capacity/load evidence.
+
+### Scope claims
+
+Allowed only with matching evidence:
+
+```text
+DESIGNED × SINGLE_CONSUMER
+IMPLEMENTED/TESTED × SINGLE_CONSUMER
+VERIFIED × SHARED
+VERIFIED × MULTI_TENANT_PROVEN
+```
+
+Architecture documentation alone cannot promote the scope to `SHARED` or `MULTI_TENANT_PROVEN`.
+
