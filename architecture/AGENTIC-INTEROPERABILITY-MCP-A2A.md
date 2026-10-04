@@ -34,7 +34,7 @@ Enterprise implication: MCP servers can be treated more like horizontally scalab
 
 ### A2A
 
-Reference baseline observed on 2026-10-04: **A2A specification release 1.0.1**, wire protocol version **1.0**, Python SDK baseline **a2a-sdk 1.1.5**.
+Reference baseline observed on 2026-10-04: **A2A specification release 1.0.1**, wire protocol version **1.0**, Python SDK baseline **a2a-sdk 1.2.1**.
 
 A2A provides a standard for discovering agent capabilities and exchanging messages/tasks/artifacts between independent agents without exposing their internal state or tools.
 
