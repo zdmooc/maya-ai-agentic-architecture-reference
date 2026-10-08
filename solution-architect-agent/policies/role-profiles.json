@@ -1,0 +1,66 @@
+{
+  "version": "D099-AA2-v1",
+  "status": "DESIGNED_NOT_ENFORCED",
+  "default_decision": "DENY",
+  "profiles": {
+    "maya-architect": {
+      "read": "ALLOW",
+      "search": "ALLOW",
+      "web": "ASK",
+      "shell": "ASK",
+      "edit": "DENY",
+      "git_push": "DENY",
+      "oc_mutation": "DENY"
+    },
+    "maya-reviewer": {
+      "read": "ALLOW",
+      "git_diff": "ALLOW",
+      "tests": "ASK",
+      "edit": "DENY",
+      "git_push": "DENY",
+      "auto_fix": "DENY"
+    },
+    "maya-builder": {
+      "read": "ALLOW",
+      "edit": "ASK",
+      "tests": "ALLOW",
+      "commit": "ASK",
+      "git_push": "DENY",
+      "runtime_mutation": "DENY",
+      "workspace": "ISOLATED_WORKTREE"
+    },
+    "maya-openshift-reader": {
+      "oc_get": "ALLOW_SCOPED",
+      "oc_describe": "ALLOW_SCOPED",
+      "oc_logs": "ALLOW_SCOPED",
+      "oc_exec": "ASK",
+      "oc_apply": "DENY",
+      "oc_delete": "DENY"
+    }
+  },
+  "required_guards": [
+    "authenticated_subject",
+    "repo_allowlist",
+    "namespace_allowlist",
+    "file_scope_allowlist",
+    "server_side_policy",
+    "approval_action_hash_binding",
+    "approval_expiry_and_single_use",
+    "independent_reviewer_identity",
+    "deny_by_default",
+    "audit_redaction"
+  ],
+  "denied_commands": [
+    "git push",
+    "git reset --hard",
+    "git clean -fdx",
+    "rm -rf",
+    "docker system prune",
+    "oc apply",
+    "oc delete",
+    "kubectl apply",
+    "kubectl delete",
+    "helm upgrade",
+    "argocd app sync"
+  ]
+}

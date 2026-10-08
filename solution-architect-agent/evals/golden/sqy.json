@@ -1,0 +1,106 @@
+{
+  "version": "D099-AA0-v1",
+  "mission": {
+    "id": "SQY",
+    "title": "IT-EXPLORER Kubernetes/OpenShift CaaS",
+    "source": "portfolio/D098_SQY_EXECUTION_STATUS_2026-10-06.md"
+  },
+  "requirements": {
+    "FR": [
+      {
+        "id": "FR-01",
+        "text": "Map existing capabilities to canonical repos",
+        "acceptance": "Owner, revision and sources for each selected capability",
+        "source": "portfolio/D098_SQY_EXECUTION_STATUS_2026-10-06.md"
+      }
+    ],
+    "NFR": [
+      {
+        "id": "NFR-01",
+        "text": "No runtime overclaim",
+        "acceptance": "Each claim has scope and evidence",
+        "source": "D-099 ACCEPTED"
+      }
+    ]
+  },
+  "repositories": [
+    {
+      "name": "zdmooc/cadrage_202682030",
+      "canonical_owner": "GOVERNANCE",
+      "revision": "4e963461",
+      "source": "program/MASTER_ROADMAP.md"
+    },
+    {
+      "name": "zdmooc/shared-platform-services-openshift",
+      "canonical_owner": "SHARED_PLATFORM",
+      "revision": "c615985d",
+      "source": "ROADMAP.md"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "G-01",
+      "description": "Multi-node HA or production readiness not justified by single-node CRC",
+      "source": "shared-platform-services-openshift/BACKLOG.md",
+      "action": "Review existing gates and open OP1–OP4 PRs before any extension"
+    }
+  ],
+  "options": [
+    {
+      "id": "S1",
+      "approach": "Reuse merged baseline only",
+      "advantages": [
+        "No duplication"
+      ],
+      "risks": [
+        "Remaining open evidence gates"
+      ],
+      "evidence_limit": "Merged main only"
+    },
+    {
+      "id": "S2",
+      "approach": "Bounded specialist PR and review",
+      "advantages": [
+        "Focused on gap"
+      ],
+      "risks": [
+        "Needs independent CI and runtime review"
+      ],
+      "evidence_limit": "PR is not merged nor runtime-proven"
+    },
+    {
+      "id": "S3",
+      "approach": "New platform",
+      "advantages": [
+        "Can isolate independent experiments"
+      ],
+      "risks": [
+        "Duplication and unjustified cost"
+      ],
+      "evidence_limit": "Not selected without unmet capability"
+    }
+  ],
+  "adr": {
+    "id": "ADR-REFERENCE",
+    "status": "PROPOSED",
+    "chosen": "S2",
+    "reason": "Reuse canonical assets, close only actual evidence gaps",
+    "approval_ref": null
+  },
+  "evidence": [
+    {
+      "claim": "Existing D-093 operator, lifecycle and day-2 reference",
+      "level": "DESIGNED",
+      "source": "https://github.com/zdmooc/shared-platform-services-openshift",
+      "scope": "Reference comparison, not a fresh runtime test"
+    }
+  ],
+  "limits": [
+    "Human golden fixture, not an agent benchmark result",
+    "No CRC experiment run for D-099"
+  ],
+  "next_actions": [
+    "Run read-only agent benchmark against independently curated human reference"
+  ],
+  "status": "DESIGNED"
+}
