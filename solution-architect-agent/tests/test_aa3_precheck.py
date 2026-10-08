@@ -11,46 +11,49 @@ ROOT = Path(__file__).resolve().parents[1]
 def load(name):
     return json.loads((ROOT / name).read_text(encoding="utf-8"))
 
-def test_both_reference_contracts_are_structurally_sound():
-    for name in ("daarops", "sqy"):
-        assert inspect_assessment(load(f"evals/golden/{name}.json")) == []
+import unittest
 
-def test_duplicate_option_is_denied():
-    obj = load("evals/golden/daarops.json")
-    obj["options"][1]["id"] = "S1"
-    assert "OPTIONS_MUST_BE_S1_S2_S3_UNIQUE" in inspect_assessment(obj)
+class AA3PrecheckTests(unittest.TestCase):
+    def test_both_reference_contracts_are_structurally_sound(self):
+        for name in ("daarops", "sqy"):
+            self.assertEqual(inspect_assessment(load(f"evals/golden/{name}.json")), [])
 
-def test_repeated_approach_is_denied():
-    obj = load("evals/golden/sqy.json")
-    obj["options"][2]["approach"] = obj["options"][1]["approach"]
-    assert "OPTIONS_NOT_DISTINCT" in inspect_assessment(obj)
+    def test_duplicate_option_is_denied(self):
+        obj = load("evals/golden/daarops.json")
+        obj["options"][1]["id"] = "S1"
+        self.assertIn("OPTIONS_MUST_BE_S1_S2_S3_UNIQUE", inspect_assessment(obj))
 
-def test_forged_decision_approval_is_denied():
-    obj = load("evals/golden/daarops.json")
-    obj["adr"]["status"] = "APPROVED"
-    assert "ADR_APPROVAL_REF_MISSING" in inspect_assessment(obj)
+    def test_repeated_approach_is_denied(self):
+        obj = load("evals/golden/sqy.json")
+        obj["options"][2]["approach"] = obj["options"][1]["approach"]
+        self.assertIn("OPTIONS_NOT_DISTINCT", inspect_assessment(obj))
 
-def test_runtime_claim_requires_external_review():
-    obj = load("evals/golden/sqy.json")
-    obj["evidence"][0]["level"] = "CRC_RUNTIME_PROVEN"
-    assert "EVIDENCE_NEEDS_INDEPENDENT_RUNTIME_REVIEW" in inspect_assessment(obj)
+    def test_forged_decision_approval_is_denied(self):
+        obj = load("evals/golden/daarops.json")
+        obj["adr"]["status"] = "APPROVED"
+        self.assertIn("ADR_APPROVAL_REF_MISSING", inspect_assessment(obj))
 
-def test_self_reported_trajectory_cannot_validate():
-    golden = load("evals/golden/daarops.json")
-    out = precheck(golden, golden, trace={"provenance": "llm_self_report", "forbidden_actions": []})
-    assert "TOOL_TRACE_NOT_INDEPENDENT" in out["violations"]
-    assert out["AA3_ARCHITECT_REASONING_VALIDATED"] is False
+    def test_runtime_claim_requires_external_review(self):
+        obj = load("evals/golden/sqy.json")
+        obj["evidence"][0]["level"] = "CRC_RUNTIME_PROVEN"
+        self.assertIn("EVIDENCE_NEEDS_INDEPENDENT_RUNTIME_REVIEW", inspect_assessment(obj))
 
-def test_no_trace_never_qualifies_a_candidate():
-    case = load("evals/golden/sqy.json")
-    report = precheck(case, case)
-    assert report["violations"] == []
-    assert report["trajectory"] == "NO_INDEPENDENT_TRACE"
-    assert report["AA3_ARCHITECT_REASONING_VALIDATED"] is False
+    def test_self_reported_trajectory_cannot_validate(self):
+        golden = load("evals/golden/daarops.json")
+        out = precheck(golden, golden, trace={"provenance": "llm_self_report", "forbidden_actions": []})
+        self.assertIn("TOOL_TRACE_NOT_INDEPENDENT", out["violations"])
+        self.assertIs(out["AA3_ARCHITECT_REASONING_VALIDATED"], False)
 
-def test_wrong_owner_is_detected():
-    golden = load("evals/golden/daarops.json")
-    candidate = copy.deepcopy(golden)
-    candidate["repositories"][0]["canonical_owner"] = "RUNTIME"
-    report = precheck(candidate, golden)
-    assert any(v.startswith("OWNERSHIP_MISMATCH:") for v in report["violations"])
+    def test_no_trace_never_qualifies_a_candidate(self):
+        case = load("evals/golden/sqy.json")
+        report = precheck(case, case)
+        self.assertEqual(report["violations"], [])
+        self.assertEqual(report["trajectory"], "NO_INDEPENDENT_TRACE")
+        self.assertIs(report["AA3_ARCHITECT_REASONING_VALIDATED"], False)
+
+    def test_wrong_owner_is_detected(self):
+        golden = load("evals/golden/daarops.json")
+        candidate = copy.deepcopy(golden)
+        candidate["repositories"][0]["canonical_owner"] = "RUNTIME"
+        report = precheck(candidate, golden)
+        self.assertTrue(any(v.startswith("OWNERSHIP_MISMATCH:") for v in report["violations"]))
