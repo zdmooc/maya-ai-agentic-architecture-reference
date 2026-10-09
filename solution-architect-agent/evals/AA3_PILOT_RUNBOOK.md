@@ -69,3 +69,38 @@ If `LOCAL_OPENCODE_SMOKE_TRANSPORT_PASS` is observed, **only then** perform
 two-case pilot with a brand-new output path; the target model remains below 64k.
 If failure persists, the classified `stderr_categories` identifies the next
 single corrective action. Avoid leaking raw diagnostic logs into GitHub.
+
+## October 9 — reproducible OpenCode Windows invocation is the priority
+
+A manual isolated invocation on the user's HP17G3 **succeeded**:
+`OPENCODE_EXIT_CODE=0`, `STDOUT_BYTES=937`, `STDERR_BYTES=0`.
+It used the same resolver and child environment as the pilot, but a scratch
+directory created **directly under `C:/workspaces`** and the text
+`Reply exactly D099_LOCAL_SMOKE_OK. Do not use tools.`. That is a
+**transport/process success**, not proof of a complete correct model answer
+or the formal AA3 benchmark.
+
+The pilot has been aligned to those two known successful conditions. New
+tests assert that its execution scratch folder is directly below the output
+folder's parent (not nested within the evidence output), and the run
+**stops after the first nonzero OpenCode exit** instead of wasting another
+full-case attempt. This is a consistency change, **not a demonstrated root
+cause** of the earlier 68-byte, unclassified stderr. Existing scope, source
+hash checks and deny-only policy requests remain intact.
+
+Recheck only one case initially (not both), with a new output folder:
+
+```bash
+cd /c/workspaces/D099-AA3-HUB
+git pull --ff-only origin d099-aa0-aa2-method-contracts
+export OLLAMA_HOST=192.168.56.1:11434
+D099_ALLOW_LOCAL_INFERENCE=YES env -u OPENCODE_CONFIG_CONTENT \
+ python solution-architect-agent/evals/run_aa3_pilot.py \
+ --case daarops --out /c/workspaces/D099-AA3-EVIDENCE-004
+```
+
+If its returned `opencode_exit_code=0`, inspect the structured result;
+if it exits 1 again, the new `diagnostic.stderr_categories` and
+`stderr_bytes` are enough to decide the next troubleshooting step.
+Full AA3 remains open until actual multi-case results, trustworthy
+authorization, 64k target and independent review.

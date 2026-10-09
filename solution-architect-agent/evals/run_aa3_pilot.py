@@ -319,7 +319,7 @@ def execute_local_turn(prompt: str, destination: Path, *, timeout: int) -> subpr
     """Same safe process environment for a minimal smoke and full case."""
     env = child_environment()
     executable = resolve_opencode()
-    with tempfile.TemporaryDirectory(prefix="d099-aa3-", dir=destination) as sandbox:
+    with tempfile.TemporaryDirectory(prefix="d099-diag-", dir=destination.parent) as sandbox:
         # No optional --title flag: native Windows CLI variants may reject it.
         # Passing argv directly, not shell=True, keeps prompt text out of cmd.exe.
         cmd = [executable, "run", "--pure", "--format", "json",
@@ -332,7 +332,7 @@ def execute_local_turn(prompt: str, destination: Path, *, timeout: int) -> subpr
 def smoke_transport(destination: Path) -> dict:
     """One small local model turn; never reads case files or golden answers."""
     result = execute_local_turn(
-        "Reply exactly D099_LOCAL_SMOKE_OK. Do not call tools.",
+        "Reply exactly D099_LOCAL_SMOKE_OK. Do not use tools.",
         destination, timeout=120,
     )
     trace = destination / "smoke.events.jsonl"
@@ -462,7 +462,10 @@ def main_argv(argv: list[str] | None = None) -> int:
     results = []
     for case in chosen:
         try:
-            results.append(pilot_one(case, destination))
+            outcome = pilot_one(case, destination)
+            results.append(outcome)
+            if outcome.get("status") == "LOCAL_PILOT_OPENCODE_ERROR":
+                break  # A failed local OpenCode process makes the next case unhelpful.
         except subprocess.TimeoutExpired:
             results.append({"case": case, "status": "LOCAL_PILOT_TIMEOUT",
                             "AA3_ARCHITECT_REASONING_VALIDATED": False})
@@ -476,8 +479,11 @@ def main_argv(argv: list[str] | None = None) -> int:
             # A missing executable is not a model failure. No point attempting
             # the next case with the same broken Windows launcher.
             break
+    attempted = {entry["case"] for entry in results}
     summary = {"status": "LOCAL_ONLY_NON_QUALIFYING_PILOT", "config": config,
-               "cases": results, "AA3_ARCHITECT_REASONING_VALIDATED": False}
+               "cases": results,
+               "skipped_cases": [case for case in chosen if case not in attempted],
+               "AA3_ARCHITECT_REASONING_VALIDATED": False}
     (destination / "summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",

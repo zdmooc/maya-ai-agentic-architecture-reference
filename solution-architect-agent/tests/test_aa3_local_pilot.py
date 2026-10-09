@@ -218,6 +218,46 @@ class AA3PilotTests(unittest.TestCase):
             self.assertEqual(outcome["diagnostic"]["stderr_categories"],
                              ["CLI_OPTION_REJECTED"])
 
+    def test_child_launch_uses_same_workspace_root_as_successful_windows_check(self):
+        import subprocess
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as folder:
+            output = Path(folder) / "evidence-004"
+            output.mkdir()
+            with patch.object(PILOT, "resolve_opencode", return_value="C:/opencode.exe"):
+                with patch.object(PILOT.subprocess, "run", return_value=(
+                    subprocess.CompletedProcess(
+                        args=["opencode"], returncode=0, stdout="", stderr=""
+                    )
+                )) as runner:
+                    PILOT.execute_local_turn("Reply exactly D099_LOCAL_SMOKE_OK.",
+                                            output, timeout=10)
+                    args, kwargs = runner.call_args
+                    self.assertEqual(args[0][-1], "Reply exactly D099_LOCAL_SMOKE_OK.")
+                    self.assertEqual(Path(kwargs["cwd"]).parent, output.parent)
+                    self.assertIs(kwargs["shell"] if "shell" in kwargs else False, False)
+                    self.assertEqual(kwargs["env"]["OPENCODE_DISABLE_DEFAULT_PLUGINS"], "1")
+
+    def test_full_pilot_stops_after_first_transport_failure(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as folder:
+            with patch.object(PILOT, "pilot_one", return_value={
+                "case": "daarops", "status": "LOCAL_PILOT_OPENCODE_ERROR",
+                "opencode_exit_code": 1,
+            }) as invoke:
+                with patch.object(PILOT, "assert_isolated_config",
+                                  return_value={"model": PILOT.MODEL}):
+                    with patch.dict(os.environ, {
+                        "D099_ALLOW_LOCAL_INFERENCE": "YES",
+                    }):
+                        rc = PILOT.main_argv(
+                            ["--case", "both", "--out", folder]
+                        )
+            self.assertEqual(rc, 2)
+            self.assertEqual(invoke.call_count, 1)
+            report = json.loads((Path(folder) / "summary.json").read_text())
+            self.assertEqual(report["skipped_cases"], ["sqy"])
+
     def test_model_tool_call_is_disallowed(self):
         with self.assertRaisesRegex(ValueError, "MODEL_ATTEMPTED_TOOL_USE"):
             PILOT.extract(json.dumps({"type": "tool_use", "part": {}}) + "\n" +
