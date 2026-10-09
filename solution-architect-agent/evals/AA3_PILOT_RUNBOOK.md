@@ -20,7 +20,7 @@ python solution-architect-agent/evals/run_aa3_pilot.py \
   --case both --out /c/workspaces/D099-AA3-EVIDENCE-001 --dry-run
 ```
 
-If `OPENCODE_CONFIG_CONTENT` is already set, the runner validates its restrictions before use. If absent, the runner **creates its own restrictive, local-only inline OpenCode config** from the explicitly allowlisted `OLLAMA_HOST` value (`192.168.56.1:11434` on the tested HP). It never uses the globally installed providers as an unrestricted fallback. Do not paste secrets into the shell. The inline config must have `enabled_providers=["ollama"]`, a single local Ollama provider, `permission.*="deny"`, `agent.plan.permission.*="deny"`, sharing disabled, and updates disabled. The **resolved** OpenCode policy previously had a late `external_directory allow` entry, so this precondition verifies requested deny rules only; it does **not** count as full denial enforcement. Run only under a user-approved isolated local operator account, with no secrets in prompts.
+If `OPENCODE_CONFIG_CONTENT` is already set, the runner validates its restrictions before use. If absent, the runner **creates its own restrictive, local-only inline OpenCode config** from the explicitly allowlisted `OLLAMA_HOST` value (`192.168.56.1:11434` on the tested HP). It never uses the globally installed providers as an unrestricted fallback. Do not paste secrets into the shell. The inline config must have `enabled_providers=["ollama"]`, a single local Ollama provider, `permission.*="deny"`, `agent.d099-evaluator.permission.*="deny"`, sharing disabled, and updates disabled. The **resolved** OpenCode policy previously had a late `external_directory allow` entry, so this precondition verifies requested deny rules only; it does **not** count as full denial enforcement. Run only under a user-approved isolated local operator account, with no secrets in prompts.
 
 ```bash
 D099_ALLOW_LOCAL_INFERENCE=YES \
@@ -104,3 +104,51 @@ if it exits 1 again, the new `diagnostic.stderr_categories` and
 `stderr_bytes` are enough to decide the next troubleshooting step.
 Full AA3 remains open until actual multi-case results, trustworthy
 authorization, 64k target and independent review.
+
+## 2026-10-09 — output contract failure, not JSONL corruption (read-only boilerplate)
+
+The operator's offline inspection of `D099-AA3-EVIDENCE-006/daarops.events.jsonl`
+reported a valid **1150-byte OpenCode JSONL** stream: exactly one
+`step_start`, one `text`, and one `step_finish`. The reconstructed
+model text was only **229 characters**, beginning with
+`You are in READ-ONLY mode. I will not make any changes to the system.`
+The previous `JSONDecodeError` is correctly reporting non-JSON model text.
+No architectural candidate was produced. Do **not** amend the extractor
+to accept this as valid architectural output.
+
+The built-in `plan` agent is an interactive planning profile with its
+own system instructions. Its use for a strict JSON evaluator is a hypothesis
+for the observed read-only boilerplate, not conclusively proven. OpenCode
+allows defining custom primary agents in JSON configuration with a
+system prompt and tool permissions:
+https://dev.opencode.ai/docs/agents/
+
+**Constrained corrective change:** the local pilot now requests a single
+dedicated `d099-evaluator` primary agent, with a fixed JSON-only system
+prompt and `permission.*=deny`. Runtime configuration validation rejects
+`plan`, additional agents, any prompt substitution, changed model or
+tool grants. Provider remains only local Ollama `qwen2.5:3b`.
+Actual resolved permissions remain `NOT_VERIFIED_BY_THIS_CHECK`;
+this is not the formal AA3 acceptance gate.
+
+**Before re-running a full mission, test only the JSON response contract:**
+
+```bash
+cd /c/workspaces/D099-AA3-HUB
+git status --short
+git pull --ff-only origin d099-aa0-aa2-method-contracts
+export OLLAMA_HOST=192.168.56.1:11434
+D099_ALLOW_LOCAL_INFERENCE=YES env -u OPENCODE_CONFIG_CONTENT \
+ python solution-architect-agent/evals/run_aa3_pilot.py \
+ --smoke-only --out /c/workspaces/D099-AA3-SMOKE-007
+```
+
+A meaningful smoke pass is now
+`LOCAL_OPENCODE_SMOKE_JSON_CONTRACT_PASS`, which requires
+`{"probe":"D099_LOCAL_SMOKE_OK"}` as **actual JSON** in an OpenCode
+text event, not just a clean process exit. If it fails, report
+`summary.json` instead of launching expensive frozen full-case
+prompts. If it passes, a **single** DAAROPS case can be tested with
+a new folder; status `AA3_ARCHITECT_REASONING_VALIDATED=false` always
+requires independent validation. Older sections of this runbook are
+historical and describe the prior `plan` implementation.
