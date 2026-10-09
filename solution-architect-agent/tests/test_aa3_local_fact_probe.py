@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "evals"))
 from independent.prepare_case import assemble_case
 from local_aa3_fact_probe import (
-    CONTEXT, ENDPOINTS, MODEL, assess_response, request_payload, single_probe,
+    CONTEXT, ENDPOINTS, MODEL, assess_response, request_payload, single_probe,\n    facts_format_schema, identity_prompt,
 )
 
 
@@ -38,7 +38,7 @@ class LocalAA3ProbeTests(unittest.TestCase):
         self.assertEqual(payload["options"]["num_predict"], 384)
         self.assertFalse(payload["think"])
         self.assertFalse(payload["stream"])
-        self.assertEqual(payload["format"], "json")
+        self.assertEqual(payload["format"], facts_format_schema(self.packet))\n        self.assertEqual(payload["format"]["properties"]["facts"]["minItems"], 3)\n        self.assertEqual(payload["format"]["properties"]["facts"]["maxItems"], 3)\n        self.assertIn("EXACTLY 3 facts", payload["prompt"])\n        self.assertIn("ONE mission", payload["prompt"])
         self.assertIn("facts", payload["prompt"])
         self.assertNotIn("tools", payload)
 
@@ -68,6 +68,51 @@ class LocalAA3ProbeTests(unittest.TestCase):
         self.assertIn("MISSION_ID_MISMATCH", report["violations"])
         self.assertIn("REPOSITORY_NOT_IN_TRUSTED_INVENTORY",
                       report["violations"])
+
+    def test_real_2026_10_09_model_output_missing_identity_fields_fails(self):
+        # Sanitized reproduction of actual HP output: correct quotes, no
+        # mission value, no repository name, duplicate mission entry.
+        observed = [
+            {"id": "F001", "kind": "mission", "source_id": "N1",
+             "quote": "Mission NOTIFY-01 covers notification preference management."},
+            {"id": "F002", "kind": "repository", "source_id": "N1",
+             "quote": "Canonical repo lab/notification-api owns REST user preferences and opt-out enforcement."},
+            {"id": "F003", "kind": "mission", "source_id": "N2",
+             "quote": "Mission NOTIFY-01 requires bounded asynchronous delivery."},
+            {"id": "F004", "kind": "repository", "source_id": "N2",
+             "quote": "Canonical repo lab/event-relay owns delivery queue consumers, deduplication keys and delivery status events."},
+        ]
+        outcome = assess_response(self.packet, {
+            "response": json.dumps({"facts": observed}), "done": True,
+            "eval_count": 231, "prompt_eval_count": 475,
+            "total_duration": 181050000000, "load_duration": 24790000000,
+        })
+        self.assertEqual(outcome["status"], "AA3_LOCAL_FACT_GATE_FAIL")
+        self.assertIn("MODEL_FACT_JSON_SCHEMA_INVALID", outcome["violations"])
+        self.assertIn("MISSION_FACT_COUNT_INVALID", outcome["violations"])
+        self.assertFalse(outcome["AA3_ARCHITECT_REASONING_VALIDATED"])
+
+    def test_blank_wrong_fields_do_not_bypass_deterministic_gate(self):
+        facts = synthetic_facts()
+        for f in facts:
+            f.setdefault("value", "")
+            f.setdefault("repository", "")
+        facts[1]["repository"] = "lab/not-real"
+        result = assess_response(self.packet, {
+            "response": json.dumps({"facts": facts}), "done": True,
+        })
+        self.assertIn("REPOSITORY_NOT_IN_TRUSTED_INVENTORY",
+                      result["violations"])
+        self.assertEqual(result["status"], "AA3_LOCAL_FACT_GATE_FAIL")
+
+    def test_schema_mandates_all_identity_keys(self):
+        payload = facts_format_schema(self.packet)
+        fact = payload["properties"]["facts"]["items"]
+        self.assertTrue({"value", "repository", "quote", "kind",
+                         "source_id"} <= set(fact["required"]))
+        self.assertEqual(payload["properties"]["facts"]["minItems"], 3)
+        self.assertNotIn("lab/notification-api", str(payload))
+        self.assertIn("value=empty string", identity_prompt(self.packet))
 
     def test_unexpected_root_shape_denied(self):
         report = assess_response(self.packet, {
