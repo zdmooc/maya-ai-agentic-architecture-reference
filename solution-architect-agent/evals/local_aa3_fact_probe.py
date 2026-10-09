@@ -10,9 +10,7 @@ import argparse
 import json
 import os
 import sys
-from urllib.request import ProxyHandler, Request, build_opener
-
-from jsonschema import Draft202012Validator
+from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
 from grounding_gate import evaluate_facts
 from independent.prepare_case import assemble_case
@@ -75,6 +73,41 @@ def facts_format_schema(packet: dict) -> dict:
     }
 
 
+def fact_shape_valid(packet: dict, content: object) -> bool:
+    """Mirror this probe's small JSON-schema subset with stdlib only.
+
+    Ollama receives the actual schema, but the Windows test runner does not
+    require a new pip dependency. Source truth is checked separately.
+    """
+    if not isinstance(content, dict) or set(content) != {"facts"}:
+        return False
+    facts = content["facts"]
+    count = len(packet["repository_sources"]) + 1
+    if not isinstance(facts, list) or len(facts) > count:
+        return False
+    expected = {"id", "kind", "source_id", "quote", "value", "repository"}
+    ids = {s["id"] for s in packet["sources"]}
+    for item in facts:
+        if not isinstance(item, dict) or set(item) != expected:
+            return False
+        if not all(isinstance(item[key], str) for key in expected):
+            return False
+        if not item["id"] or not item["quote"]:
+            return False
+        if item["kind"] not in {"mission", "repository"}:
+            return False
+        if item["source_id"] not in ids:
+            return False
+    return True
+
+
+class NoRedirect(HTTPRedirectHandler):
+    """Never permit a local inference response to redirect elsewhere."""
+
+    def redirect_request(self, request, fp, code, msg, headers, newurl):
+        raise ValueError("OLLAMA_REDIRECT_DENIED")
+
+
 def identity_prompt(packet: dict) -> str:
     owners = packet["repository_sources"]
     expected = len(owners)
@@ -135,10 +168,8 @@ def assess_response(packet: dict, response: object) -> dict:
             problems.append("INFERENCE_NOT_COMPLETED")
         if response.get("done_reason") == "length":
             problems.append("INFERENCE_TRUNCATED")
-    if isinstance(content, dict):
-        validation = Draft202012Validator(facts_format_schema(packet))
-        if not validation.is_valid(content):
-            problems.append("MODEL_FACT_JSON_SCHEMA_INVALID")
+    if not fact_shape_valid(packet, content):
+        problems.append("MODEL_FACT_JSON_SCHEMA_INVALID")
     facts = None
     if not isinstance(content, dict) or set(content) != {"facts"}:
         problems.append("FACT_OUTPUT_MUST_HAVE_ONLY_FACTS_KEY")
@@ -190,7 +221,7 @@ def single_probe(*, endpoint: str, case: str, consent: str) -> dict:
     req = Request(endpoint + "/api/generate", data=data,
                   headers={"Content-Type": "application/json"},
                   method="POST")
-    client = build_opener(ProxyHandler({}))
+    client = build_opener(ProxyHandler({}), NoRedirect())
     with client.open(req, timeout=300) as reply:
         result = json.load(reply)
     return assess_response(packet, result)

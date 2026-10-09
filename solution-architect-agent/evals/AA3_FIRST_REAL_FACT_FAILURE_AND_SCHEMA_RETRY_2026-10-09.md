@@ -44,3 +44,5 @@ ollama ps
 *Do not upgrade to 16K/64K on the strength of JSON formatting.* A
 successful retry is only `AA3_LOCAL_FACT_GATE_PASS`, not proof of
 architectural requirements, solution comparison or review acceptance.
+
+The **Windows probe uses only Python standard library dependencies** for checking this bounded response shape, so it needs no local `jsonschema` installation. Redirects from the local Ollama endpoint are denied. The repository's wider CI suite still installs `jsonschema` for unrelated architectural contracts.
