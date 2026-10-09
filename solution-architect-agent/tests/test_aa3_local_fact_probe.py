@@ -15,13 +15,13 @@ from local_aa3_fact_probe import (
 
 def synthetic_facts():
     return [
-        {"id": "M1", "kind": "mission", "value": "NOTIFY-01",
+        {"id": "M1", "kind": "mission", "value": "NOTIFY-01", "repository": "",
          "source_id": "N1",
          "quote": "Mission NOTIFY-01 covers notification preference management."},
-        {"id": "R1", "kind": "repository", "repository": "lab/notification-api",
+        {"id": "R1", "kind": "repository", "value": "", "repository": "lab/notification-api",
          "source_id": "N1",
          "quote": "Canonical repo lab/notification-api owns REST user preferences and opt-out enforcement."},
-        {"id": "R2", "kind": "repository", "repository": "lab/event-relay",
+        {"id": "R2", "kind": "repository", "value": "", "repository": "lab/event-relay",
          "source_id": "N2",
          "quote": "Canonical repo lab/event-relay owns delivery queue consumers, deduplication keys and delivery status events."},
     ]
