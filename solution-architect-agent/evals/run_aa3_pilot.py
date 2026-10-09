@@ -101,10 +101,19 @@ def assert_isolated_config() -> dict:
     provider = cfg.get("provider", {})
     if not isinstance(provider, dict) or set(provider) != {"ollama"}:
         raise ValueError("UNKNOWN_PROVIDER")
-    settings = provider["ollama"].get("options", {})
+    provider_config = provider["ollama"]
+    if (not isinstance(provider_config, dict)
+            or provider_config.get("npm") != "@ai-sdk/openai-compatible"
+            or set(provider_config.get("models", {})) != {"qwen2.5:3b"}):
+        raise ValueError("UNAPPROVED_PROVIDER_DEFINITION")
+    settings = provider_config.get("options", {})
+    if not isinstance(settings, dict) or set(settings) != {"baseURL"}:
+        raise ValueError("POTENTIALLY_SENSITIVE_PROVIDER_OPTIONS")
     endpoint = settings.get("baseURL")
     if endpoint not in ALLOWED_ENDPOINTS or urlsplit(endpoint).username:
         raise ValueError("OLLAMA_ENDPOINT_NOT_APPROVED")
+    if any(key in cfg for key in ("mcp", "plugin", "tools", "instructions")):
+        raise ValueError("EXTRA_TOOLS_OR_PLUGINS_CONFIGURED")
     permissions = cfg.get("permission", {})
     agent = cfg.get("agent", {}).get("plan", {})
     if permissions.get("*") != "deny":
@@ -117,6 +126,28 @@ def assert_isolated_config() -> dict:
     return {"model": MODEL, "endpoint": endpoint,
             "policy_config": "DENY_ONLY_REQUESTED",
             "actual_resolved_policy": "NOT_VERIFIED_BY_THIS_CHECK"}
+
+
+# Only pass variables needed to run the local OpenCode binary; never let
+# GH_TOKEN, KUBECONFIG, cloud credentials or proxy environment reach the model
+# process. The explicitly isolated scratch directory contains no repo secrets.
+HOST_ENV_KEYS = frozenset({
+    "PATH", "PATHEXT", "SYSTEMROOT", "WINDIR", "COMSPEC", "TEMP", "TMP",
+    "USERPROFILE", "HOME", "APPDATA", "LOCALAPPDATA", "PROGRAMDATA",
+    "NUMBER_OF_PROCESSORS", "PROCESSOR_ARCHITECTURE", "LANG",
+    "LC_ALL", "TERM", "OLLAMA_HOST", "OPENCODE_CONFIG_CONTENT",
+})
+
+
+def child_environment() -> dict[str, str]:
+    env = {key: val for key, val in os.environ.items() if key in HOST_ENV_KEYS}
+    env.update({
+        "OPENCODE_DISABLE_AUTOUPDATE": "1",
+        "OPENCODE_DISABLE_DEFAULT_PLUGINS": "1",
+        "OPENCODE_DISABLE_LSP_DOWNLOAD": "1",
+        "OPENCODE_DISABLE_CLAUDE_CODE": "1",
+    })
+    return env
 
 
 def extract(raw: str) -> tuple[dict, dict]:
@@ -146,14 +177,7 @@ def extract(raw: str) -> tuple[dict, dict]:
 
 def pilot_one(case: str, destination: Path, *, timeout: int = 600) -> dict:
     prompt, meta = assemble(case)
-    env = dict(os.environ)
-    # Make no cloud provider discovery and no default extension loading.
-    env.update({
-        "OPENCODE_DISABLE_AUTOUPDATE": "1",
-        "OPENCODE_DISABLE_DEFAULT_PLUGINS": "1",
-        "OPENCODE_DISABLE_LSP_DOWNLOAD": "1",
-        "OPENCODE_DISABLE_CLAUDE_CODE": "1",
-    })
+    env = child_environment()
     with tempfile.TemporaryDirectory(prefix="d099-aa3-", dir=destination) as sandbox:
         cmd = ["opencode", "run", "--pure", "--format", "json", "--model",
                MODEL, "--agent", "plan", "--title", f"D099 pilot {case}", prompt]

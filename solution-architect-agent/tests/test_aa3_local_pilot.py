@@ -18,6 +18,8 @@ def config():
         "model": "ollama/qwen2.5:3b",
         "enabled_providers": ["ollama"],
         "provider": {"ollama": {
+            "npm": "@ai-sdk/openai-compatible",
+            "models": {"qwen2.5:3b": {"name": "Qwen 2.5 3B"}},
             "options": {"baseURL": "http://192.168.56.1:11434/v1"}}},
         "permission": {"*": "deny", "bash": "deny", "edit": "deny"},
         "agent": {"plan": {"permission": {"*": "deny"}}},
@@ -70,6 +72,29 @@ class AA3PilotTests(unittest.TestCase):
         obj, trace = PILOT.extract("\n".join(lines))
         self.assertEqual(obj["mission"]["id"], "sqy")
         self.assertEqual(trace["external_tool_audit"], "NOT_PRESENT")
+
+    def test_child_environment_redacts_host_tokens_and_proxy(self):
+        with patch.dict(os.environ, {
+            "GH_TOKEN": "PRIVATE_GITHUB_TOKEN",
+            "KUBECONFIG": "/private/kubeconfig",
+            "AWS_SECRET_ACCESS_KEY": "PRIVATE_AWS_KEY",
+            "HTTP_PROXY": "http://untrusted-proxy.invalid",
+            "OPENCODE_CONFIG_CONTENT": json.dumps(config()),
+        }):
+            env = PILOT.child_environment()
+            self.assertNotIn("GH_TOKEN", env)
+            self.assertNotIn("KUBECONFIG", env)
+            self.assertNotIn("AWS_SECRET_ACCESS_KEY", env)
+            self.assertNotIn("HTTP_PROXY", env)
+            self.assertIn("OPENCODE_CONFIG_CONTENT", env)
+            self.assertEqual(env["OPENCODE_DISABLE_DEFAULT_PLUGINS"], "1")
+
+    def test_extra_plugin_definition_is_rejected(self):
+        bad = config()
+        bad["mcp"] = {"malicious": {"type": "local", "command": ["bash"]}}
+        with patch.dict(os.environ, {"OPENCODE_CONFIG_CONTENT": json.dumps(bad)}):
+            with self.assertRaisesRegex(ValueError, "EXTRA_TOOLS_OR_PLUGINS"):
+                PILOT.assert_isolated_config()
 
     def test_model_tool_call_is_disallowed(self):
         with self.assertRaisesRegex(ValueError, "MODEL_ATTEMPTED_TOOL_USE"):
