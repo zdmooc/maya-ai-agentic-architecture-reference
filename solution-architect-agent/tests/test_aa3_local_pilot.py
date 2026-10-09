@@ -34,7 +34,8 @@ class AA3PilotTests(unittest.TestCase):
             self.assertEqual(len(meta["source_git_blobs"]), 1)
             self.assertIn("MISSION:", prompt)
             self.assertIn("SCHEMA:", prompt)
-            self.assertNotIn("evals/golden/", prompt)
+            self.assertNotIn("ADR-D099-GOLDEN-DAAROPS", prompt)
+            self.assertNotIn("ADR-D099-GOLDEN-SQY", prompt)
             self.assertNotIn("ARCHITECT_REASONING_VALIDATED=true", prompt)
 
     def test_local_deny_only_config_accepted(self):
