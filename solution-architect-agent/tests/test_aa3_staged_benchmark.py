@@ -147,6 +147,19 @@ class StagedBenchmarkTests(TestCase):
                         out, None, consent="YES")
             model.assert_not_called()
 
+    @patch("local_aa3_staged_benchmark.build_opener",
+           side_effect=AssertionError("MODEL_CALLED"))
+    def test_no_evidence_write_inside_versioned_repo(self, model):
+        import local_aa3_staged_benchmark as module
+        dest = Path(module.__file__).resolve().parents[2] / (
+            "D099-UNSAFE-EVIDENCE-EXAMPLE-NOT-CREATED")
+        with self.assertRaisesRegex(ValueError,
+                                    "EVIDENCE_OUTSIDE_SOURCE_CHECKOUT"):
+            process("stage1", "daarops", "http://192.168.56.1:11434",
+                    dest, None, consent="YES")
+        self.assertFalse(dest.exists())
+        model.assert_not_called()
+
     def test_nonmatching_previous_stage_refused(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
