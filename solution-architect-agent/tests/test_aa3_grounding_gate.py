@@ -66,5 +66,29 @@ class GroundingTests(unittest.TestCase):
         self.assertIn("FACT_ID_INVALID_OR_DUPLICATE", report["violations"])
 
 
+
+    def test_second_expected_repo_must_have_its_own_fact(self):
+        packet, facts = fixture()
+        packet["repository_sources"]["lab/another"] = "S-01"
+        faults = gate.evaluate_facts(packet, facts)["violations"]
+        self.assertIn("REQUIRED_REPOSITORY_FACT_MISSING_OR_DUPLICATE:lab/another", faults)
+
+    def test_duplicate_owner_fact_fails(self):
+        packet, facts = fixture()
+        duplicate = dict(facts[1])
+        duplicate["id"] = "F4"
+        facts.append(duplicate)
+        faults = gate.evaluate_facts(packet, facts)["violations"]
+        self.assertIn("REQUIRED_REPOSITORY_FACT_MISSING_OR_DUPLICATE:lab/notify", faults)
+
+    def test_quote_must_explicitly_name_its_mission_and_repository(self):
+        packet, facts = fixture()
+        facts[0]["quote"] = "Retry must be bounded."
+        facts[1]["quote"] = "Retry must be bounded."
+        faults = gate.evaluate_facts(packet, facts)["violations"]
+        self.assertIn("MISSION_ID_NOT_IN_QUOTE", faults)
+        self.assertIn("REPOSITORY_NAME_NOT_IN_QUOTE", faults)
+
+
 if __name__ == "__main__":
     unittest.main()

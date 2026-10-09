@@ -81,6 +81,24 @@ def evaluate_facts(packet: dict[str, Any], facts: list[dict[str, Any]]) -> dict[
         faults.append("MISSION_FACT_COUNT_INVALID")
     if repo_count < 1:
         faults.append("REPOSITORY_FACT_MISSING")
+    # Every trusted owner needs exactly one explicit, source-anchored fact.
+    # A single plausible repository must not hide an omitted canonical owner.
+    repo_facts = [f for f in facts if isinstance(f, dict)
+                  and f.get("kind") == "repository"]
+    repo_names = [f.get("repository") for f in repo_facts]
+    for name in owners:
+        if repo_names.count(name) != 1:
+            faults.append("REQUIRED_REPOSITORY_FACT_MISSING_OR_DUPLICATE:" + name)
+    for fact in repo_facts:
+        name = fact.get("repository")
+        quote = fact.get("quote")
+        if isinstance(name, str) and isinstance(quote, str) and name not in quote:
+            faults.append("REPOSITORY_NAME_NOT_IN_QUOTE")
+    for fact in facts:
+        if isinstance(fact, dict) and fact.get("kind") == "mission":
+            quote = fact.get("quote")
+            if isinstance(quote, str) and isinstance(mission, str) and mission not in quote:
+                faults.append("MISSION_ID_NOT_IN_QUOTE")
     violations = sorted(set(faults))
     return {
         "status": "AA3_LEXICAL_SOURCE_GATE_ONLY",
