@@ -106,6 +106,17 @@ class DesignSliceTests(TestCase):
         design["options"][2]["approach"] = design["options"][0]["approach"]
         self.assertFalse(format_valid(self.packet, design))
 
+    def test_unhashable_values_are_denied_without_crashing(self):
+        design = example_design()
+        design["options"][1]["id"] = ["S2"]
+        self.assertFalse(format_valid(self.packet, design))
+        design = example_design()
+        design["options"][1]["source_id"] = ["N2"]
+        self.assertFalse(format_valid(self.packet, design))
+        design = example_design()
+        design["adr"]["chosen"] = {"id": "S2"}
+        self.assertFalse(format_valid(self.packet, design))
+
     def test_no_runtime_claim_level(self):
         design = example_design()
         design["evidence_level"] = "CRC_RUNTIME_PROVEN"

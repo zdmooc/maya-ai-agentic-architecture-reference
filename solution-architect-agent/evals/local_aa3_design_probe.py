@@ -110,7 +110,11 @@ def format_valid(packet: dict, output: object) -> bool:
     if not isinstance(opts, list) or len(opts) != 3:
         return False
     expected_ids = {"S1", "S2", "S3"}
-    if {o.get("id") for o in opts if isinstance(o, dict)} != expected_ids:
+    # Handle untrusted JSON types without raising TypeError on unhashables.
+    if any(not isinstance(o, dict) or not isinstance(o.get("id"), str)
+           for o in opts):
+        return False
+    if {o["id"] for o in opts} != expected_ids:
         return False
     allowed = {s["id"] for s in packet["sources"]}
     approaches = []
@@ -122,7 +126,7 @@ def format_valid(packet: dict, output: object) -> bool:
         if any(not isinstance(o[k], str) or not o[k].strip()
                for k in ("approach", "advantage", "risk")):
             return False
-        if o["source_id"] not in allowed:
+        if not isinstance(o["source_id"], str) or o["source_id"] not in allowed:
             return False
         approaches.append(o["approach"].strip().casefold())
     if len(set(approaches)) != 3:
@@ -133,7 +137,7 @@ def format_valid(packet: dict, output: object) -> bool:
     }:
         return False
     if adr["status"] != "PROPOSED" or adr["approval_ref"] is not None or (
-        adr["chosen"] not in expected_ids
+        not isinstance(adr["chosen"], str) or adr["chosen"] not in expected_ids
     ):
         return False
     if not isinstance(adr["reason"], str) or not adr["reason"].strip():
