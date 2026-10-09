@@ -3,6 +3,7 @@ import json
 import tempfile
 import sys
 from pathlib import Path
+from jsonschema import Draft202012Validator
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -12,6 +13,7 @@ sys.path.insert(0, str(ROOT / "evals"))
 from local_aa3_staged_benchmark import (
     assemble_benchmark, clipped_schema, make_request,
     source_conformance, evaluate, process, check_previous, PROTOCOL,
+    sha256_bytes,
 )
 
 
@@ -71,6 +73,60 @@ class StagedBenchmarkTests(TestCase):
             "response": '{"mission": {"id":', "done": True,
             "done_reason": "length",
         })
+        self.assertIsNone(model)
+        self.assertIn("GENERATION_TRUNCATED", faults)
+        self.assertIn("MODEL_JSON_NOT_VALID", faults)
+
+    def test_a_valid_stage1_snapshot_is_rechecked_offline_before_stage2(self):
+        src = self.packet["bundle"]["sources"][0]["id"]
+        stage1 = {
+            "mission": {"id": "DAAROPS", "title": "Operator assessment",
+                        "source": src},
+            "requirements": {
+                "FR": [{"id": "FR1", "text": "Controller reconciliation",
+                        "acceptance": "Observe and Manage boundaries",
+                        "source": src}],
+                "NFR": [{"id": "NFR1", "text": "No unsafe takeover",
+                         "acceptance": "Owner conflict stops mutation",
+                         "source": src}],
+            },
+            "repositories": [{
+                "name": "zdmooc/shared-platform-services-openshift",
+                "canonical_owner": "PLATFORM_OPERATOR",
+                "revision": "UNKNOWN", "source": src,
+            }],
+            "gaps": [],
+        }
+        schema = clipped_schema(self.packet["schema"], "stage1")
+        self.assertFalse(list(Draft202012Validator(schema).iter_errors(stage1)))
+        self.assertEqual(source_conformance(self.packet, stage1), [])
+        with tempfile.TemporaryDirectory() as temp:
+            folder = Path(temp)
+            artifact = json.dumps(stage1, ensure_ascii=False,
+                                  sort_keys=True, indent=2).encode("utf-8")
+            (folder / "stage1.candidate.local.json").write_bytes(artifact)
+            (folder / "stage1.summary.json").write_text(json.dumps({
+                "status": "AA3_STAGE1_STATIC_READY_FOR_REVIEW",
+                "candidate_sha256": sha256_bytes(artifact),
+                "protocol": PROTOCOL, "model": "qwen3.5:9b-q4_K_M",
+                "case": "DAAROPS",
+                "source_commit": self.packet["bundle"]["source_commit"],
+            }))
+            verified, _ = check_previous(self.packet, folder)
+            self.assertEqual(verified, stage1)
+            req, _ = make_request(self.packet, "stage2", verified)
+            self.assertEqual(req["options"]["num_predict"], 1550)
+            self.assertNotIn("tools", req)
+            self.assertIn("STAGE1_MODEL_OUTPUT_UNTRUSTED_JSON", req["prompt"])
+            # Tampering after summary creation must fail closed.
+            (folder / "stage1.candidate.local.json").write_text("{}")
+            with self.assertRaisesRegex(ValueError, "MISMATCH"):
+                check_previous(self.packet, folder)
+
+    def test_stage2_truncation_does_not_silently_merge(self):
+        model, faults = evaluate("stage2", self.packet, {
+            "response": "{", "done": True, "done_reason": "length",
+        }, stage1={})
         self.assertIsNone(model)
         self.assertIn("GENERATION_TRUNCATED", faults)
         self.assertIn("MODEL_JSON_NOT_VALID", faults)
