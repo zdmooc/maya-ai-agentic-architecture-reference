@@ -51,6 +51,37 @@ class AA3PrecheckTests(unittest.TestCase):
         self.assertEqual(report["trajectory"], "NO_INDEPENDENT_TRACE")
         self.assertIs(report["AA3_ARCHITECT_REASONING_VALIDATED"], False)
 
+    def test_wrong_mission_id_fails_even_when_schema_is_valid(self):
+        golden = load("evals/golden/daarops.json")
+        candidate = copy.deepcopy(golden)
+        candidate["mission"]["id"] = "mission-id-123"
+        report = precheck(candidate, golden)
+        self.assertIn("MISSION_ID_MISMATCH", report["violations"])
+        self.assertEqual(report["case"], "mission-id-123")
+        self.assertIs(report["AA3_ARCHITECT_REASONING_VALIDATED"], False)
+
+    def test_missing_every_required_repo_is_not_ownership_success(self):
+        golden = load("evals/golden/daarops.json")
+        candidate = copy.deepcopy(golden)
+        candidate["repositories"] = [{
+            "name": "zdmooc/fictional-generic-repo",
+            "canonical_owner": "UNVERIFIED",
+            "revision": "unknown",
+            "source": "synthetic"
+        }]
+        report = precheck(candidate, golden)
+        self.assertEqual(
+            sorted(v for v in report["violations"]
+                   if v.startswith("REQUIRED_REPOSITORY_NOT_MAPPED:")),
+            [
+                "REQUIRED_REPOSITORY_NOT_MAPPED:zdmooc/argocd-expert-pack",
+                "REQUIRED_REPOSITORY_NOT_MAPPED:zdmooc/cadrage_202682030",
+                "REQUIRED_REPOSITORY_NOT_MAPPED:zdmooc/shared-platform-services-openshift",
+            ],
+        )
+        self.assertIs(report["required_repositories_mapped"], False)
+        self.assertIs(report["ownership_matches"], False)
+
     def test_wrong_owner_is_detected(self):
         golden = load("evals/golden/daarops.json")
         candidate = copy.deepcopy(golden)

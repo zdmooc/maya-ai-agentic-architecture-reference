@@ -294,3 +294,43 @@ narrative/schema/truncated, record `AA3_LOCAL_3B_LIMITATION` and
 evaluate a qualified longer-context model in a **separate, approved
 iteration**, rather than repeatedly tweaking extraction or declaring
 AA3 success. Do not automatically run SQY. `AA3_ARCHITECT_REASONING_VALIDATED=false`.
+
+## 2026-10-09 — DAAROPS generated JSON precheck fails repository-grounding
+
+Operator ran `python -m pip install "jsonschema>=4.20,<5"` on the HP,
+successfully installing `jsonschema 4.26.0` with its dependencies. The
+user then ran `precheck.py` **offline** against the **unchanged** prior
+`D099-AA3-EVIDENCE-012/daarops.candidate.json` and frozen
+`evals/golden/daarops.json`. The precheck returned `STATIC_PRECHECK_ONLY`
+with `case="mission-id-123"` and three violations:
+`REQUIRED_REPOSITORY_NOT_MAPPED:zdmooc/argocd-expert-pack`,
+`...:zdmooc/cadrage_202682030`,
+`...:zdmooc/shared-platform-services-openshift`. It also reported
+`required_repositories_mapped=false`, `ownership_matches=true`,
+`trajectory=NO_INDEPENDENT_TRACE`, `human_architecture_review=REQUIRED`,
+`AA3_ARCHITECT_REASONING_VALIDATED=false`.
+
+**Interpretation:** generating a syntactically valid schema-conforming
+object is **not** equivalent to correct mission analysis. The model
+misidentified DAAROPS as `mission-id-123` and failed to map every
+canonical repo expected by the provisional offline golden baseline.
+The old precheck incorrectly failed to flag the mission mismatch,
+and its ownership field was vacuously true when no required repos
+overlapped. **Small evaluator hardening, not a model remediation:**
+add `MISSION_ID_MISMATCH` against the golden case id, and change
+`ownership_matches` to false when any required repo is missing.
+Add regression tests for both failure modes. Do not edit the model
+candidate, score reference, source manifest, evaluator tolerances
+or runtime permissions. Do not change the case golden based on
+later D-093 progress while grading this frozen test.
+
+**Next run is offline only**: pull the architecture PR branch and rerun
+`python solution-architect-agent/evals/precheck.py
+--candidate C:/workspaces/D099-AA3-EVIDENCE-012/daarops.candidate.json
+--golden solution-architect-agent/evals/golden/daarops.json`.
+The expected result is still a static **FAIL**, now explicitly
+including `MISSION_ID_MISMATCH` and `ownership_matches=false`.
+Inspect FR/NFR, alternatives, evidence limitations and ADR before
+choosing a revised evaluation model or benchmark scenario. Do NOT
+rerun DAAROPS/SQY inference, alter score fixtures, merge PRs or
+mutate CRC as part of this correction. AA3 OPEN.

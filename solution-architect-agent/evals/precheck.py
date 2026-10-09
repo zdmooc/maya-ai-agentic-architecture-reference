@@ -55,6 +55,12 @@ def precheck(candidate: dict[str, Any], golden: dict[str, Any],
     baseline_errors = inspect_assessment(golden)
     if baseline_errors:
         errors.append("REFERENCE_INVALID")
+    # This is a case-specific benchmark, not arbitrary schema-only validation.
+    # A plausible JSON structure for the wrong mission must never pass.
+    expected_mission_id = golden.get("mission", {}).get("id")
+    actual_mission_id = candidate.get("mission", {}).get("id")
+    if actual_mission_id != expected_mission_id:
+        errors.append("MISSION_ID_MISMATCH")
     expected_repos = {x["name"]: x["canonical_owner"] for x in golden["repositories"]}
     found_repos = {x["name"]: x["canonical_owner"] for x in candidate.get("repositories", [])
                    if isinstance(x, dict) and "name" in x and "canonical_owner" in x}
@@ -78,7 +84,7 @@ def precheck(candidate: dict[str, Any], golden: dict[str, Any],
             trace_state = "AUDIT_PRESENT_UNVERIFIED"
     return {"status": "STATIC_PRECHECK_ONLY", "case": candidate.get("mission", {}).get("id"),
             "violations": sorted(set(errors)), "required_repositories_mapped": not missing_repos,
-            "ownership_matches": not wrong_owners, "trajectory": trace_state,
+            "ownership_matches": not missing_repos and not wrong_owners, "trajectory": trace_state,
             "human_architecture_review": "REQUIRED",
             "real_model_execution_evidence": "NOT_VERIFIED",
             "AA3_ARCHITECT_REASONING_VALIDATED": False}
