@@ -4,6 +4,8 @@ This is a **pilot** for DAAROPS Operator-first and IT-EXPLORER SQY CaaS; it does
 
 Two inputs under `evals/frozen/` are **exact source text snapshots** from the canonical `cadrage_202682030` main commit `4e9634616f6d30ecd632f09e29a04b29eb907792`; source Git blob SHA is verified offline before a prompt is constructed. The model sees only its mission case, source snapshot and schema; no golden fixture. These snapshots are not current live repo audits. Do not promote historical evidence into new runtime claims.
 
+Windows Python must invoke a **native PE** rather than the npm Git Bash shim. The runner now resolves `opencode.exe` from the npm package or its installed Windows optional dependency, verifies a real `MZ` executable over 1 MB to avoid npm's placeholder, and never passes mission Markdown to `cmd.exe` or `shell=True`. A missing native binary produces a diagnostic in `--dry-run` and a structured `LOCAL_PILOT_WINDOWS_LAUNCH_BLOCKED` status rather than a traceback. **No install/reinstall is performed.** If native binary detection fails, inspect `npm root -g` and platform package before taking action. The earlier `SOURCES_PINNED_NO_MODEL` preflight did not check the executable; it confirmed only input integrity.
+
 The orchestrator runs **both cases sequentially** in separate ephemeral non-Git directories under an explicitly chosen output folder, with existing OpenCode `--pure --agent plan --format json`, one approved local Ollama provider and deny-only **requested** tool permissions. It requires explicit `D099_ALLOW_LOCAL_INFERENCE=YES`. It does not execute arbitrary tools, install packages, mutate product repositories/CRC, invoke GitHub, or download another model.
 
 ## Windows Git Bash — after cloning/checking out architecture PR #4

@@ -115,6 +115,53 @@ class AA3PilotTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "EXTRA_TOOLS_OR_PLUGINS"):
                 PILOT.assert_isolated_config()
 
+    def test_windows_executable_discovery_rejects_npm_stub(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as folder:
+            root = Path(folder)
+            native = root / "node_modules" / "opencode-ai" / "node_modules" / (
+                "opencode-windows-x64" ) / "bin" / "opencode.exe"
+            native.parent.mkdir(parents=True)
+            native.write_bytes(b"MZ" + b"0" * 1_000_001)
+            stub = root / "node_modules" / "opencode-ai" / "bin" / "opencode.exe"
+            stub.parent.mkdir(parents=True)
+            stub.write_bytes(b"#!/bin/sh\\necho stub\\n")
+            selected = PILOT._first_windows_native(
+                PILOT._windows_native_candidates([root])
+            )
+            self.assertEqual(selected, native.resolve())
+
+    def test_windows_placeholder_only_is_not_executable(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as folder:
+            root = Path(folder)
+            stub = root / "node_modules" / "opencode-ai" / "bin" / "opencode.exe"
+            stub.parent.mkdir(parents=True)
+            stub.write_bytes(b"MZ" + b"0" * 400)
+            self.assertIsNone(PILOT._first_windows_native(
+                PILOT._windows_native_candidates([root])
+            ))
+
+    def test_missing_native_executable_returns_structured_result(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as folder:
+            with patch.object(PILOT, "pilot_one",
+                              side_effect=FileNotFoundError("no exe")):
+                with patch.object(PILOT, "assert_isolated_config",
+                                  return_value={"model": PILOT.MODEL}):
+                    with patch.dict(os.environ, {
+                        "D099_ALLOW_LOCAL_INFERENCE": "YES",
+                    }):
+                        code = PILOT.main_argv([
+                            "--case", "daarops", "--out", folder,
+                        ])
+            self.assertEqual(code, 2)
+            report = json.loads((Path(folder) / "summary.json").read_text())
+            self.assertEqual(
+                report["cases"][0]["status"],
+                "LOCAL_PILOT_WINDOWS_LAUNCH_BLOCKED",
+            )
+
     def test_model_tool_call_is_disallowed(self):
         with self.assertRaisesRegex(ValueError, "MODEL_ATTEMPTED_TOOL_USE"):
             PILOT.extract(json.dumps({"type": "tool_use", "part": {}}) + "\n" +

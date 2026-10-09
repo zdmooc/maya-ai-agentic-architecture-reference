@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -206,11 +207,78 @@ def extract(raw: str) -> tuple[dict, dict]:
                        "human_review": "NOT_PRESENT"}
 
 
+def _windows_native_candidates(roots: list[Path]) -> list[Path]:
+    """Return explicit native EXE candidates, never npm .cmd/.ps1 shims."""
+    result = []
+    for root in roots:
+        package = root / "node_modules" / "opencode-ai"
+        result.append(package / "bin" / "opencode.exe")
+        # npm allow-scripts may have blocked postinstall while downloading
+        # the platform optional dependency; prefer its real native EXE.
+        result.extend(sorted((package / "node_modules").glob(
+            "opencode-windows-*/bin/opencode.exe"
+        )))
+    return result
+
+
+def _first_windows_native(candidates: list[Path]) -> Path | None:
+    for path in candidates:
+        try:
+            # The 479-byte npm install placeholder must NOT be executed.
+            if (path.is_file() and path.stat().st_size > 1_000_000
+                    and path.open("rb").read(2) == b"MZ"):
+                return path.resolve()
+        except OSError:
+            continue
+    return None
+
+
+def resolve_opencode() -> str:
+    """Find a native executable without Windows shell/batch interpretation.
+
+    Sending frozen Markdown model prompts through cmd.exe/opencode.cmd risks
+    shell metacharacter or %% expansion. Invoke the real Windows PE directly.
+    """
+    if os.name != "nt":
+        candidate = shutil.which("opencode")
+        if not candidate:
+            raise FileNotFoundError("OPENCODE_NOT_ON_PATH")
+        return candidate
+
+    roots = []
+    # npm's opencode.cmd sits next to node_modules/opencode-ai on Windows.
+    shim = shutil.which("opencode.cmd")
+    if shim:
+        roots.append(Path(shim).parent)
+    appdata = os.environ.get("APPDATA")
+    if appdata:
+        roots.append(Path(appdata) / "npm")
+    for env_key in ("NPM_CONFIG_PREFIX", "npm_config_prefix"):
+        value = os.environ.get(env_key)
+        if value:
+            roots.append(Path(value))
+    # A native EXE added to PATH (e.g. direct distribution) is acceptable.
+    native = shutil.which("opencode.exe")
+    if native:
+        native_binary = _first_windows_native([Path(native)])
+        if native_binary:
+            return str(native_binary)
+    native_binary = _first_windows_native(_windows_native_candidates(roots))
+    if native_binary:
+        return str(native_binary)
+    raise FileNotFoundError(
+        "OPENCODE_NATIVE_EXE_NOT_FOUND: npm Windows launcher found but "
+        "no valid native .exe was located; inspect npm root -g and "
+        "opencode-windows-x64/bin/opencode.exe. Do not enable shell=True."
+    )
+
+
 def pilot_one(case: str, destination: Path, *, timeout: int = 600) -> dict:
     prompt, meta = assemble(case)
     env = child_environment()
+    executable = resolve_opencode()
     with tempfile.TemporaryDirectory(prefix="d099-aa3-", dir=destination) as sandbox:
-        cmd = ["opencode", "run", "--pure", "--format", "json", "--model",
+        cmd = [executable, "run", "--pure", "--format", "json", "--model",
                MODEL, "--agent", "plan", "--title", f"D099 pilot {case}", prompt]
         result = subprocess.run(cmd, cwd=sandbox, env=env, capture_output=True,
                                 text=True, encoding="utf-8", errors="replace",
@@ -252,18 +320,24 @@ def pilot_one(case: str, destination: Path, *, timeout: int = 600) -> dict:
     return meta
 
 
-def main() -> int:
+def main_argv(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--case", choices=("daarops", "sqy", "both"), default="both")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--dry-run", action="store_true")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     chosen = ("daarops", "sqy") if args.case == "both" else (args.case,)
     meta = [assemble(case)[1] for case in chosen]
     if args.dry_run:
-        print(json.dumps({"status": "SOURCES_PINNED_NO_MODEL", "cases": meta},
+        try:
+            resolve_opencode()
+            cli_status = "NATIVE_BINARY_RESOLVED_NO_MODEL"
+        except FileNotFoundError as exc:
+            cli_status = str(exc)
+        print(json.dumps({"status": "SOURCES_PINNED_NO_MODEL",
+                          "opencode_preflight": cli_status, "cases": meta},
                          indent=2))
-        return 0
+        return 0 if cli_status == "NATIVE_BINARY_RESOLVED_NO_MODEL" else 2
     if os.environ.get("D099_ALLOW_LOCAL_INFERENCE") != "YES":
         parser.error("D099_ALLOW_LOCAL_INFERENCE=YES required")
     config = assert_isolated_config()
@@ -280,6 +354,16 @@ def main() -> int:
         except subprocess.TimeoutExpired:
             results.append({"case": case, "status": "LOCAL_PILOT_TIMEOUT",
                             "AA3_ARCHITECT_REASONING_VALIDATED": False})
+        except (FileNotFoundError, OSError) as exc:
+            results.append({
+                "case": case,
+                "status": "LOCAL_PILOT_WINDOWS_LAUNCH_BLOCKED",
+                "error_type": type(exc).__name__,
+                "AA3_ARCHITECT_REASONING_VALIDATED": False,
+            })
+            # A missing executable is not a model failure. No point attempting
+            # the next case with the same broken Windows launcher.
+            break
     summary = {"status": "LOCAL_ONLY_NON_QUALIFYING_PILOT", "config": config,
                "cases": results, "AA3_ARCHITECT_REASONING_VALIDATED": False}
     (destination / "summary.json").write_text(
@@ -289,6 +373,10 @@ def main() -> int:
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0 if all(x.get("status") == "LOCAL_PILOT_STATIC_PRECHECK_PASS"
                     for x in results) else 2
+
+
+def main() -> int:
+    return main_argv()
 
 
 if __name__ == "__main__":
