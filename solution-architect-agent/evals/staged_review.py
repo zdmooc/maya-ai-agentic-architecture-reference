@@ -14,14 +14,16 @@ from typing import Any
 
 from grounding_gate import evaluate_facts
 from decision_gate import evaluate_design
-from independent.prepare_case import assemble, SOURCE
+from independent.prepare_case import assemble_case, case_path, SOURCE
 
 MAX_INPUT_BYTES = 256 * 1024
 
 
 def review(facts: object, candidate: object, *,
-           expected_fixture_sha256: str) -> dict[str, Any]:
-    observed = hashlib.sha256(SOURCE.read_bytes()).hexdigest()
+           expected_fixture_sha256: str,
+           fixture_name: str = "notification_case.json") -> dict[str, Any]:
+    selected = case_path(fixture_name)
+    observed = hashlib.sha256(selected.read_bytes()).hexdigest()
     if (not isinstance(expected_fixture_sha256, str)
             or re.fullmatch(r"[a-f0-9]{64}", expected_fixture_sha256) is None
             or observed != expected_fixture_sha256):
@@ -32,7 +34,7 @@ def review(facts: object, candidate: object, *,
             "ready_for_independent_human_review": False,
             "AA3_ARCHITECT_REASONING_VALIDATED": False,
         }
-    packet, _ = assemble()
+    packet, _ = assemble_case(fixture_name)
     facts_status = evaluate_facts(packet, facts)
     design_status = evaluate_design(candidate, packet, facts_status)
     violations = sorted(set(facts_status["violations"] +
@@ -63,11 +65,14 @@ def read_json(path: Path) -> Any:
 def main() -> int:
     cli = argparse.ArgumentParser()
     cli.add_argument("--facts", required=True, type=Path)
+    cli.add_argument("--fixture-name", default="notification_case.json",
+                     choices=["notification_case.json", "inventory_case.json"])
     cli.add_argument("--candidate", required=True, type=Path)
     cli.add_argument("--expected-fixture-sha256", required=True)
     opts = cli.parse_args()
     result = review(read_json(opts.facts), read_json(opts.candidate),
-                    expected_fixture_sha256=opts.expected_fixture_sha256)
+                    expected_fixture_sha256=opts.expected_fixture_sha256,
+                    fixture_name=opts.fixture_name)
     print(json.dumps(result, indent=2, sort_keys=True, ensure_ascii=False))
     return 0 if result["status"] == "AA3_OFFLINE_PRECHECK_PASS" else 2
 

@@ -8,10 +8,18 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "notification_case.json"
 REFERENCE = ROOT / "notification_reference.review_only.json"
+ALLOWED_SYNTHETIC = frozenset({"notification_case.json", "inventory_case.json"})
 
 
-def assemble() -> tuple[dict[str, Any], dict[str, Any]]:
-    fixture = json.loads(SOURCE.read_text(encoding="utf-8"))
+def case_path(name: str) -> Path:
+    if name not in ALLOWED_SYNTHETIC:
+        raise ValueError("UNAPPROVED_INDEPENDENT_FIXTURE")
+    return ROOT / name
+
+
+def assemble_case(name: str) -> tuple[dict[str, Any], dict[str, Any]]:
+    selected = case_path(name)
+    fixture = json.loads(selected.read_text(encoding="utf-8"))
     if fixture.get("origin") != "SYNTHETIC_FICTIONAL_NO_EXTERNAL_CLIENT_OR_REPOSITORY":
         raise ValueError("ONLY_SYNTHETIC_INDEPENDENT_CASE_ALLOWED")
     sources = fixture["sources"]
@@ -39,13 +47,18 @@ def assemble() -> tuple[dict[str, Any], dict[str, Any]]:
     # The blind model packet contains no reference/golden answer.
     return packet, {
         "status": "SYNTHETIC_BLIND_PACKET_STATIC_ONLY",
-        "fixture_path": "notification_case.json",
-        "fixture_sha256": hashlib.sha256(SOURCE.read_bytes()).hexdigest(),
+        "fixture_path": name,
+        "fixture_sha256": hashlib.sha256(selected.read_bytes()).hexdigest(),
         "reference_exposed": False,
         "source_provenance": "FICTIONAL_FIXTURE_PIN_TO_COMMIT_BEFORE_MODEL_RUN",
         "model_invoked": False,
         "AA3_ARCHITECT_REASONING_VALIDATED": False,
     }
+
+
+def assemble() -> tuple[dict[str, Any], dict[str, Any]]:
+    """Compatibility with the original NOTIFY-01 fixture."""
+    return assemble_case("notification_case.json")
 
 
 if __name__ == "__main__":
