@@ -1,0 +1,69 @@
+{
+  "origin": "OPERATOR_TRANSCRIPTION_UNATTESTED",
+  "model": "qwen3.5:9b-q4_K_M",
+  "purpose": "Input to an independently re-validated, local fictional architecture design slice; NOT a blind reference or verified model trace.",
+  "cases": {
+    "notification_case.json": {
+      "mission_id": "NOTIFY-01",
+      "reported_status": "AA3_LOCAL_FACT_GATE_PASS",
+      "requested_context": 8192,
+      "facts": [
+        {
+          "id": "M1",
+          "kind": "mission",
+          "quote": "Mission NOTIFY-01 covers notification preference management.",
+          "repository": "",
+          "source_id": "N1",
+          "value": "NOTIFY-01"
+        },
+        {
+          "id": "R1",
+          "kind": "repository",
+          "quote": "Canonical repo lab/notification-api owns REST user preferences and opt-out enforcement.",
+          "repository": "lab/notification-api",
+          "source_id": "N1",
+          "value": ""
+        },
+        {
+          "id": "R2",
+          "kind": "repository",
+          "quote": "Canonical repo lab/event-relay owns delivery queue consumers, deduplication keys and delivery status events.",
+          "repository": "lab/event-relay",
+          "source_id": "N2",
+          "value": ""
+        }
+      ]
+    },
+    "inventory_case.json": {
+      "mission_id": "INVENTORY-02",
+      "reported_status": "AA3_LOCAL_FACT_GATE_PASS",
+      "requested_context": 8192,
+      "facts": [
+        {
+          "id": "M1",
+          "kind": "mission",
+          "quote": "Mission INVENTORY-02 covers inventory reservation and expiry.",
+          "repository": "",
+          "source_id": "I1",
+          "value": "INVENTORY-02"
+        },
+        {
+          "id": "R1",
+          "kind": "repository",
+          "quote": "Canonical repo lab/inventory-api owns stock availability API and reservation request validation.",
+          "repository": "lab/inventory-api",
+          "source_id": "I1",
+          "value": ""
+        },
+        {
+          "id": "R2",
+          "kind": "repository",
+          "quote": "Canonical repo lab/stock-ledger owns reservation IDs, stock mutation journal and idempotency keys.",
+          "repository": "lab/stock-ledger",
+          "source_id": "I2",
+          "value": ""
+        }
+      ]
+    }
+  }
+}
