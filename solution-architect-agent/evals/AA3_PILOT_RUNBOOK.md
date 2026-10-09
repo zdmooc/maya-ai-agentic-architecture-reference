@@ -244,3 +244,53 @@ single frozen architecture case in a new output directory, not both;
 if `exit_code=1` remains, inspect the new local stderr and investigate
 additional inherited OS handles only based on that evidence. Full AA3
 cannot be marked validated by this smoke alone.
+
+## 2026-10-09 — full mission run: OpenCode PASS, schema-vs-instance confusion
+
+User confirmed frozen DAAROPS case `D099-AA3-EVIDENCE-011` ran with
+`opencode_exit_code=0`, `stdout_bytes=14171`, `stderr_bytes=0`
+on the HP17G3 after isolated stdin. `LOCAL_PILOT_OUTPUT_INVALID`,
+`JSONDecodeError`, `NON_JSON_MODEL_TEXT` persists.
+
+**Offline JSONL inspection (read-only)**: 14,174-byte trace,
+`step_start=1`, `text=1`, `step_finish=1`. The 11,984-character
+text begins by describing a *structured data schema for a public GitHub
+repository / personal technical portfolio for Go/Kubebuilder* and ends in
+descriptive prose, with Markdown code fences. Attempt to decode the
+whole text as JSON fails at position 0. Parsing the first embedded
+object finds **a JSON Schema** with keys `$schema`,
+`additionalProperties`, `properties`, `required`, `type`, and
+**4,472 trailing characters**, not an instance of the assessment contract.
+
+**Grounded verdict**: transport and local model generation succeeded;
+the required *instance* containing `mission`, `requirements`,
+`repositories`, `gaps`, `options`, `adr` etc. was **not produced**.
+Do not relax the extractor to accept the embedded schema, strip prose to
+produce an illusory pass, alter the schema/golden or promote any
+evidence claim. A short smoke JSON pass does not imply an AA3
+architectural pass. Small local `qwen2.5:3b` can follow a small JSON
+instruction, but **has not demonstrated** this long-form task.
+
+**One measured prompt-only remediation**: keep frozen source snapshots,
+Git blob hashes, model, agent, deny-only config, validator, golden
+fixtures and subprocess all unchanged. `assemble()` now appends a
+last-position `INSTANCE_FINAL_DIRECTIVE` *after* the full JSON Schema,
+explicitly prohibiting a repeated schema, manifesto, Markdown or
+narrative and requiring exactly the assessment root keys, distinct
+S1/S2/S3, a PROPOSED ADR, explicit uncertainty and a single full JSON
+object. This addresses the observed tendency for the last, large
+SCHEMA block to be treated as the task instead of validation metadata.
+It is a hypothesis to be tested, **not proof of better model reasoning**.
+Regenerated prompt SHA-256 changes by design; source revision/hash
+provenance must not change. Regression tests cover the final instruction
+position and refusal to emit schema keys.
+
+**Controlled next run** (only after CI success): one DAAROPS case using
+a new output directory `C:/workspaces/D099-AA3-EVIDENCE-012`, no
+additional OpenCode smoke required since transport was already proven.
+Review `summary.json` and schema/precheck; a valid syntactic JSON
+instance can still be inaccurate or incomplete. If output is again
+narrative/schema/truncated, record `AA3_LOCAL_3B_LIMITATION` and
+evaluate a qualified longer-context model in a **separate, approved
+iteration**, rather than repeatedly tweaking extraction or declaring
+AA3 success. Do not automatically run SQY. `AA3_ARCHITECT_REASONING_VALIDATED=false`.

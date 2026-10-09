@@ -34,6 +34,26 @@ EVAL_SYSTEM_PROMPT = (
     "identify limitations, and never claim unverified runtime evidence "
     "or approved architecture decisions."
 )
+INSTANCE_FINAL_DIRECTIVE = (
+    "\n\nFINAL OUTPUT TASK — D099 ARCHITECTURE ASSESSMENT INSTANCE, "
+    "NOT A JSON SCHEMA:\n"
+    "Return a SINGLE completed JSON object for the DAAROPS or SQY "
+    "mission above, not a reusable schema, personal GitHub portfolio "
+    "manifest, instructions, sample template, or narrative explanation. "
+    "The SCHEMA above is validation metadata, NOT the answer. "
+    "The root object's FIRST property MUST be \"version\":\"D099-AA0-v1\" "
+    "and the root properties MUST be exactly: version, mission, requirements, "
+    "repositories, gaps, options, adr, evidence, limits, next_actions, status. "
+    "Do NOT emit root properties $schema, type, properties, required, "
+    "additionalProperties or definitions. "
+    "Populate actual mission FR and NFR, source-grounded repo ownership and "
+    "gaps, distinct S1/S2/S3 alternatives, one PROPOSED ADR with null "
+    "approval_ref, explicit evidence limits and bounded next actions. "
+    "Only rely on the frozen source; never claim live inspections, approvals "
+    "or operational evidence. Use short values, no fabricated facts. "
+    "Output ONLY the complete JSON object, starting with { and ending with }; "
+    "NO Markdown fences, preamble, commentary, or trailing text."
+)
 ALLOWED_ENDPOINTS = {
     "http://127.0.0.1:11434/v1",
     "http://localhost:11434/v1",
@@ -87,6 +107,7 @@ def assemble(case: str) -> tuple[str, dict]:
         "MISSION:\n" + mission + "\n\n"
         "FROZEN SOURCE MATERIAL:\n" + "\n\n---\n\n".join(sources)
         + "\n\nSCHEMA:\n" + schema
+        + INSTANCE_FINAL_DIRECTIVE
     )
     if len(prompt) > MAX_PROMPT:
         raise ValueError("PROMPT_OVER_SIZE_BUDGET")
