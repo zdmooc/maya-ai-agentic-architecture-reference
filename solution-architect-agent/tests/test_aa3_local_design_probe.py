@@ -77,6 +77,16 @@ class DesignSliceTests(TestCase):
             },
         )
 
+    def test_prompts_require_all_options_to_satisfy_mandatory_needs(self):
+        notification = design_prompt(self.packet, self.facts)
+        self.assertIn("Unbounded retries are NOT a viable alternative", notification)
+        self.assertIn("Consent acceptance tests are verification activities", notification)
+        self.assertIn("All three options must meet all mandatory needs", notification)
+        inventory, facts, _ = operator_observation("inventory_case.json")
+        inv = design_prompt(inventory, facts)
+        self.assertIn("reservation expiry and release", inv)
+        self.assertIn("Duplicate stock allocation without safety", inv)
+
     def test_structural_candidate_only_ready_for_future_human_review(self):
         response = {
             "response": json.dumps(example_design()), "done": True,

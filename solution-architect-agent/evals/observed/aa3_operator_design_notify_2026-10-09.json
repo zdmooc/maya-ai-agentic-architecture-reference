@@ -1,0 +1,78 @@
+{
+  "origin": "OPERATOR_TRANSCRIPTION_UNATTESTED",
+  "scenario": "notification_case.json",
+  "local_model": "qwen3.5:9b-q4_K_M",
+  "reported_status": "AA3_LOCAL_DESIGN_SLICE_PASS",
+  "structural_violations_reported": [],
+  "context_requested": 8192,
+  "fixture_sha256": "7b443bef6e88538dc48f928f35b2b7702128fdea54afb96be074113db07d7980",
+  "prompt_tokens": 525,
+  "generated_tokens": 530,
+  "total_seconds": 296.91,
+  "load_seconds": 28.01,
+  "ram_free_after_gib": 24.15,
+  "model_resident_after_run": false,
+  "design": {
+    "adr": {
+      "approval_ref": null,
+      "chosen": "S2",
+      "reason": "S2 best balances the need for bounded retries and traceability by strictly utilizing the deduplication keys and status events in source N2, while explicitly managing the missing maximum retry constraint through design rather than unproven runtime behavior.",
+      "status": "PROPOSED"
+    },
+    "case_id": "NOTIFY-01",
+    "evidence_level": "DESIGNED",
+    "limits": [
+      "no runtime measured",
+      "no approval"
+    ],
+    "options": [
+      {
+        "advantage": "Directly leverages the canonical opt-out enforcement logic defined in source N1 for immediate user control.",
+        "approach": "Implement synchronous REST endpoints in lab/notification-api for preference management, coupled with a proposed dead-letter queue pattern in lab/event-relay for unbounded retries.",
+        "id": "S1",
+        "risk": "The lack of an explicit maximum retry count in source N2 creates potential delivery loops, violating the bounded retry requirement.",
+        "source_id": "N1"
+      },
+      {
+        "advantage": "Utilizes the existing delivery status events in source N2 to ensure traceable outcomes without relying on unproven runtime metrics.",
+        "approach": "Decouple preference updates from delivery by using lab/event-relay's deduplication keys to enforce idempotency while implementing a hard stop on retries based on the proposed dead-letter design.",
+        "id": "S2",
+        "risk": "The absence of measured RTO or production proof in source N2 introduces uncertainty regarding actual delivery latency and failure handling under load.",
+        "source_id": "N2"
+      },
+      {
+        "advantage": "Addresses the specific gap in source N1 regarding consent revocation acceptance by adding a dedicated test layer before asynchronous processing.",
+        "approach": "Adopt a hybrid model where lab/notification-api handles consent revocation acceptance tests (currently missing in N1) via a new internal validation step before delegating to lab/event-relay.",
+        "id": "S3",
+        "risk": "Introducing a new acceptance test layer may conflict with the current documentation scope of source N1 which lacks such a test definition.",
+        "source_id": "N1"
+      }
+    ]
+  },
+  "preliminary_assistant_review": {
+    "review_type": "PRELIMINARY_TEXT_REVIEW_NOT_INDEPENDENT_HUMAN_SCORE",
+    "judgement": "NEEDS_ARCHITECTURAL_REVISION",
+    "issues": [
+      {
+        "id": "OPTION_S1_CONFLICTS_MANDATORY_BOUNDED_RETRY",
+        "option": "S1",
+        "severity": "MAJOR",
+        "source": "N2",
+        "quote_from_option": "for unbounded retries",
+        "reason": "The N2 scenario explicitly requires bounded asynchronous delivery; an option with unbounded retries contradicts the required property even though its risk section notices the violation."
+      },
+      {
+        "id": "OPTION_S3_TEST_ACTIVITY_NOT_DISTINCT_ARCHITECTURE",
+        "option": "S3",
+        "severity": "MAJOR",
+        "source": "N1",
+        "quote_from_option": "handles consent revocation acceptance tests",
+        "reason": "The proposed acceptance-test/validation step is useful to qualify consent behaviour but does not establish a complete alternative architecture for bounded delivery and failure handling."
+      }
+    ],
+    "s2_assessment": "Plausible preliminary direction from N2 for idempotency, explicit retry cap and traceability; still only a design proposal, not a proven decision.",
+    "independent_human_score": null,
+    "adr_approved": false,
+    "AA3_ARCHITECT_REASONING_VALIDATED": false
+  }
+}
