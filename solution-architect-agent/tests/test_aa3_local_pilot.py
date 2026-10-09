@@ -162,6 +162,62 @@ class AA3PilotTests(unittest.TestCase):
                 "LOCAL_PILOT_WINDOWS_LAUNCH_BLOCKED",
             )
 
+    def test_stderr_diagnostic_reports_categories_without_secret_text(self):
+        import subprocess
+        result = PILOT.safe_process_diagnostic(subprocess.CompletedProcess(
+            args=["redacted"], returncode=1, stdout="",
+            stderr="Unknown option --title; Bearer HIDDEN_SECRET and C:\\secret\\key.txt",
+        ))
+        self.assertEqual(result["stderr_categories"], ["CLI_OPTION_REJECTED"])
+        self.assertEqual(result["stdout_bytes"], 0)
+        self.assertGreater(result["stderr_bytes"], 0)
+        self.assertNotIn("HIDDEN_SECRET", str(result))
+        self.assertNotIn("key.txt", str(result))
+
+    def test_stderr_empty_is_reported(self):
+        import subprocess
+        data = PILOT.safe_process_diagnostic(subprocess.CompletedProcess(
+            args=[], returncode=1, stdout="", stderr="",
+        ))
+        self.assertEqual(data["stderr_categories"], ["NO_STDERR_CAPTURED"])
+
+    def test_smoke_uses_short_prompt_and_same_process_runner(self):
+        import subprocess
+        from tempfile import TemporaryDirectory
+        sample = '\n'.join([
+            json.dumps({"type": "step_start", "part": {}}),
+            json.dumps({"type": "text",
+                        "part": {"type": "text", "text": "D099_LOCAL_SMOKE_OK"}}),
+        ])
+        with TemporaryDirectory() as folder:
+            with patch.object(PILOT, "execute_local_turn", return_value=(
+                subprocess.CompletedProcess(
+                    args=["opencode"], returncode=0, stdout=sample, stderr="",
+                )
+            )) as invoke:
+                outcome = PILOT.smoke_transport(Path(folder))
+            self.assertEqual(outcome["status"], "LOCAL_OPENCODE_SMOKE_TRANSPORT_PASS")
+            self.assertIn("text", outcome["event_types"])
+            self.assertEqual(invoke.call_count, 1)
+            self.assertLess(len(invoke.call_args.args[0]), 100)
+            self.assertTrue((Path(folder) / "smoke.events.jsonl").exists())
+
+    def test_failed_smoke_is_fail_closed_and_diagnostic_only(self):
+        import subprocess
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as folder:
+            with patch.object(PILOT, "execute_local_turn", return_value=(
+                subprocess.CompletedProcess(
+                    args=["opencode"], returncode=1, stdout="",
+                    stderr="Error: unknown option --title",
+                )
+            )):
+                outcome = PILOT.smoke_transport(Path(folder))
+            self.assertEqual(outcome["status"], "LOCAL_OPENCODE_SMOKE_FAILED")
+            self.assertFalse(outcome["AA3_ARCHITECT_REASONING_VALIDATED"])
+            self.assertEqual(outcome["diagnostic"]["stderr_categories"],
+                             ["CLI_OPTION_REJECTED"])
+
     def test_model_tool_call_is_disallowed(self):
         with self.assertRaisesRegex(ValueError, "MODEL_ATTEMPTED_TOOL_USE"):
             PILOT.extract(json.dumps({"type": "tool_use", "part": {}}) + "\n" +

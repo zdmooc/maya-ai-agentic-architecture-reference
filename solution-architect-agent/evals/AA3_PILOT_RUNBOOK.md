@@ -33,3 +33,39 @@ Outputs (local-only, do not automatically upload): `daarops.events.jsonl`, `daar
 The model `qwen2.5:3b` advertises 32,768 tokens, **below** the planned >=64k model-context target; it may not successfully produce a full JSON architecture assessment. Record that limitation, not a made-up 64k result. `jsonschema` is necessary for offline structural scoring; if unavailable, the pilot preserves JSON and marks `JSONSCHEMA_UNAVAILABLE`.
 
 Full AA3 still needs version-locked live source access through the governed real MCP gateway, independent runtime tool-call audit (not model-supplied), qualified context, baseline review and human scoring >=85/100 on each case with no severe policy violations. A golden fixture match alone does not qualify.
+
+## October 9, 2026 — AA3 Windows native launcher resolved; OpenCode exits 1 with zero stdout
+
+The operator ran both cases from the native PE launcher (preflight reported
+`NATIVE_BINARY_RESOLVED_NO_MODEL`), but both returned `opencode_exit_code=1`
+and `*.events.jsonl` files had exactly zero bytes. **No JSON events are
+available and the previous script discarded captured stderr.** This is
+not an observed LLM benchmark failure, but an OpenCode invocation diagnostic
+gap. Do not repeat DAAROPS/SQY until a short transport smoke succeeds.
+
+The runner now provides `--smoke-only`: one short text turn with the exact
+approved local Ollama configuration, native Windows PE, `--pure`,
+`--format json`, and `--agent plan`. It does not construct either mission
+prompt or load the provisional answers. Both smoke and benchmark now use a
+single process builder, without optional `--title`, to avoid CLI compatibility
+ambiguity. Diagnostic reports contain **only fixed error categories, stdout/
+stderr byte counts and SHA-256 of stderr; raw stderr, argv, prompts, local
+paths and tokens are not logged in summary.json**. The local
+`smoke.events.jsonl` file may still contain model text; inspect before
+sharing. No automatic retry.
+
+```bash
+cd /c/workspaces/D099-AA3-HUB
+git status --short
+git pull --ff-only origin d099-aa0-aa2-method-contracts
+export OLLAMA_HOST=192.168.56.1:11434
+D099_ALLOW_LOCAL_INFERENCE=YES env -u OPENCODE_CONFIG_CONTENT \
+  python solution-architect-agent/evals/run_aa3_pilot.py \
+  --smoke-only --out /c/workspaces/D099-AA3-SMOKE-003
+cat /c/workspaces/D099-AA3-SMOKE-003/summary.json
+```
+
+If `LOCAL_OPENCODE_SMOKE_TRANSPORT_PASS` is observed, **only then** perform
+two-case pilot with a brand-new output path; the target model remains below 64k.
+If failure persists, the classified `stderr_categories` identifies the next
+single corrective action. Avoid leaking raw diagnostic logs into GitHub.

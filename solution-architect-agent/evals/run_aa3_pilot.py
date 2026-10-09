@@ -273,19 +273,102 @@ def resolve_opencode() -> str:
     )
 
 
-def pilot_one(case: str, destination: Path, *, timeout: int = 600) -> dict:
-    prompt, meta = assemble(case)
+def safe_process_diagnostic(result: subprocess.CompletedProcess[str]) -> dict:
+    """Report ONLY controlled categories and hashes, never raw stderr/argv."""
+    stderr = result.stderr or ""
+    stdout = result.stdout or ""
+    lower = stderr.casefold()
+    matches = (
+        ("CLI_OPTION_REJECTED", ("unknown option", "unrecognized option",
+                                  "unknown argument", "unexpected argument")),
+        ("LOCAL_ENDPOINT_UNAVAILABLE", ("econnrefused", "connection refused",
+                                        "could not connect", "fetch failed")),
+        ("PROCESS_PERMISSION_ERROR", ("eacces", "access is denied",
+                                      "permission denied")),
+        ("MODEL_CONTEXT_ERROR", ("context length", "context window",
+                                 "too many tokens", "context overflow")),
+        ("MODEL_OR_PROVIDER_ERROR", ("provider not found", "model not found",
+                                     "modelnotfound", "invalid model")),
+        ("RUNTIME_MISSING_DEPENDENCY", ("cannot find module",
+                                        "module not found", "file not found",
+                                        "no such file or directory")),
+        ("PROCESS_EXCEPTION", ("panic:", "fatal error", "unhandled exception",
+                               "uncaught exception", "traceback")),
+        ("CONFIGURATION_ERROR", ("invalid config", "configuration error",
+                                 "config file", "schema validation")),
+        ("AUTHENTICATION_ERROR", ("unauthorized", "401", "api key")),
+    )
+    categories = [category for category, indicators in matches
+                  if any(token in lower for token in indicators)]
+    if not stderr:
+        categories = ["NO_STDERR_CAPTURED"]
+    elif not categories:
+        categories = ["UNCLASSIFIED_STDERR"]
+    return {
+        "stdout_bytes": len(stdout.encode("utf-8", errors="replace")),
+        "stderr_bytes": len(stderr.encode("utf-8", errors="replace")),
+        "stderr_sha256": hashlib.sha256(
+            stderr.encode("utf-8", errors="replace")
+        ).hexdigest() if stderr else None,
+        "stderr_categories": categories,
+        "stderr_raw_in_report": False,
+    }
+
+
+def execute_local_turn(prompt: str, destination: Path, *, timeout: int) -> subprocess.CompletedProcess[str]:
+    """Same safe process environment for a minimal smoke and full case."""
     env = child_environment()
     executable = resolve_opencode()
     with tempfile.TemporaryDirectory(prefix="d099-aa3-", dir=destination) as sandbox:
-        cmd = [executable, "run", "--pure", "--format", "json", "--model",
-               MODEL, "--agent", "plan", "--title", f"D099 pilot {case}", prompt]
-        result = subprocess.run(cmd, cwd=sandbox, env=env, capture_output=True,
-                                text=True, encoding="utf-8", errors="replace",
-                                timeout=timeout, check=False)
+        # No optional --title flag: native Windows CLI variants may reject it.
+        # Passing argv directly, not shell=True, keeps prompt text out of cmd.exe.
+        cmd = [executable, "run", "--pure", "--format", "json",
+               "--model", MODEL, "--agent", "plan", prompt]
+        return subprocess.run(cmd, cwd=sandbox, env=env, capture_output=True,
+                              text=True, encoding="utf-8", errors="replace",
+                              timeout=timeout, check=False)
+
+
+def smoke_transport(destination: Path) -> dict:
+    """One small local model turn; never reads case files or golden answers."""
+    result = execute_local_turn(
+        "Reply exactly D099_LOCAL_SMOKE_OK. Do not call tools.",
+        destination, timeout=120,
+    )
+    trace = destination / "smoke.events.jsonl"
+    trace.write_text(result.stdout, encoding="utf-8")
+    diagnostics = safe_process_diagnostic(result)
+    events = []
+    for line in result.stdout.splitlines():
+        if line.strip():
+            try:
+                value = json.loads(line)
+                events.append(value.get("type") if isinstance(value, dict) else "invalid")
+            except ValueError:
+                events.append("invalid_json")
+    status = (
+        "LOCAL_OPENCODE_SMOKE_TRANSPORT_PASS"
+        if result.returncode == 0 and "text" in events
+        else "LOCAL_OPENCODE_SMOKE_FAILED"
+    )
+    return {
+        "case": "smoke",
+        "status": status,
+        "opencode_exit_code": result.returncode,
+        "event_types": sorted(set(events)),
+        "diagnostic": diagnostics,
+        "model_output_semantics_validated": False,
+        "AA3_ARCHITECT_REASONING_VALIDATED": False,
+    }
+
+
+def pilot_one(case: str, destination: Path, *, timeout: int = 600) -> dict:
+    prompt, meta = assemble(case)
+    result = execute_local_turn(prompt, destination, timeout=timeout)
     trace = destination / f"{case}.events.jsonl"
     trace.write_text(result.stdout, encoding="utf-8")
-    # stderr stays local, never upload or expose credentials; only exit code in report
+    # No raw stderr or prompt: only byte counts, digest and fixed categories.
+    meta["diagnostic"] = safe_process_diagnostic(result)
     meta.update({"timestamp_utc": datetime.now(timezone.utc).isoformat(),
                  "opencode_exit_code": result.returncode,
                  "status": "LOCAL_PILOT_CAPTURED_UNREVIEWED",
@@ -325,8 +408,37 @@ def main_argv(argv: list[str] | None = None) -> int:
     parser.add_argument("--case", choices=("daarops", "sqy", "both"), default="both")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--smoke-only", action="store_true",
+                        help="One short OpenCode/Ollama transport turn; no mission")
     args = parser.parse_args(argv)
     chosen = ("daarops", "sqy") if args.case == "both" else (args.case,)
+    if args.smoke_only and args.dry_run:
+        parser.error("Choose either --smoke-only or --dry-run")
+    if args.smoke_only:
+        if os.environ.get("D099_ALLOW_LOCAL_INFERENCE") != "YES":
+            parser.error("D099_ALLOW_LOCAL_INFERENCE=YES required")
+        config = assert_isolated_config()
+        dest = args.out.resolve()
+        if dest.is_relative_to(ROOT):
+            parser.error("--out must be outside the Git repository")
+        dest.mkdir(parents=True, exist_ok=True)
+        if (dest / "summary.json").exists() or (dest / "smoke.events.jsonl").exists():
+            parser.error("Output exists: choose a new --out folder")
+        try:
+            outcome = smoke_transport(dest)
+        except (FileNotFoundError, OSError, subprocess.TimeoutExpired) as exc:
+            outcome = {"case": "smoke", "status": "LOCAL_OPENCODE_SMOKE_LAUNCH_FAILED",
+                       "error_type": type(exc).__name__,
+                       "AA3_ARCHITECT_REASONING_VALIDATED": False}
+        summary = {"status": "LOCAL_TRANSPORT_SMOKE_ONLY",
+                   "config": config, "cases": [outcome],
+                   "AA3_ARCHITECT_REASONING_VALIDATED": False}
+        (dest / "summary.json").write_text(
+            json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
+        return 0 if outcome["status"] == "LOCAL_OPENCODE_SMOKE_TRANSPORT_PASS" else 2
     meta = [assemble(case)[1] for case in chosen]
     if args.dry_run:
         try:
