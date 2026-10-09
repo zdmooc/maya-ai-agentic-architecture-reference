@@ -1,0 +1,176 @@
+[
+  {
+    "id": "DISCOVERY",
+    "inputs": [
+      "mission",
+      "cadrage"
+    ],
+    "outputs": [
+      "source_inventory"
+    ],
+    "owner": "maya-architect",
+    "autonomy": "L1_ADVISE",
+    "approval_gate": "NONE",
+    "validator": "schema + provenance + policy",
+    "refusal": "source_missing"
+  },
+  {
+    "id": "REQUIREMENTS",
+    "inputs": [
+      "source_inventory"
+    ],
+    "outputs": [
+      "requirements"
+    ],
+    "owner": "maya-architect",
+    "autonomy": "L1_ADVISE",
+    "approval_gate": "NONE",
+    "validator": "schema + provenance + policy",
+    "refusal": "unverifiable_requirement"
+  },
+  {
+    "id": "REPO_MAPPING",
+    "inputs": [
+      "requirements",
+      "repositories"
+    ],
+    "outputs": [
+      "repository_map"
+    ],
+    "owner": "maya-architect",
+    "autonomy": "L1_ADVISE",
+    "approval_gate": "NONE",
+    "validator": "schema + provenance + policy",
+    "refusal": "ownership_collision"
+  },
+  {
+    "id": "GAP_ANALYSIS",
+    "inputs": [
+      "requirements",
+      "repositories"
+    ],
+    "outputs": [
+      "gaps"
+    ],
+    "owner": "maya-architect",
+    "autonomy": "L1_ADVISE",
+    "approval_gate": "NONE",
+    "validator": "schema + provenance + policy",
+    "refusal": "unsupported_gap"
+  },
+  {
+    "id": "OPTIONS",
+    "inputs": [
+      "gaps"
+    ],
+    "outputs": [
+      "options"
+    ],
+    "owner": "maya-architect",
+    "autonomy": "L1_ADVISE",
+    "approval_gate": "NONE",
+    "validator": "schema + provenance + policy",
+    "refusal": "missing_alternative"
+  },
+  {
+    "id": "ADR",
+    "inputs": [
+      "options"
+    ],
+    "outputs": [
+      "proposed_adr"
+    ],
+    "owner": "maya-architect",
+    "autonomy": "L1_ADVISE",
+    "approval_gate": "AUTHENTICATED_HUMAN_APPROVAL",
+    "validator": "schema + provenance + policy",
+    "refusal": "no_human_architecture_approval"
+  },
+  {
+    "id": "BACKLOG",
+    "inputs": [
+      "adr"
+    ],
+    "outputs": [
+      "backlog"
+    ],
+    "owner": "maya-architect",
+    "autonomy": "L1_ADVISE",
+    "approval_gate": "NONE",
+    "validator": "schema + provenance + policy",
+    "refusal": "no_approved_adr"
+  },
+  {
+    "id": "BUILD",
+    "inputs": [
+      "approved_adr",
+      "backlog"
+    ],
+    "outputs": [
+      "bounded_diff"
+    ],
+    "owner": "maya-builder",
+    "autonomy": "L2_BUILD",
+    "approval_gate": "AUTHENTICATED_HUMAN_APPROVAL",
+    "validator": "schema + provenance + policy",
+    "refusal": "out_of_scope_edit"
+  },
+  {
+    "id": "TEST_REVIEW",
+    "inputs": [
+      "diff",
+      "tests"
+    ],
+    "outputs": [
+      "independent_review"
+    ],
+    "owner": "maya-reviewer",
+    "autonomy": "L3_TEST",
+    "approval_gate": "AUTHENTICATED_HUMAN_APPROVAL",
+    "validator": "schema + provenance + policy",
+    "refusal": "review_or_ci_failed"
+  },
+  {
+    "id": "RUNTIME",
+    "inputs": [
+      "human_runtime_authorization"
+    ],
+    "outputs": [
+      "runtime_proof"
+    ],
+    "owner": "maya-openshift-reader",
+    "autonomy": "L5_CRC_READ",
+    "approval_gate": "AUTHENTICATED_HUMAN_APPROVAL",
+    "validator": "schema + provenance + policy",
+    "refusal": "runtime_mutation_without_explicit_authorization"
+  },
+  {
+    "id": "EVIDENCE",
+    "inputs": [
+      "tests",
+      "runtime_evidence"
+    ],
+    "outputs": [
+      "evidence_pack"
+    ],
+    "owner": "maya-reviewer",
+    "autonomy": "L1_ADVISE",
+    "approval_gate": "NONE",
+    "validator": "schema + provenance + policy",
+    "refusal": "runtime_overclaim"
+  },
+  {
+    "id": "DEMO",
+    "inputs": [
+      "evidence_pack"
+    ],
+    "outputs": [
+      "demo_runbook"
+    ],
+    "owner": "maya-architect",
+    "autonomy": "L1_ADVISE",
+    "approval_gate": "NONE",
+    "validator": "schema + provenance + policy",
+    "refusal": "unreproducible_claim"
+  }
+]

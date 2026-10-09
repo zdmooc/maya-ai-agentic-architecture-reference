@@ -1,0 +1,140 @@
+{
+  "version": "D099-AA0-v1",
+  "mission": {
+    "id": "DAAROPS",
+    "title": "Platform Engineer Kubernetes Go OpenShift Operators OLM",
+    "source": "zdmooc/cadrage_202682030/portfolio/DAAROPS_PLATFORM_ENGINEER_KUBERNETES_GO_MISSION_ALIGNMENT_2026-10-07.md"
+  },
+  "requirements": {
+    "FR": [
+      {
+        "id": "FR-OP-01",
+        "text": "Explain and demonstrate a Go/controller-runtime Operator and CapabilityConsumption CRD with Observe/Manage, SSA, Conditions and retries",
+        "acceptance": "Reconciler, status transitions and owner boundaries linked to the canonical Shared Platform implementation",
+        "source": "portfolio/DAAROPS_PLATFORM_ENGINEER_KUBERNETES_GO_MISSION_ALIGNMENT_2026-10-07.md"
+      },
+      {
+        "id": "FR-OP-02",
+        "text": "Trace GitOps workloads independently of platform-owned baseline",
+        "acceptance": "Show Argo CD desired state without double ownership, with an Instant Payments consumer reference",
+        "source": "portfolio/DAAROPS_PLATFORM_ENGINEER_KUBERNETES_GO_MISSION_ALIGNMENT_2026-10-07.md"
+      },
+      {
+        "id": "FR-OP-03",
+        "text": "Prepare OLM install, upgrade, uninstall explanation against Kubernetes and OpenShift evidence levels",
+        "acceptance": "Separate Kind OLM lifecycle from currently pending exact OpenShift OLM replay",
+        "source": "portfolio/DAAROPS_PLATFORM_ENGINEER_KUBERNETES_GO_MISSION_ALIGNMENT_2026-10-07.md"
+      }
+    ],
+    "NFR": [
+      {
+        "id": "NFR-OP-01",
+        "text": "Non-destructive brownfield adoption",
+        "acceptance": "Observe detects OwnershipConflict without mutation; Manage requires explicit approval and Retain semantics",
+        "source": "portfolio/DAAROPS_PLATFORM_ENGINEER_KUBERNETES_GO_MISSION_ALIGNMENT_2026-10-07.md"
+      },
+      {
+        "id": "NFR-OP-02",
+        "text": "Operational observability and recoverability",
+        "acceptance": "Describe retry/backoff, leader lease, bounded metrics and failure recovery referencing Kind I6A/I6B evidence",
+        "source": "portfolio/DAAROPS_PLATFORM_ENGINEER_KUBERNETES_GO_MISSION_ALIGNMENT_2026-10-07.md"
+      }
+    ]
+  },
+  "repositories": [
+    {
+      "name": "zdmooc/cadrage_202682030",
+      "canonical_owner": "GOVERNANCE",
+      "revision": "4e963461",
+      "source": "portfolio/DAAROPS_PLATFORM_ENGINEER_KUBERNETES_GO_MISSION_ALIGNMENT_2026-10-07.md"
+    },
+    {
+      "name": "zdmooc/shared-platform-services-openshift",
+      "canonical_owner": "PRIMARY_OPERATOR_PLATFORM",
+      "revision": "c615985d",
+      "source": "shared-platform-services-openshift/ROADMAP.md"
+    },
+    {
+      "name": "zdmooc/argocd-expert-pack",
+      "canonical_owner": "SUPPORTING_GITOPS_SPECIALIST",
+      "revision": "6807107a",
+      "source": "portfolio/DAAROPS_PLATFORM_ENGINEER_KUBERNETES_GO_MISSION_ALIGNMENT_2026-10-07.md"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "G-OLM-CRC",
+      "description": "Exact Operator Lifecycle Manager install/upgrade/uninstall on OpenShift CRC is not yet evidenced on merged main; D-093 OP2 PR #12 remains open",
+      "source": "https://github.com/zdmooc/shared-platform-services-openshift/pull/12",
+      "action": "Review OP2 CI and seek separate authorization for an isolated CRC replay, without confusing Kind and OpenShift proof"
+    },
+    {
+      "id": "G-DEMO-INT",
+      "description": "OP3 integrated Operator+Argo CD+Day-2 CRC replay is pending; OP4 recruiter demo pack is prepared only",
+      "source": "https://github.com/zdmooc/shared-platform-services-openshift/pull/14",
+      "action": "Reuse OP3/OP4 PRs without merging or cluster mutation as part of D-099"
+    }
+  ],
+  "options": [
+    {
+      "id": "S1",
+      "approach": "Evidence-only Operator interview pack from merged main",
+      "advantages": [
+        "No CRC workload impact",
+        "Immediately traceable to I4/I5/I6 evidence"
+      ],
+      "risks": [
+        "Cannot claim exact OpenShift OLM lifecycle"
+      ],
+      "evidence_limit": "Prior Kind OLM and CRC consumer proof only"
+    },
+    {
+      "id": "S2",
+      "approach": "Target OP2/OP3 existing Shared Platform branches for tightly approved evidence replay",
+      "advantages": [
+        "Closes exact OLM/Day-2 gaps without duplicating operators"
+      ],
+      "risks": [
+        "Needs isolated cluster window, merge approval and brownfield conflict assessment"
+      ],
+      "evidence_limit": "OP2/OP3 CRC not proven at baseline"
+    },
+    {
+      "id": "S3",
+      "approach": "Create an alternative Operator platform or deploy parallel GitOps ownership",
+      "advantages": [
+        "Would allow an independent design space"
+      ],
+      "risks": [
+        "Duplicates canonical ownership and increases regression risk"
+      ],
+      "evidence_limit": "No evidence that existing platform is inadequate"
+    }
+  ],
+  "adr": {
+    "id": "ADR-D099-GOLDEN-DAAROPS",
+    "status": "PROPOSED",
+    "chosen": "S2",
+    "reason": "Conditional extension on existing OP2/OP3 PRs, retaining safe S1 for immediate interviews; no separate Operator platform",
+    "approval_ref": null
+  },
+  "evidence": [
+    {
+      "claim": "Kind I6C OLM lifecycle and CRC I5 consumer #1 already documented; exact CRC OLM OP2 pending",
+      "level": "DESIGNED",
+      "source": "portfolio/DAAROPS_PLATFORM_ENGINEER_KUBERNETES_GO_MISSION_ALIGNMENT_2026-10-07.md",
+      "scope": "Documentary reference to previously captured proofs; no fresh D-099 runtime"
+    }
+  ],
+  "limits": [
+    "Provisional curator-drafted baseline; requires independent human architecture validation",
+    "DAAROPS recruiter interest does not constitute a CRC mutation authorization",
+    "Do not treat OP2/OP3 open PRs as merged",
+    "CRC single-node is not HA/production"
+  ],
+  "next_actions": [
+    "Score agent output against actual D-093 OP1→OP4 head and review references",
+    "Obtain separate permission only if exact OLM CRC reproduction is needed"
+  ],
+  "status": "DESIGNED"
+}

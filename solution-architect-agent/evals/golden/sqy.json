@@ -1,0 +1,146 @@
+{
+  "version": "D099-AA0-v1",
+  "mission": {
+    "id": "SQY",
+    "title": "IT-EXPLORER Kubernetes/OpenShift CaaS",
+    "source": "zdmooc/cadrage_202682030/portfolio/EXPERT_KUBERNETES_OPENSHIFT_SQY_MISSION_ALIGNMENT_2026-10-06.md"
+  },
+  "requirements": {
+    "FR": [
+      {
+        "id": "FR-CAAS-01",
+        "text": "Describe on-prem OpenShift CaaS cluster lifecycle: control plane, ingress, DNS/LB, registry, IAM/PKI, storage and Day-2",
+        "acceptance": "Reuses Cluster Factory HLD/LLD and OpenShift overlay; excludes Data Lakehouse from flagship CaaS claim",
+        "source": "portfolio/EXPERT_KUBERNETES_OPENSHIFT_SQY_MISSION_ALIGNMENT_2026-10-06.md"
+      },
+      {
+        "id": "FR-CAAS-02",
+        "text": "Demonstrate troubleshooting N3/RCA for DNS/NetworkPolicy, pod/deploy, PVC and workload capacity",
+        "acceptance": "Traces D098 SQY4 runtime evidence with failure, diagnosis, remediation and postchecks",
+        "source": "portfolio/D098_SQY_EXECUTION_STATUS_2026-10-06.md"
+      },
+      {
+        "id": "FR-CAAS-03",
+        "text": "Explain upgrade and migration assessment without triggering a real cluster upgrade",
+        "acceptance": "Identify ClusterVersionOverridesSet blocker and documented bounded migration rehearsal",
+        "source": "portfolio/D098_SQY_EXECUTION_STATUS_2026-10-06.md"
+      }
+    ],
+    "NFR": [
+      {
+        "id": "NFR-CAAS-01",
+        "text": "Preserve platform security and operational observability",
+        "acceptance": "Explicit SCC/RBAC, SCA/SBOM/supply-chain proof levels, Prometheus/Alertmanager/Loki and Shared OIDC/OTel",
+        "source": "portfolio/EXPERT_KUBERNETES_OPENSHIFT_SQY_MISSION_ALIGNMENT_2026-10-06.md"
+      },
+      {
+        "id": "NFR-CAAS-02",
+        "text": "No production-readiness overclaim",
+        "acceptance": "CRC is single-node; no multi-node OpenShift HA, production Vault or verified client identity inferred",
+        "source": "portfolio/EXPERT_KUBERNETES_OPENSHIFT_SQY_MISSION_ALIGNMENT_2026-10-06.md"
+      }
+    ]
+  },
+  "repositories": [
+    {
+      "name": "zdmooc/cadrage_202682030",
+      "canonical_owner": "GOVERNANCE",
+      "revision": "4e963461",
+      "source": "portfolio/EXPERT_KUBERNETES_OPENSHIFT_SQY_MISSION_ALIGNMENT_2026-10-06.md"
+    },
+    {
+      "name": "zdmooc/k8s-openshift-cluster-factory",
+      "canonical_owner": "PRIMARY_CAAS_LIFECYCLE_N3",
+      "revision": "2ea67b0a",
+      "source": "portfolio/EXPERT_KUBERNETES_OPENSHIFT_SQY_MISSION_ALIGNMENT_2026-10-06.md"
+    },
+    {
+      "name": "zdmooc/shared-platform-services-openshift",
+      "canonical_owner": "SHARED_PLATFORM_ONBOARDING",
+      "revision": "c615985d",
+      "source": "portfolio/EXPERT_KUBERNETES_OPENSHIFT_SQY_MISSION_ALIGNMENT_2026-10-06.md"
+    },
+    {
+      "name": "zdmooc/openshift-migration-framework",
+      "canonical_owner": "MIGRATION_CUTOVER_ROLLBACK",
+      "revision": "e2183ff0",
+      "source": "portfolio/EXPERT_KUBERNETES_OPENSHIFT_SQY_MISSION_ALIGNMENT_2026-10-06.md"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "G-PROD-HA",
+      "description": "No production multi-node OpenShift HA or enterprise disaster recovery proof, despite mission preparation SQY0–SQY7 being closed",
+      "source": "portfolio/EXPERT_KUBERNETES_OPENSHIFT_SQY_MISSION_ALIGNMENT_2026-10-06.md",
+      "action": "Do not reopen D098 for a CI-only or single-node demonstration; require an explicit mission demand and new environment for HA evidence"
+    },
+    {
+      "id": "G-VAULT-OPS",
+      "description": "Enterprise Vault/CyberArk operation and certain integrations remain architecture-pattern-only",
+      "source": "portfolio/EXPERT_KUBERNETES_OPENSHIFT_SQY_MISSION_ALIGNMENT_2026-10-06.md",
+      "action": "Limit claim to designs; defer live validation until a concrete consumer and authorization exist"
+    }
+  ],
+  "options": [
+    {
+      "id": "S1",
+      "approach": "Reuse completed D098 CaaS/N3/observability mission pack and verified scope",
+      "advantages": [
+        "Zero duplicated CaaS platform",
+        "All eight mission-preparation steps already closed to declared gates"
+      ],
+      "risks": [
+        "No multi-node OpenShift production evidence"
+      ],
+      "evidence_limit": "CRC single-node, Kind and bounded CI are not production"
+    },
+    {
+      "id": "S2",
+      "approach": "Execute one targeted additional on-prem production-like lab only if client demand justifies it",
+      "advantages": [
+        "Would reduce a specific NFR uncertainty"
+      ],
+      "risks": [
+        "Requires hardware, access, explicit approval and cost"
+      ],
+      "evidence_limit": "No target environment available in this benchmark"
+    },
+    {
+      "id": "S3",
+      "approach": "Create a new independent CaaS repo to reimplement existing capabilities",
+      "advantages": [
+        "Potentially a separate research sandbox"
+      ],
+      "risks": [
+        "Duplicates Cluster Factory, Shared Platform and migration specialists"
+      ],
+      "evidence_limit": "No uncovered common platform need supports it"
+    }
+  ],
+  "adr": {
+    "id": "ADR-D099-GOLDEN-SQY",
+    "status": "PROPOSED",
+    "chosen": "S1",
+    "reason": "D098 portfolio readiness is closed within documented scope; preserve current flagship and do not reopen HA/production claims without a new mission requirement",
+    "approval_ref": null
+  },
+  "evidence": [
+    {
+      "claim": "D098 SQY0–SQY7 mission-preparation closure, N3 scenarios and CI/CRC evidence are documented",
+      "level": "DESIGNED",
+      "source": "portfolio/D098_SQY_EXECUTION_STATUS_2026-10-06.md",
+      "scope": "Documentary evidence retrieval; D-099 agent does not reproduce past CRC runtime"
+    }
+  ],
+  "limits": [
+    "Provisional curator-drafted baseline, not independently human-approved",
+    "Client identity not confirmed by local folder convention",
+    "CRC single-node and Kind cannot prove OpenShift multi-node HA",
+    "D098 closure means mission preparation, not production platform acceptance"
+  ],
+  "next_actions": [
+    "Audit D098 flagship and supporting repositories without reimplementing closed gates",
+    "Evaluate independent agent answer for correct exclusion of Data Lakehouse as CaaS owner"
+  ],
+  "status": "DESIGNED"
+}

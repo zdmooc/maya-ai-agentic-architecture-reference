@@ -1,0 +1,21 @@
+{
+  "version": "D099-AA3-INDEPENDENT-SYNTHETIC-v1",
+  "origin": "SYNTHETIC_FICTIONAL_NO_EXTERNAL_CLIENT_OR_REPOSITORY",
+  "mission_id": "INVENTORY-02",
+  "mission_title": "Warehouse inventory reservation and idempotent allocation",
+  "scenario": "An imaginary retailer needs stock reservation with expiry, a read-only availability API and consistency under retries. Compare architecture options using only these fictional source documents, with no claims of deployed proof.",
+  "repository_sources": {
+    "lab/inventory-api": "I1",
+    "lab/stock-ledger": "I2"
+  },
+  "sources": [
+    {
+      "id": "I1",
+      "text": "Mission INVENTORY-02 covers inventory reservation and expiry. Canonical repo lab/inventory-api owns stock availability API and reservation request validation. The design lacks an explicit timeout acceptance test. This is a synthetic design; no system is deployed."
+    },
+    {
+      "id": "I2",
+      "text": "Mission INVENTORY-02 requires retry-safe stock allocation. Canonical repo lab/stock-ledger owns reservation IDs, stock mutation journal and idempotency keys. Duplicate delivery is possible in the design. Compensating release is a proposal and has no measured recovery proof."
+    }
+  ]
+}

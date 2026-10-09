@@ -1,0 +1,49 @@
+{
+  "program": "D-099",
+  "checkpoint": "2026-10-09",
+  "assessment_owner": "zdmooc/maya-ai-agentic-architecture-reference",
+  "status": "AA3_PARTIAL_REAL_LOCAL_EVIDENCE_NOT_QUALIFIED",
+  "real_local": {
+    "model": "qwen3.5:9b-q4_K_M",
+    "requested_context": 8192,
+    "claimed_64k_qualified": false,
+    "fictional_fact_cases_pass": [
+      "NOTIFY-01",
+      "INVENTORY-02"
+    ],
+    "fictional_design_slices_structure_pass": [
+      "NOTIFY-01",
+      "INVENTORY-02"
+    ],
+    "design_slices_independent_semantic_pass": false,
+    "real_kubernetes_go_benchmark_cases": []
+  },
+  "benchmark": {
+    "cases": [
+      "daarops",
+      "sqy"
+    ],
+    "frozen_public_sources_present": true,
+    "model_full_D099_AA0_v1_run_performed": false,
+    "golden_baselines_human_approved": false,
+    "human_score_85_both": false,
+    "independent_tool_call_audit_present": false,
+    "OpenCode_effective_permissions_verified": false,
+    "approver_signed": false
+  },
+  "gates": {
+    "AA0_FORMALLY_CLOSED": false,
+    "AA1_LOCAL_MODEL_BASELINE_VALIDATED": false,
+    "AA2_ROLE_PROFILES_E2E_VALIDATED": false,
+    "AA3_ARCHITECT_REASONING_VALIDATED": false,
+    "D099_CLOSED": false
+  },
+  "environment_safety": {
+    "allowed_model_call": "OLLAMA_LOCAL_ONLY_WHEN_OPERATOR_OPT_IN",
+    "no_goldens_in_prompt": true,
+    "model_tool_access": false,
+    "CRC_MUTATION_AUTHORIZED": false,
+    "runtime_tamper_audit": "NOT_PRESENT"
+  },
+  "note": "Metadata is a checkpoint template for independent review, NOT signed proof or an assertion about future runs. Human scoring and effective tool-policy audits cannot be supplied by CI."
+}

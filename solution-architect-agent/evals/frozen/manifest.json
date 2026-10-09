@@ -1,0 +1,29 @@
+{
+  "version": "D099-AA3-PILOT-FROZEN-v1",
+  "method_head_at_freeze": "2ba8d9ea5d0542742dbcb2df7d97b2256eeb4589",
+  "source_repository": "zdmooc/cadrage_202682030",
+  "source_commit": "4e9634616f6d30ecd632f09e29a04b29eb907792",
+  "scope": "Offline read-only pilot source snapshots; not human-reviewed goldens",
+  "cases": {
+    "daarops": {
+      "mission_file": "evals/cases/daarops-mission.md",
+      "sources": [
+        {
+          "file": "evals/frozen/daarops-alignment.md",
+          "upstream_path": "portfolio/DAAROPS_PLATFORM_ENGINEER_KUBERNETES_GO_MISSION_ALIGNMENT_2026-10-07.md",
+          "upstream_git_blob_sha": "3ebedb899390849d40a93db533646e70374c58b5"
+        }
+      ]
+    },
+    "sqy": {
+      "mission_file": "evals/cases/sqy-mission.md",
+      "sources": [
+        {
+          "file": "evals/frozen/sqy-alignment.md",
+          "upstream_path": "portfolio/EXPERT_KUBERNETES_OPENSHIFT_SQY_MISSION_ALIGNMENT_2026-10-06.md",
+          "upstream_git_blob_sha": "2f41d26c255a13babf5cee2210adee63e87b6bd8"
+        }
+      ]
+    }
+  }
+}

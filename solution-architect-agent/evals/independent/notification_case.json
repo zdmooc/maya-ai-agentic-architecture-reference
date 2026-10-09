@@ -1,0 +1,21 @@
+{
+  "version": "D099-AA3-INDEPENDENT-SYNTHETIC-v1",
+  "origin": "SYNTHETIC_FICTIONAL_NO_EXTERNAL_CLIENT_OR_REPOSITORY",
+  "mission_id": "NOTIFY-01",
+  "mission_title": "Notification preferences and bounded delivery reliability",
+  "scenario": "A fictional regulated service requires explicit notification preferences, bounded retry and traceable delivery outcomes. Produce an architecture assessment of the supplied fictional owner repositories without claiming real runtime proof.",
+  "repository_sources": {
+    "lab/notification-api": "N1",
+    "lab/event-relay": "N2"
+  },
+  "sources": [
+    {
+      "id": "N1",
+      "text": "Mission NOTIFY-01 covers notification preference management. Canonical repo lab/notification-api owns REST user preferences and opt-out enforcement. Current documentation describes GET and PATCH preferences but lacks a consent revocation acceptance test. No production evidence was supplied."
+    },
+    {
+      "id": "N2",
+      "text": "Mission NOTIFY-01 requires bounded asynchronous delivery. Canonical repo lab/event-relay owns delivery queue consumers, deduplication keys and delivery status events. Current documentation describes retry without an explicit maximum; dead-letter handling is a proposed design, not deployed. There is no measured RTO or production runtime proof."
+    }
+  ]
+}
