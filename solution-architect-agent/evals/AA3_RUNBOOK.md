@@ -17,3 +17,31 @@ Status: **READY_FOR_INDEPENDENT_MODEL_TEST / NOT_EXECUTED**. The provisional ref
 AA3 completion requires a real independent model run, audited trajectory and human-approved scoring on both cases; a CI run on these JSON contracts is never that proof.
 
 Cannot be run by CI: local model readiness, real CRC resources, OIDC/tool gateway, and human decision.
+
+## Offline AA3 evidence pipeline (prepared only, NOT executed)
+
+A **local one-turn JSON output** may be collected with OpenCode on the Windows workbench after source material has been frozen and sandboxing verified:
+
+```bash
+# In an isolated scratch directory with the reviewed local-only, deny-tools config
+# and NO goldens mounted, no Git credentials, no kubeconfig:
+opencode run --pure --format json --model ollama/qwen2.5:3b --agent plan \
+  'Return ONLY one JSON object satisfying the attached D-099 assessment schema; do not fabricate sources or runtime evidence.' \
+  > candidate-daarops.events.jsonl
+```
+
+This command alone is **not a valid AA3 assessment**: the mission case, schema and a frozen, authorized source packet must be supplied separately within an accepted context budget. Current qwen2.5:3b advertises 32,768, which is **below the 64k target**. No raw golden references can be placed in the model's prompt or readable workspace.
+
+If an OpenCode run actually produces a complete JSON assessment, extract it without ever copying golden answers into the candidate workspace:
+
+```bash
+python solution-architect-agent/evals/extract_opencode_candidate.py \
+  --trace candidate-daarops.events.jsonl \
+  --candidate candidate-daarops.json \
+  --metadata candidate-daarops.metadata.json
+python solution-architect-agent/evals/precheck.py \
+  --candidate candidate-daarops.json \
+  --golden solution-architect-agent/evals/golden/daarops.json
+```
+
+**This is only a structural/offline smoke**, with no independent tool audit or human score; `AA3_ARCHITECT_REASONING_VALIDATED=false` always. The command is a skeleton and should **not** be run until the correct benchmark prompt with frozen source packet and human-reviewed references is prepared. The model is not qualified for 64k and the future AA3 repo-read policy is **not** equivalent to the AA1 deny-everything `plan` profile.
