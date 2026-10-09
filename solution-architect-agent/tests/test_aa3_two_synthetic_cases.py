@@ -1,7 +1,8 @@
-"""Two independent fictional cases exercise the same bounded static gates."""
+"""D099 AA3 two-case static-only synthetic integration; unittest-discovered."""
 import hashlib
 import sys
 from pathlib import Path
+import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "evals"))
@@ -35,34 +36,37 @@ def inventory():
     return facts, obj
 
 
-def test_two_fictional_cases_share_same_review_contract():
-    for name, id_expected in (
-        ("notification_case.json", "NOTIFY-01"),
-        ("inventory_case.json", "INVENTORY-02"),
-    ):
-        packet, meta = assemble_case(name)
-        assert packet["mission_id"] == id_expected
-        assert meta["model_invoked"] is False
-        assert len(packet["repository_sources"]) == 2
-    facts, candidate = inventory()
-    digest = hashlib.sha256(case_path("inventory_case.json").read_bytes()).hexdigest()
-    result = review(facts, candidate, expected_fixture_sha256=digest,
-                    fixture_name="inventory_case.json")
-    assert result["status"] == "AA3_OFFLINE_PRECHECK_PASS"
-    assert result["AA3_ARCHITECT_REASONING_VALIDATED"] is False
+class TwoSyntheticCasesTests(unittest.TestCase):
+    def test_two_fictional_cases_share_same_review_contract(self):
+        for name, expected in (
+            ("notification_case.json", "NOTIFY-01"),
+            ("inventory_case.json", "INVENTORY-02"),
+        ):
+            packet, meta = assemble_case(name)
+            self.assertEqual(packet["mission_id"], expected)
+            self.assertFalse(meta["model_invoked"])
+            self.assertEqual(len(packet["repository_sources"]), 2)
+        facts, candidate = inventory()
+        digest = hashlib.sha256(case_path("inventory_case.json").read_bytes()).hexdigest()
+        result = review(facts, candidate, expected_fixture_sha256=digest,
+                        fixture_name="inventory_case.json")
+        self.assertEqual(result["status"], "AA3_OFFLINE_PRECHECK_PASS")
+        self.assertFalse(result["AA3_ARCHITECT_REASONING_VALIDATED"])
+
+    def test_unapproved_case_name_rejected(self):
+        with self.assertRaisesRegex(ValueError, "UNAPPROVED_INDEPENDENT_FIXTURE"):
+            case_path("../../private/file.json")
+
+    def test_mixed_case_sources_and_identity_do_not_pass(self):
+        facts, candidate = inventory()
+        digest = hashlib.sha256(case_path("notification_case.json").read_bytes()).hexdigest()
+        result = review(facts, candidate, expected_fixture_sha256=digest,
+                        fixture_name="notification_case.json")
+        self.assertEqual(result["status"], "AA3_OFFLINE_PRECHECK_FAIL")
+        self.assertIn("MISSION_ID_MISMATCH", result["violations"])
+        self.assertIn("REPOSITORY_REQUIRED_MISSING:lab/notification-api",
+                      result["violations"])
 
 
-def test_unapproved_case_name_rejected():
-    import pytest
-    with pytest.raises(ValueError, match="UNAPPROVED_INDEPENDENT_FIXTURE"):
-        case_path("../../private/file.json")
-
-
-def test_mixed_case_sources_and_identity_do_not_pass():
-    facts, candidate = inventory()
-    sha = hashlib.sha256(case_path("notification_case.json").read_bytes()).hexdigest()
-    result = review(facts, candidate, expected_fixture_sha256=sha,
-                    fixture_name="notification_case.json")
-    assert result["status"] == "AA3_OFFLINE_PRECHECK_FAIL"
-    assert "MISSION_ID_MISMATCH" in result["violations"]
-    assert "REPOSITORY_REQUIRED_MISSING:lab/notification-api" in result["violations"]
+if __name__ == "__main__":
+    unittest.main()
