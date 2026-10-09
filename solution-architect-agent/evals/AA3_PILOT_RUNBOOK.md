@@ -152,3 +152,45 @@ prompts. If it passes, a **single** DAAROPS case can be tested with
 a new folder; status `AA3_ARCHITECT_REASONING_VALIDATED=false` always
 requires independent validation. Older sections of this runbook are
 historical and describe the prior `plan` implementation.
+
+## 2026-10-09 — deterministic 68-byte stderr after dedicated evaluator change
+
+The user retested local `--smoke-only` after updating to the
+dedicated `d099-evaluator` (`e8df54a`). Result:
+`LOCAL_OPENCODE_SMOKE_FAILED`, `opencode_exit_code=1`,
+`stdout_bytes=0`, `stderr_bytes=68`,
+`stderr_sha256=d08708a6593b173f0e27d8ce95e079f88b566abc2e91b37def6c38b88c071a5e`.
+This is **identical to earlier failures** with the built-in `plan`
+agent. The new agent is not shown to resolve this transport issue. Because
+no JSON event was produced, the report does not prove that the evaluator
+agent actually executed. It also does not invalidate the separate
+observed non-JSON read-only response from a previous successful model
+turn. No full mission was started by the guarded command.
+
+The **only change here** is durable capture of failed-process raw stderr
+to a **new, local-only** `smoke.stderr.local.txt` (or
+`daarops.stderr.local.txt`) inside the operator-selected output folder.
+The JSON summary contains only the local filename, a sensitivity-review
+flag, byte count, categories and hash, never raw stderr. Do **not** commit
+or upload the file: raw OpenCode diagnostics may contain usernames,
+machine paths or credentials. The file is written exclusively (`x`)
+and only on `exit_code != 0`. Success never writes a stderr file.
+Existing safety boundaries and one-shot behavior are unchanged.
+
+One fresh Windows smoke execution to capture the missing 68 bytes:
+
+```bash
+cd /c/workspaces/D099-AA3-HUB
+git status --short
+git pull --ff-only origin d099-aa0-aa2-method-contracts
+export OLLAMA_HOST=192.168.56.1:11434
+D099_ALLOW_LOCAL_INFERENCE=YES env -u OPENCODE_CONFIG_CONTENT \
+ python solution-architect-agent/evals/run_aa3_pilot.py \
+ --smoke-only --out /c/workspaces/D099-AA3-SMOKE-009
+```
+
+If status is nonzero, **inspect locally**
+`C:/workspaces/D099-AA3-SMOKE-009/smoke.stderr.local.txt` and
+redact secrets before sharing its short diagnostic text. **Do not rerun
+DAAROPS or SQY** until the error is identified. Successful smoke JSON
+contract alone is not AA3 acceptance.

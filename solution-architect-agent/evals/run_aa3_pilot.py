@@ -344,6 +344,24 @@ def safe_process_diagnostic(result: subprocess.CompletedProcess[str]) -> dict:
     }
 
 
+def preserve_failure_stderr(
+    result: subprocess.CompletedProcess[str], destination: Path, case: str
+) -> str | None:
+    """Store actual failed-process stderr ONLY on the operator workstation.
+
+    Never include the raw text in the JSON summary or a GitHub artifact.
+    Use a new, dedicated output directory. The model never sees this file.
+    """
+    if case not in ("smoke", "daarops", "sqy"):
+        raise ValueError("UNAPPROVED_DIAGNOSTIC_CASE")
+    if result.returncode == 0 or not result.stderr:
+        return None
+    filename = f"{case}.stderr.local.txt"
+    with (destination / filename).open("x", encoding="utf-8", newline="") as file:
+        file.write(result.stderr)
+    return filename
+
+
 def execute_local_turn(prompt: str, destination: Path, *, timeout: int) -> subprocess.CompletedProcess[str]:
     """Same safe process environment for a minimal smoke and full case."""
     env = child_environment()
@@ -368,6 +386,9 @@ def smoke_transport(destination: Path) -> dict:
     trace = destination / "smoke.events.jsonl"
     trace.write_text(result.stdout, encoding="utf-8")
     diagnostics = safe_process_diagnostic(result)
+    diagnostic_file = preserve_failure_stderr(result, destination, "smoke")
+    diagnostics["stderr_local_file"] = diagnostic_file
+    diagnostics["stderr_sensitive_review_required"] = bool(diagnostic_file)
     events = []
     for line in result.stdout.splitlines():
         if line.strip():
@@ -407,6 +428,9 @@ def pilot_one(case: str, destination: Path, *, timeout: int = 600) -> dict:
     trace.write_text(result.stdout, encoding="utf-8")
     # No raw stderr or prompt: only byte counts, digest and fixed categories.
     meta["diagnostic"] = safe_process_diagnostic(result)
+    diagnostic_file = preserve_failure_stderr(result, destination, case)
+    meta["diagnostic"]["stderr_local_file"] = diagnostic_file
+    meta["diagnostic"]["stderr_sensitive_review_required"] = bool(diagnostic_file)
     meta.update({"timestamp_utc": datetime.now(timezone.utc).isoformat(),
                  "opencode_exit_code": result.returncode,
                  "status": "LOCAL_PILOT_CAPTURED_UNREVIEWED",

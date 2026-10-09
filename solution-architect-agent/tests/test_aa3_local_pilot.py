@@ -313,6 +313,58 @@ class AA3PilotTests(unittest.TestCase):
                     if cfg is not None:
                         self.assertEqual(cfg["permission"]["*"], "deny")
 
+    def test_failed_stderr_saved_only_in_local_file_not_summary(self):
+        import subprocess
+        from tempfile import TemporaryDirectory
+        error = "FATAL error 68 bytes; TOKEN_SHOULD_STAY_LOCAL"
+        result = subprocess.CompletedProcess(
+            args=["opencode"], returncode=1, stdout="", stderr=error
+        )
+        with TemporaryDirectory() as directory:
+            output = Path(directory)
+            filename = PILOT.preserve_failure_stderr(result, output, "smoke")
+            self.assertEqual(filename, "smoke.stderr.local.txt")
+            self.assertEqual((output / filename).read_text(encoding="utf-8"), error)
+            self.assertFalse((output / "summary.json").exists())
+            with self.assertRaises(FileExistsError):
+                PILOT.preserve_failure_stderr(result, output, "smoke")
+        self.assertNotIn("TOKEN_SHOULD_STAY_LOCAL",
+                         str(PILOT.safe_process_diagnostic(result)))
+
+    def test_success_never_persists_stderr_and_case_must_be_known(self):
+        import subprocess
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as folder:
+            out = Path(folder)
+            succeeded = subprocess.CompletedProcess(
+                args=[], returncode=0, stdout="ok", stderr="warning"
+            )
+            self.assertIsNone(
+                PILOT.preserve_failure_stderr(succeeded, out, "smoke")
+            )
+            self.assertFalse(list(out.glob("*.stderr.local.txt")))
+            with self.assertRaisesRegex(ValueError, "UNAPPROVED_DIAGNOSTIC_CASE"):
+                PILOT.preserve_failure_stderr(succeeded, out, "other")
+
+    def test_failed_smoke_writes_local_error_file_and_hash_only_to_result(self):
+        import subprocess
+        from tempfile import TemporaryDirectory
+        error = "PRIVATE_STACK_TRACE keep local"
+        with TemporaryDirectory() as folder:
+            with patch.object(PILOT, "execute_local_turn", return_value=(
+                subprocess.CompletedProcess(
+                    args=[], returncode=1, stdout="", stderr=error
+                )
+            )):
+                outcome = PILOT.smoke_transport(Path(folder))
+            self.assertEqual(outcome["status"], "LOCAL_OPENCODE_SMOKE_FAILED")
+            self.assertEqual(outcome["diagnostic"]["stderr_local_file"],
+                             "smoke.stderr.local.txt")
+            self.assertTrue(outcome["diagnostic"]["stderr_sensitive_review_required"])
+            self.assertNotIn(error, json.dumps(outcome))
+            self.assertEqual((Path(folder)/"smoke.stderr.local.txt").read_text(),
+                             error)
+
     def test_model_tool_call_is_disallowed(self):
         with self.assertRaisesRegex(ValueError, "MODEL_ATTEMPTED_TOOL_USE"):
             PILOT.extract(json.dumps({"type": "tool_use", "part": {}}) + "\n" +
