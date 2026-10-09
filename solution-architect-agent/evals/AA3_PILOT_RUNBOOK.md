@@ -334,3 +334,45 @@ Inspect FR/NFR, alternatives, evidence limitations and ADR before
 choosing a revised evaluation model or benchmark scenario. Do NOT
 rerun DAAROPS/SQY inference, alter score fixtures, merge PRs or
 mutate CRC as part of this correction. AA3 OPEN.
+
+
+## 2026-10-09 — result of second offline precheck and candidate review
+
+After applying the deterministic precheck hardening (`9951e759...`), the
+operator **replayed only the offline validator** on the unchanged
+`D099-AA3-EVIDENCE-012/daarops.candidate.json`. The output had exactly
+four violations: `MISSION_ID_MISMATCH` plus
+`REQUIRED_REPOSITORY_NOT_MAPPED` for `zdmooc/cadrage_202682030`,
+`zdmooc/shared-platform-services-openshift` and
+`zdmooc/argocd-expert-pack`. Corrected status:
+`required_repositories_mapped=false`, `ownership_matches=false`,
+`trajectory=NO_INDEPENDENT_TRACE`, and
+`AA3_ARCHITECT_REASONING_VALIDATED=false`.
+
+The locally printed **actual candidate** identifies mission
+`mission-id-123` / `OpenShift Platform Architecture Review`, repositories
+`openplatform-controllers` and `openplatform-admin-ops`,
+`FR=1`, `NFR=1`, `gaps=2`, and three documentation / benchmarks
+alternatives unrelated to the operator-first mission. It proposes
+`ADR-001` selecting documentation standardization (S1) with
+`status=PROPOSED`, `approval_ref=null`, and
+`evidence.level=DESIGNED`. A structurally valid JSON candidate is
+**not a grounded DAAROPS assessment**. The repository names were not
+verified by the frozen source or any external repository tool.
+
+**Gate verdict**: `LOCAL_3B_SCHEMA_CONFORMANT_BUT_SEMANTIC_FAILURE`;
+local OpenCode/Bun transport and JSON encoding are now demonstrated,
+but end-to-end AA3 model reasoning is **not**. Stop repeated attempts to
+make a 3B response pass by rewriting prompts/schema/golden, and do not
+promote an irrelevant ADR or synthesized repositories to evidence.
+Do not run SQY using the same configuration solely to accumulate
+more non-qualifying traces.
+
+**Next design decision, not yet implemented:** qualify a different local
+model with adequate context and measured HP RAM/latency (target >=64k),
+or define a multi-step fact-grounded analysis with a deterministic
+mission/repo ownership gate before generation of S1/S2/S3 and ADR.
+Whichever path is approved must be independently assessed on the
+unchanged blind cases, with external tool audit, real deny enforcement,
+an architecture reviewer score >=85/100 on both DAAROPS and SQY,
+and no critical policy failure. AA3 OPEN; no merges or CRC changes.
