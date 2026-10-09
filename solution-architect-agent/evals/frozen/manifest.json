@@ -6,20 +6,20 @@
   "scope": "Offline read-only pilot source snapshots; not human-reviewed goldens",
   "cases": {
     "daarops": {
-      "mission_file": "solution-architect-agent/evals/cases/daarops-mission.md",
+      "mission_file": "evals/cases/daarops-mission.md",
       "sources": [
         {
-          "file": "solution-architect-agent/evals/frozen/daarops-alignment.md",
+          "file": "evals/frozen/daarops-alignment.md",
           "upstream_path": "portfolio/DAAROPS_PLATFORM_ENGINEER_KUBERNETES_GO_MISSION_ALIGNMENT_2026-10-07.md",
           "upstream_git_blob_sha": "3ebedb899390849d40a93db533646e70374c58b5"
         }
       ]
     },
     "sqy": {
-      "mission_file": "solution-architect-agent/evals/cases/sqy-mission.md",
+      "mission_file": "evals/cases/sqy-mission.md",
       "sources": [
         {
-          "file": "solution-architect-agent/evals/frozen/sqy-alignment.md",
+          "file": "evals/frozen/sqy-alignment.md",
           "upstream_path": "portfolio/EXPERT_KUBERNETES_OPENSHIFT_SQY_MISSION_ALIGNMENT_2026-10-06.md",
           "upstream_git_blob_sha": "2f41d26c255a13babf5cee2210adee63e87b6bd8"
         }
