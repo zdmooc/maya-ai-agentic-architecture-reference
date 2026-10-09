@@ -247,6 +247,10 @@ def process(phase: str, case: str, endpoint: str, out: Path,
             raise ValueError("STAGE1_DIR_REQUIRED")
         stage1, stage1_meta = check_previous(packet, stage1_dir)
     req, prompt_hash = make_request(packet, phase, stage1)
+    # Never write operator output inside the versioned code repository.
+    repository_root = Path(__file__).resolve().parents[2]
+    if out.resolve().is_relative_to(repository_root):
+        raise ValueError("EVIDENCE_OUTSIDE_SOURCE_CHECKOUT_REQUIRED")
     # Never delete/overwrite existing evidence. Do not call model on collision.
     try:
         out.mkdir(mode=0o700, parents=False, exist_ok=False)
@@ -366,6 +370,7 @@ def main() -> int:
                 "UNAPPROVED_CASE_OR_ENDPOINT",
                 "STAGE1_CANDIDATE_SHAPE_INVALID",
                 "STAGE1_SOURCES_OR_OWNERS_INVALID",
+                "EVIDENCE_OUTSIDE_SOURCE_CHECKOUT_REQUIRED",
             } else "PRECONDITION_FAILED",
             "model_request_sent": False,
             "AA3_ARCHITECT_REASONING_VALIDATED": False,
