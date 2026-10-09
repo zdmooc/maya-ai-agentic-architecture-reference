@@ -73,6 +73,25 @@ class AA3PilotTests(unittest.TestCase):
         self.assertEqual(obj["mission"]["id"], "sqy")
         self.assertEqual(trace["external_tool_audit"], "NOT_PRESENT")
 
+    def test_one_shot_config_generated_when_absent(self):
+        with patch.dict(os.environ, {
+            "OLLAMA_HOST": "192.168.56.1:11434",
+        }):
+            os.environ.pop("OPENCODE_CONFIG_CONTENT", None)
+            data = PILOT.assert_isolated_config()
+            self.assertEqual(data["model"], "ollama/qwen2.5:3b")
+            cfg = json.loads(os.environ["OPENCODE_CONFIG_CONTENT"])
+            self.assertEqual(cfg["permission"]["bash"], "deny")
+            self.assertEqual(cfg["provider"]["ollama"]["options"]["baseURL"],
+                             "http://192.168.56.1:11434/v1")
+            os.environ.pop("OPENCODE_CONFIG_CONTENT", None)
+
+    def test_rejects_remote_host_auto_configuration(self):
+        with patch.dict(os.environ, {"OLLAMA_HOST": "evil.invalid:11434"}):
+            os.environ.pop("OPENCODE_CONFIG_CONTENT", None)
+            with self.assertRaisesRegex(ValueError, "OLLAMA_HOST_NOT_APPROVED"):
+                PILOT.assert_isolated_config()
+
     def test_child_environment_redacts_host_tokens_and_proxy(self):
         with patch.dict(os.environ, {
             "GH_TOKEN": "PRIVATE_GITHUB_TOKEN",

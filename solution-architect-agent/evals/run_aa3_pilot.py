@@ -84,7 +84,38 @@ def assemble(case: str) -> tuple[str, dict]:
     return prompt, meta
 
 
+def ensure_pilot_config() -> None:
+    """Use existing validated inline config or synthesize one for local Ollama."""
+    if os.environ.get("OPENCODE_CONFIG_CONTENT", ""):
+        return
+    host = os.environ.get("OLLAMA_HOST", "127.0.0.1:11434").strip()
+    if "://" not in host:
+        host = "http://" + host
+    parsed = urlsplit(host)
+    if (parsed.scheme != "http" or parsed.path not in ("", "/")
+            or parsed.query or parsed.fragment or parsed.username
+            or parsed.password):
+        raise ValueError("OLLAMA_HOST_NOT_APPROVED")
+    endpoint = f"http://{parsed.hostname}:{parsed.port or 11434}/v1"
+    if endpoint not in ALLOWED_ENDPOINTS:
+        raise ValueError("OLLAMA_HOST_NOT_APPROVED")
+    cfg = {
+        "model": MODEL, "enabled_providers": ["ollama"],
+        "provider": {"ollama": {
+            "npm": "@ai-sdk/openai-compatible", "name": "Ollama Local",
+            "options": {"baseURL": endpoint},
+            "models": {"qwen2.5:3b": {"name": "Qwen 2.5 3B"}},
+        }},
+        "permission": {"*": "deny", "bash": "deny", "edit": "deny",
+                       "external_directory": "deny"},
+        "agent": {"plan": {"permission": {"*": "deny"}}},
+        "share": "disabled", "autoupdate": False, "snapshot": False,
+    }
+    os.environ["OPENCODE_CONFIG_CONTENT"] = json.dumps(cfg)
+
+
 def assert_isolated_config() -> dict:
+    ensure_pilot_config()
     raw = os.environ.get("OPENCODE_CONFIG_CONTENT", "")
     if not raw or len(raw) > 10000:
         raise ValueError("SAFE_OPENCODE_CONFIG_REQUIRED")

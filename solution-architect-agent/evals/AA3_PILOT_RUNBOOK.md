@@ -18,7 +18,7 @@ python solution-architect-agent/evals/run_aa3_pilot.py \
   --case both --out /c/workspaces/D099-AA3-EVIDENCE-001 --dry-run
 ```
 
-The prior environment variables `OPENCODE_CONFIG_CONTENT` and `OLLAMA_HOST` should remain in the **same terminal** as the existing isolated OpenCode test; check they are set without printing any credentials. The inline config must have `enabled_providers=["ollama"]`, a single local Ollama provider, `permission.*="deny"`, `agent.plan.permission.*="deny"`, sharing disabled, and updates disabled. The **resolved** OpenCode policy previously had a late `external_directory allow` entry, so this precondition verifies requested deny rules only; it does **not** count as full denial enforcement. Run only under a user-approved isolated local operator account, with no secrets in prompts.
+If `OPENCODE_CONFIG_CONTENT` is already set, the runner validates its restrictions before use. If absent, the runner **creates its own restrictive, local-only inline OpenCode config** from the explicitly allowlisted `OLLAMA_HOST` value (`192.168.56.1:11434` on the tested HP). It never uses the globally installed providers as an unrestricted fallback. Do not paste secrets into the shell. The inline config must have `enabled_providers=["ollama"]`, a single local Ollama provider, `permission.*="deny"`, `agent.plan.permission.*="deny"`, sharing disabled, and updates disabled. The **resolved** OpenCode policy previously had a late `external_directory allow` entry, so this precondition verifies requested deny rules only; it does **not** count as full denial enforcement. Run only under a user-approved isolated local operator account, with no secrets in prompts.
 
 ```bash
 D099_ALLOW_LOCAL_INFERENCE=YES \
