@@ -23,8 +23,12 @@ class FullBenchmarkOfflineTests(TestCase):
             self.assertIn("FROZEN_INPUT_JSON", prompt)
             self.assertIn("NOT a current runtime audit", prompt)
             self.assertNotIn('"required": [', prompt)
-            self.assertNotIn('golden/daarops', prompt)
-            self.assertNotIn('golden/sqy', prompt)
+            # Mission documents can mention the withheld golden PATH as
+            # a warning; that is not the golden CONTENT being exposed.
+            golden_data = (ROOT / "evals/golden" / f"{case}.json").read_text()
+            self.assertNotIn(golden_data, prompt)
+            self.assertNotIn('"canonical_owner":"PRIMARY_CAAS_LIFECYCLE_N3"',
+                             prompt)
             self.assertLessEqual(len(prompt), 23000)
 
     def test_request_single_local_json_schema_no_tools(self):
