@@ -31,6 +31,26 @@ def evaluate_design(candidate: object, packet: dict[str, Any],
             if not isinstance(owners, dict) or not owners:
                 problems.append("HOST_INVENTORY_REQUIRED")
                 owners = {}
+            # A schema-valid answer can still cite invented documents.
+            source_ids = {
+                s.get("id") for s in packet.get("sources", [])
+                if isinstance(s, dict) and isinstance(s.get("id"), str)
+            } if isinstance(packet.get("sources"), list) else set()
+            if not source_ids:
+                problems.append("HOST_SOURCES_REQUIRED")
+            citations = [
+                candidate["mission"]["source"],
+                *(r["source"] for r in candidate["repositories"]),
+                *(r["source"] for kind in ("FR", "NFR")
+                  for r in candidate["requirements"][kind]),
+                *(gap["source"] for gap in candidate["gaps"]),
+                *(e["source"] for e in candidate["evidence"]),
+            ]
+            if any(s not in source_ids for s in citations):
+                problems.append("CITATION_NOT_IN_TRUSTED_SOURCES")
+            for r in candidate["repositories"]:
+                if r["name"] in owners and r["source"] != owners[r["name"]]:
+                    problems.append("REPOSITORY_SOURCE_OWNER_MISMATCH:" + r["name"])
             mapped = [r["name"] for r in candidate["repositories"]]
             for required in owners:
                 if required not in mapped:

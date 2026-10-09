@@ -11,7 +11,9 @@ gate = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(gate)
 FACT = {"lexical_grounding_pass": True, "violations": []}
 PACKET = {"mission_id": "NOTIFY-01",
-          "repository_sources": {"lab/notify": "S-01"}}
+          "repository_sources": {"lab/notify": "S-01"},
+          "sources": [{"id": "S-01", "text": "Synthetic source",
+                       "sha256": "0" * 64}]}
 
 
 def candidate():
@@ -85,6 +87,22 @@ class AA3DecisionTests(unittest.TestCase):
         self.assertIn("OPTIONS_MUST_BE_S1_S2_S3",
                       gate.evaluate_design(obj, PACKET, FACT)["violations"])
 
+
+
+    def test_invented_citations_and_owner_source_are_rejected(self):
+        obj = candidate()
+        obj["mission"]["source"] = "NONEXISTENT"
+        obj["repositories"][0]["source"] = "OTHER"
+        issues = gate.evaluate_design(obj, PACKET, FACT)["violations"]
+        self.assertIn("CITATION_NOT_IN_TRUSTED_SOURCES", issues)
+        self.assertIn("REPOSITORY_SOURCE_OWNER_MISMATCH:lab/notify", issues)
+
+    def test_missing_trusted_source_inventory_fails(self):
+        result = gate.evaluate_design(candidate(),
+                                      {"mission_id": "NOTIFY-01",
+                                       "repository_sources": {"lab/notify": "S-01"}},
+                                      FACT)
+        self.assertIn("HOST_SOURCES_REQUIRED", result["violations"])
 
 if __name__ == "__main__":
     unittest.main()
