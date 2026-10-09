@@ -1,0 +1,98 @@
+{
+  "origin": "OPERATOR_TRANSCRIPTION_UNATTESTED",
+  "scenario": "inventory_case.json",
+  "model": "qwen3.5:9b-q4_K_M",
+  "generated_by": "HP17G3 operator local Ollama at requested num_ctx 8192",
+  "result_status": "AA3_LOCAL_DESIGN_SLICE_PASS",
+  "semantic_review_status": "PRELIMINARY_REVIEW_NEEDED",
+  "fixture_sha256": "4b3819d90aba61ee3bbbcce8b17afb363eed741b926049416860fc71582643ec",
+  "repeated_observations": [
+    {
+      "invocation": "1st actual local INVENTORY-02 design slice",
+      "tokens_generated": 475,
+      "tokens_prompt": 632,
+      "total_seconds": 294.03,
+      "load_seconds": 27.51,
+      "violations": []
+    },
+    {
+      "invocation": "2nd actual local INVENTORY-02 design slice",
+      "tokens_generated": 475,
+      "tokens_prompt": 632,
+      "total_seconds": 301.4,
+      "load_seconds": 27.58,
+      "violations": [],
+      "ram_free_gib_after": 24.16
+    }
+  ],
+  "same_design_text_in_both_runs": true,
+  "ollama_ps_after_each_run": "EMPTY: resident processor/active context NOT OBSERVED",
+  "design": {
+    "adr": {
+      "approval_ref": null,
+      "chosen": "S2",
+      "reason": "Selects S2 to balance throughput and consistency using existing idempotency keys while acknowledging the risk of duplicate delivery requires careful compensation design.",
+      "status": "PROPOSED"
+    },
+    "case_id": "INVENTORY-02",
+    "evidence_level": "DESIGNED",
+    "limits": [
+      "no runtime measured",
+      "no approval"
+    ],
+    "options": [
+      {
+        "advantage": "Guarantees strict consistency of the stock mutation journal across retries by holding locks until release or timeout.",
+        "approach": "Centralized locking in lab/stock-ledger with synchronous compensation; reservation expiry enforced via a single scheduled job that releases locks and updates the journal.",
+        "id": "S1",
+        "risk": "High latency under contention because all retry paths must wait for the central lock, violating availability requirements.",
+        "source_id": "I2"
+      },
+      {
+        "advantage": "High throughput as requests do not block each other, leveraging the existing idempotency key mechanism.",
+        "approach": "Optimistic concurrency with idempotency keys in lab/stock-ledger; expiry handled by a background worker that scans and releases stale reservations, compensating via journal entries.",
+        "id": "S2",
+        "risk": "Potential for duplicate delivery if the compensation worker fails before updating the journal, relying on unproven recovery logic.",
+        "source_id": "I2"
+      },
+      {
+        "advantage": "Decouples availability API validation from stock mutation, improving resilience against partial failures.",
+        "approach": "Event-driven architecture where lab/inventory-api publishes reservation events and lab/stock-ledger consumes them to manage expiry and release asynchronously.",
+        "id": "S3",
+        "risk": "Complex event ordering requirements increase the risk of inconsistent state if message delivery is lost or duplicated without explicit replay guarantees.",
+        "source_id": "I1"
+      }
+    ]
+  },
+  "gates": {
+    "full_aa0_assessment_schema_validated": false,
+    "human_architecture_score": "NOT_SCORED",
+    "source_semantic_entailment_reviewed": false,
+    "adr_approved": false,
+    "agent_tools_exposed": false,
+    "AA3_ARCHITECT_REASONING_VALIDATED": false,
+    "D099_CLOSED": false
+  },
+  "preliminary_assistant_review": {
+    "source": "assistant_non_independent_preliminary_text_assessment",
+    "summary": "S1/S2/S3 distinct and structurally complete; S1 guarantee and S2 throughput remain unmeasured; S3 consistency requires event ordering/replay design and proof; all proposed, no performance or recovery validated.",
+    "option_findings": [
+      {
+        "option": "S1",
+        "severity": "CAUTION_UNPROVEN_CLAIM",
+        "observation": "Guarantees strict consistency is stronger than the evidence permits; lock and timed release design are proposals, no concurrency/failure test, and the option itself warns of availability degradation."
+      },
+      {
+        "option": "S2",
+        "severity": "RISK_REQUIRES_DESIGN_PROOF",
+        "observation": "Throughput and duplicate handling are not measured. Define optimistic version checks, transactional stock allocation, idempotent journal updates, expiry races, compensation retry and recovery before considering it."
+      },
+      {
+        "option": "S3",
+        "severity": "RISK_REQUIRES_DESIGN_PROOF",
+        "observation": "Event-driven split is a plausible alternative but lacks explicit outbox/atomic publication, consumer idempotence, ordering, replay/dead-letter recovery and expiry race validation."
+      }
+    ],
+    "chosen_s2": "Plausible hypothesis only; no independent review or approved ADR"
+  }
+}
