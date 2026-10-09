@@ -9,7 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "evals"))
 from independent.prepare_case import assemble_case
 from local_aa3_fact_probe import (
-    CONTEXT, ENDPOINTS, MODEL, assess_response, request_payload, single_probe,\n    facts_format_schema, identity_prompt,
+    CONTEXT, ENDPOINTS, MODEL, assess_response, request_payload, single_probe,
+    facts_format_schema, identity_prompt,
 )
 
 
@@ -38,7 +39,11 @@ class LocalAA3ProbeTests(unittest.TestCase):
         self.assertEqual(payload["options"]["num_predict"], 384)
         self.assertFalse(payload["think"])
         self.assertFalse(payload["stream"])
-        self.assertEqual(payload["format"], facts_format_schema(self.packet))\n        self.assertEqual(payload["format"]["properties"]["facts"]["minItems"], 0)\n        self.assertEqual(payload["format"]["properties"]["facts"]["maxItems"], 3)\n        self.assertIn("EXACTLY 3 facts", payload["prompt"])\n        self.assertIn("ONE mission", payload["prompt"])
+        self.assertEqual(payload["format"], facts_format_schema(self.packet))
+        self.assertEqual(payload["format"]["properties"]["facts"]["minItems"], 0)
+        self.assertEqual(payload["format"]["properties"]["facts"]["maxItems"], 3)
+        self.assertIn("EXACTLY 3 facts", payload["prompt"])
+        self.assertIn("ONE mission", payload["prompt"])
         self.assertIn("facts", payload["prompt"])
         self.assertNotIn("tools", payload)
 
