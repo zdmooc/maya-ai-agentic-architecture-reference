@@ -371,9 +371,14 @@ def execute_local_turn(prompt: str, destination: Path, *, timeout: int) -> subpr
         # Passing argv directly, not shell=True, keeps prompt text out of cmd.exe.
         cmd = [executable, "run", "--pure", "--format", "json",
                "--model", MODEL, "--agent", EVAL_AGENT, prompt]
+        # Windows Git Bash/MSYS pseudo-terminal stdin can fail in the Bun
+        # runtime with "EUNKNOWN: unknown error, read". The prompt is an
+        # argv element, never stdin; supply a new empty OS pipe then EOF.
+        # subprocess.run(input="") creates PIPE and closes its writer,
+        # instead of inheriting a possibly invalid MSYS console handle.
         return subprocess.run(cmd, cwd=sandbox, env=env, capture_output=True,
-                              text=True, encoding="utf-8", errors="replace",
-                              timeout=timeout, check=False)
+                              input="", text=True, encoding="utf-8",
+                              errors="replace", timeout=timeout, check=False)
 
 
 def smoke_transport(destination: Path) -> dict:

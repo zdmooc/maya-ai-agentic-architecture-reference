@@ -194,3 +194,53 @@ If status is nonzero, **inspect locally**
 redact secrets before sharing its short diagnostic text. **Do not rerun
 DAAROPS or SQY** until the error is identified. Successful smoke JSON
 contract alone is not AA3 acceptance.
+
+## 2026-10-09 — root diagnostic: EUNKNOWN unknown error, read
+
+The operator finally inspected the **actual failed-process stderr**
+`D099-AA3-SMOKE-009/smoke.stderr.local.txt`:
+
+```text
+Error: Unexpected error
+
+EUNKNOWN: unknown error, read
+```
+
+This is a process-level I/O read error, **not** a JSON parse error,
+provider authentication proof, or a definitive LLM problem.
+The exact same 68-byte stderr signature was repeated across runs.
+Direct Windows Python **heredoc** invocations with a short or full prompt
+have sometimes succeeded, while calls from `python script.py` via Git
+Bash frequently fail. The runner had omitted the `stdin` argument to
+`subprocess.run`, therefore the native OpenCode/Bun process inherited a
+possible MSYS pseudo-terminal standard input. An independent upstream
+OpenCode issue describes similar Git Bash/tmux native read errors:
+https://github.com/anomalyco/opencode/issues/10129
+That public issue is contextual evidence, **not** proof of this machine's
+exact root cause.
+
+**One narrow and reversible fix**: `execute_local_turn()` now passes
+`input=""` (text mode) to `subprocess.run`, so the child receives a new
+empty anonymous pipe and EOF instead of inheriting Git Bash stdin.
+The model prompt still travels only as a direct argument in argv; no
+cmd.exe/shell interpolation; no new permissions or external network
+providers. Regression unit tests check stdin isolation on all invocation
+paths. This commit has not yet been proven on the operator's Windows runtime.
+
+Run one fresh JSON smoke only:
+
+```bash
+cd /c/workspaces/D099-AA3-HUB
+git status --short
+git pull --ff-only origin d099-aa0-aa2-method-contracts
+export OLLAMA_HOST=192.168.56.1:11434
+D099_ALLOW_LOCAL_INFERENCE=YES env -u OPENCODE_CONFIG_CONTENT \
+ python solution-architect-agent/evals/run_aa3_pilot.py \
+ --smoke-only --out /c/workspaces/D099-AA3-SMOKE-010
+```
+
+If `LOCAL_OPENCODE_SMOKE_JSON_CONTRACT_PASS` appears, follow with a
+single frozen architecture case in a new output directory, not both;
+if `exit_code=1` remains, inspect the new local stderr and investigate
+additional inherited OS handles only based on that evidence. Full AA3
+cannot be marked validated by this smoke alone.

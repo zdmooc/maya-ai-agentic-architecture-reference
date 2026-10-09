@@ -242,7 +242,35 @@ class AA3PilotTests(unittest.TestCase):
                     self.assertEqual(args[0][-1], "Reply exactly D099_LOCAL_SMOKE_OK.")
                     self.assertEqual(Path(kwargs["cwd"]).parent, output.parent)
                     self.assertIs(kwargs["shell"] if "shell" in kwargs else False, False)
+                    self.assertEqual(kwargs["input"], "")
+                    self.assertTrue(kwargs["capture_output"])
                     self.assertEqual(kwargs["env"]["OPENCODE_DISABLE_DEFAULT_PLUGINS"], "1")
+
+    def test_no_inherited_git_bash_stdin_in_all_local_calls(self):
+        import subprocess
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as folder:
+            output = Path(folder)
+            with patch.object(PILOT, "resolve_opencode",
+                              return_value="C:/opencode.exe"):
+                with patch.object(PILOT.subprocess, "run", return_value=(
+                    subprocess.CompletedProcess(
+                        args=[], returncode=0, stdout="", stderr=""
+                    )
+                )) as runner:
+                    for prompt in (
+                        '{"probe":"D099_LOCAL_SMOKE_OK"}',
+                        "Frozen architecture mission text",
+                    ):
+                        PILOT.execute_local_turn(prompt, output, timeout=10)
+                    self.assertEqual(runner.call_count, 2)
+                    for call in runner.call_args_list:
+                        args, kwargs = call
+                        self.assertEqual(kwargs["input"], "")
+                        self.assertTrue(args[0][-1])
+                        self.assertNotIn("stdin", kwargs)
+                        self.assertEqual(kwargs["env"].get("KUBECONFIG"), None)
+                        self.assertFalse(kwargs.get("shell", False))
 
     def test_full_pilot_stops_after_first_transport_failure(self):
         from tempfile import TemporaryDirectory
