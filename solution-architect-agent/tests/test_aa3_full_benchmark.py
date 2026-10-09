@@ -1,6 +1,10 @@
 """No-network benchmark assembly, provenance, denial and output regression."""
+import contextlib
+import io
 import json
+import os
 import sys
+import tempfile
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch
@@ -9,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "evals"))
 from local_aa3_full_benchmark import (
     assemble_benchmark, prompt_for, request_payload, allowed_source_path,
-    review_candidate, summarize_response,
+    review_candidate, summarize_response, main,
 )
 
 
@@ -85,6 +89,31 @@ class FullBenchmarkOfflineTests(TestCase):
         self.assertIsNone(answer)
         self.assertIn("GENERATION_TRUNCATED", errors)
         self.assertIn("MODEL_JSON_NOT_VALID", errors)
+
+
+    def test_existing_evidence_folder_refused_without_network_or_overwrite(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            evidence = Path(temporary) / "D099-AA3-EXISTING"
+            evidence.mkdir()
+            old = evidence / "summary.json"
+            old.write_text('{"original": true}', encoding="utf-8")
+            stream = io.StringIO()
+            with patch.dict(os.environ, {"D099_ALLOW_LOCAL_INFERENCE": "YES"}), \
+                 patch.object(sys, "argv", [
+                     "benchmark", "--case", "daarops", "--out", str(evidence)
+                 ]), \
+                 patch("local_aa3_full_benchmark.build_opener",
+                       side_effect=AssertionError("MUST_NOT_CALL_OLLAMA")) as http, \
+                 contextlib.redirect_stdout(stream):
+                exit_code = main()
+            self.assertEqual(exit_code, 2)
+            output = json.loads(stream.getvalue())
+            self.assertEqual(output["error_type"],
+                             "OUTPUT_DIRECTORY_ALREADY_EXISTS")
+            self.assertFalse(output["model_request_sent"])
+            self.assertEqual(old.read_text(encoding="utf-8"),
+                             '{"original": true}')
+            http.assert_not_called()
 
     def test_no_data_never_qualifies(self):
         p, _ = assemble_benchmark("sqy")

@@ -230,7 +230,20 @@ def main() -> int:
     out = args.out.resolve()
     if out.is_relative_to(ROOT.resolve()):
         raise SystemExit("EVIDENCE_OUTSIDE_SOURCE_CHECKOUT_REQUIRED")
-    out.mkdir(mode=0o700, parents=False, exist_ok=False)
+    try:
+        # Exclusive creation: never delete, reuse, truncate or overwrite
+        # a previous operator's benchmark evidence.
+        out.mkdir(mode=0o700, parents=False, exist_ok=False)
+    except FileExistsError:
+        print(json.dumps({
+            "status": "AA3_FULL_BENCHMARK_BLOCKED",
+            "error_type": "OUTPUT_DIRECTORY_ALREADY_EXISTS",
+            "model_request_sent": False,
+            "existing_evidence_overwritten": False,
+            "AA3_ARCHITECT_REASONING_VALIDATED": False,
+            "D099_CLOSED": False,
+        }, indent=2, sort_keys=True))
+        return 2
     request = Request(
         args.endpoint + "/api/generate",
         data=json.dumps(req_data).encode("utf-8"),
