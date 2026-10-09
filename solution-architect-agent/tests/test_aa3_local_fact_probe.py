@@ -38,7 +38,7 @@ class LocalAA3ProbeTests(unittest.TestCase):
         self.assertEqual(payload["options"]["num_predict"], 384)
         self.assertFalse(payload["think"])
         self.assertFalse(payload["stream"])
-        self.assertEqual(payload["format"], facts_format_schema(self.packet))\n        self.assertEqual(payload["format"]["properties"]["facts"]["minItems"], 3)\n        self.assertEqual(payload["format"]["properties"]["facts"]["maxItems"], 3)\n        self.assertIn("EXACTLY 3 facts", payload["prompt"])\n        self.assertIn("ONE mission", payload["prompt"])
+        self.assertEqual(payload["format"], facts_format_schema(self.packet))\n        self.assertEqual(payload["format"]["properties"]["facts"]["minItems"], 0)\n        self.assertEqual(payload["format"]["properties"]["facts"]["maxItems"], 3)\n        self.assertIn("EXACTLY 3 facts", payload["prompt"])\n        self.assertIn("ONE mission", payload["prompt"])
         self.assertIn("facts", payload["prompt"])
         self.assertNotIn("tools", payload)
 
@@ -110,7 +110,7 @@ class LocalAA3ProbeTests(unittest.TestCase):
         fact = payload["properties"]["facts"]["items"]
         self.assertTrue({"value", "repository", "quote", "kind",
                          "source_id"} <= set(fact["required"]))
-        self.assertEqual(payload["properties"]["facts"]["minItems"], 3)
+        self.assertEqual(payload["properties"]["facts"]["minItems"], 0)
         self.assertNotIn("lab/notification-api", str(payload))
         self.assertIn("value=empty string", identity_prompt(self.packet))
 

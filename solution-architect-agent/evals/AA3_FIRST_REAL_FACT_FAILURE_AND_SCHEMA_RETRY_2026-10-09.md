@@ -19,7 +19,7 @@ Measured **real HP** first run at 8K, Qwen3.5 9B:
 **Code adjustment:** The next one-turn local probe still uses
 `num_ctx=8192` and `num_predict=384`, `think=false` and zero
 agent tools, but supplies an Ollama `format` **JSON Schema** with
-exactly 1+N fact slots and six REQUIRED fields per fact
+maximum 1+N fact slots (empty response permitted when ungrounded) and six REQUIRED fields per fact
 (`id,kind,source_id,quote,value,repository`). Empty `value` for
 repository facts and empty `repository` for mission fact are explicit.
 The prompt separately demands *exactly one* mission and one fact per

@@ -50,7 +50,7 @@ def facts_format_schema(packet: dict) -> dict:
         "properties": {
             "facts": {
                 "type": "array",
-                "minItems": count,
+                "minItems": 0,
                 "maxItems": count,
                 "items": {
                     "type": "object",
@@ -79,7 +79,7 @@ def identity_prompt(packet: dict) -> str:
     owners = packet["repository_sources"]
     expected = len(owners)
     return build_fact_prompt(packet) + (
-        "\\n\\nSTRICT IDENTITY CHECK ONLY: Return EXACTLY "
+        "\n\nSTRICT IDENTITY CHECK ONLY: Return EXACTLY "
         + str(expected + 1)
         + " facts (ONE mission, then EXACTLY "
         + str(expected)
@@ -146,7 +146,16 @@ def assess_response(packet: dict, response: object) -> dict:
         facts = content["facts"]
     if not isinstance(facts, list):
         problems.append("FACT_OUTPUT_NOT_ARRAY")
-    fact_report = evaluate_facts(packet, facts if isinstance(facts, list) else [])\n    # No repair/normalization: malformed or omitted fields remain model failures.\n    if isinstance(facts, list):\n        for fact in facts:\n            if not isinstance(fact, dict):\n                continue\n            if fact.get("kind") == "mission" and fact.get("repository") != "":\n                problems.append("MISSION_EXTRANEOUS_REPOSITORY_FIELD")\n            if fact.get("kind") == "repository" and fact.get("value") != "":\n                problems.append("REPOSITORY_EXTRANEOUS_VALUE_FIELD")
+    fact_report = evaluate_facts(packet, facts if isinstance(facts, list) else [])
+    # No repair/normalization: malformed or omitted fields remain model failures.
+    if isinstance(facts, list):
+        for fact in facts:
+            if not isinstance(fact, dict):
+                continue
+            if fact.get("kind") == "mission" and fact.get("repository") != "":
+                problems.append("MISSION_EXTRANEOUS_REPOSITORY_FIELD")
+            if fact.get("kind") == "repository" and fact.get("value") != "":
+                problems.append("REPOSITORY_EXTRANEOUS_VALUE_FIELD")
     problems.extend(fact_report["violations"])
     stats = response if isinstance(response, dict) else {}
     return {
@@ -154,7 +163,8 @@ def assess_response(packet: dict, response: object) -> dict:
                   else "AA3_LOCAL_FACT_GATE_FAIL",
         "mission_id": packet.get("mission_id"),
         "model": MODEL,
-        "requested_context": CONTEXT,\n        "generation_format": "OLLAMA_JSON_SCHEMA",
+        "requested_context": CONTEXT,
+        "generation_format": "OLLAMA_JSON_SCHEMA",
         "observed_context": "CHECK_OLLAMA_PS_SEPARATELY",
         "facts": facts if isinstance(facts, list) and len(facts) <= 16 else None,
         "violations": sorted(set(problems)),
