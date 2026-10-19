@@ -105,6 +105,8 @@ Architect operating model:
 - [Online experimentation pattern](enterprise/GENAI-ONLINE-EXPERIMENTATION-PATTERN.md)
 - [AI architecture fitness functions](enterprise/AI-ARCHITECTURE-FITNESS-FUNCTIONS.md)
 
+**Référence bancaire et paiements (source unique, dépôt produit privé) :** [IA et paiements — architecture, scoring fraude, RAG et agents gouvernés](https://github.com/zdmooc/mayabank-instant-payments-resilience-platform/blob/main/docs/architecture/ai/IA_PAIEMENTS_BANCAIRES_REFERENTIEL_GLOBAL.md). Ce dépôt IA référence le document ; il n'en conserve aucune copie. Les extensions d'agents de paiement décrites sont des cibles de conception tant que leur exécution n'est pas prouvée.
+
 ## AI/ML and banking/insurance architecture
 
 - [Unified AI/ML Solution Architecture lifecycle](enterprise/AI-ML-SOLUTION-ARCHITECTURE-LIFECYCLE.md)
