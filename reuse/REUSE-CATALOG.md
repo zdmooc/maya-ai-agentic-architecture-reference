@@ -11,8 +11,8 @@ This catalog defines ownership boundaries so the portfolio remains understandabl
 | Azure architecture | `mayabank-azure-cloud-ai-platform` | REFERENCE | Reuse Landing Zone, IAM, network, observability, FinOps/GreenOps patterns |
 | OpenShift platform patterns | `openshift-platform-blueprints` | REFERENCE | Platform engineering source |
 | Governed deterministic decisioning analogue | `mayabank-ibm-odm-ai-decision-architecture` | REFERENCE | Strong enterprise policy/ML/GenAI/HITL pattern |
-| Product/company umbrella | `Maya` | REFERENCE | Context only until distinct executable need exists |
-| Maya GitOps | `Maya-gitops` | DEFER / ADAPT | Use when concrete Maya workloads are ready |
+| Historic product/company context | `Maya` | DEPRECATED / CONTENT_PRESERVED | Six source Markdown files (across both retired repos) preserved in private `cadrage_202682030/portfolio/legacy-maya/`; do not use as live product owner |
+| Historic Maya GitOps plan | `Maya-gitops` | DEPRECATED / CONTENT_PRESERVED | No executable Maya manifests; use `argocd-expert-pack` and `shared-platform-services-openshift` instead |
 | Enterprise AI platform empty repo | `maya-interlink-enterprise-ai-platform` | IGNORE | Do not create duplicate architecture |
 | IG connectivity | official IG REST/Streaming docs + thin adapter | INTEGRATE | `trading-ig` is convenience/reference, not authority |
 | Backtesting/replay architecture | NautilusTrader + selected internal code | REFERENCE / ADAPT | Evaluate before building a large custom engine |
