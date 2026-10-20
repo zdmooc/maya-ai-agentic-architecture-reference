@@ -1,5 +1,7 @@
 # AI Repository Portfolio Map
 
+> **Current addendum — 2026-10-20:** the `Maya` and `Maya-gitops` repositories are **DEPRECATED / CONTENT_PRESERVED / PENDING_OWNER_MANUAL_DELETE**, not active portfolio dependencies. Their 6 Markdown files are preserved in private `zdmooc/cadrage_202682030/portfolio/legacy-maya/`. Mentions below reflect the dated classification from September 15, 2026, and do not authorize rebuilding duplicate runtimes or GitOps layers.
+
 Status: **CURRENT CLASSIFICATION — 2026-09-15**
 
 Purpose: classify the repositories owned by `zdmooc` that directly implement, design or materially support AI/ML/GenAI architecture. This map prevents portfolio duplication and clarifies which repositories should be shown first for AI Solution Architect missions.
