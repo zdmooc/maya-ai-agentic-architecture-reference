@@ -1,5 +1,7 @@
 # Own Repository Audit
 
+> **Addendum 2026-10-20 — supersedes the 2026-09-15 Maya rows:** `zdmooc/Maya` and `zdmooc/Maya-gitops` are **DEPRECATED / CONTENT_PRESERVED / PENDING_OWNER_MANUAL_DELETE**. All six source Markdown files were copied unchanged to the private governance repository `zdmooc/cadrage_202682030/portfolio/legacy-maya/`. Do not use either as an active runtime, product, or GitOps owner. The dated audit table below is retained as a historical snapshot. Canonical AI architecture stays here; executable AI remains in `TradeOps-GenAI-Integration`; Argo patterns in `argocd-expert-pack`; shared services in `shared-platform-services-openshift`.
+
 Audit date: **2026-09-15**.
 
 Decision vocabulary: `REUSE`, `ADAPT`, `REFERENCE`, `REPLACE`, `DEPRECATE`, `IGNORE`.
