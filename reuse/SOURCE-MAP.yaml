@@ -20,15 +20,16 @@ sources:
   - repository: zdmooc/mayabank-ibm-odm-ai-decision-architecture
     capabilities: [deterministic-decisioning, ml, genai, mcp, hitl, audit]
     decision: REFERENCE
-  - repository: zdmooc/Maya
-    capabilities: [product-context, local-first]
-    decision: REFERENCE
-  - repository: zdmooc/Maya-gitops
-    capabilities: [gitops-concept, crc]
-    decision: DEFER
   - repository: zdmooc/maya-interlink-enterprise-ai-platform
     capabilities: []
     decision: IGNORE
+retired_sources:
+  - repository: zdmooc/Maya
+    disposition: CONTENT_PRESERVED_PENDING_OWNER_MANUAL_DELETE
+    preserved_at: zdmooc/cadrage_202682030/portfolio/legacy-maya/Maya/
+  - repository: zdmooc/Maya-gitops
+    disposition: CONTENT_PRESERVED_PENDING_OWNER_MANUAL_DELETE
+    preserved_at: zdmooc/cadrage_202682030/portfolio/legacy-maya/Maya-gitops/
 public_baseline:
   connectivity:
     - official-ig-rest-streaming
